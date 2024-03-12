@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('observation_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

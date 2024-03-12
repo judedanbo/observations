@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('document_team', function (Blueprint $table) {
             $table->foreignId('document_id');
             $table->foreignId('team_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

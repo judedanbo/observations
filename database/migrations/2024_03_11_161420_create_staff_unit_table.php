@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('staff_unit', function (Blueprint $table) {
             $table->foreignId('staff_id');
             $table->foreignId('unit_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('finding_status', function (Blueprint $table) {
             $table->foreignId('finding_id');
             $table->foreignId('status_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

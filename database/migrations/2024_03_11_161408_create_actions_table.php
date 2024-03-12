@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('finding_id');
             $table->foreignId('recommendation_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

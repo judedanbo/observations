@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('actual_end_date')->nullable();
             $table->integer('year');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

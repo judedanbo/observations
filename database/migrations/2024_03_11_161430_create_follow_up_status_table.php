@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('follow_up_status', function (Blueprint $table) {
             $table->foreignId('follow_up_id');
             $table->foreignId('status_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

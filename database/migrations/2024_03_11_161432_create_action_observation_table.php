@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('action_observation', function (Blueprint $table) {
             $table->foreignId('action_id');
             $table->foreignId('observation_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

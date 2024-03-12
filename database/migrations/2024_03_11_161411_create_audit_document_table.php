@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('audit_document', function (Blueprint $table) {
             $table->foreignId('audit_id');
             $table->foreignId('document_id');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
