@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,5 +62,28 @@ class Action extends Model
     public function followUps(): HasMany
     {
         return $this->hasMany(FollowUp::class);
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('title')
+                ->required()
+                ->maxLength(250),
+            RichEditor::make('description')
+                ->columnSpanFull(),
+            Select::make('observation_id')
+                ->relationship('observation', 'title')
+                ->required(),
+            Select::make('follow_up_id')
+                ->relationship('followUp', 'title')
+                ->required(),
+            Select::make('finding_id')
+                ->relationship('finding', 'title')
+                ->required(),
+            Select::make('recommendation_id')
+                ->relationship('recommendation', 'title')
+                ->required(),
+        ];
     }
 }

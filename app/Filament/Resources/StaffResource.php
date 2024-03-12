@@ -21,18 +21,7 @@ class StaffResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('staff_number')
-                    ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Staff::getForm());
     }
 
     public static function table(Table $table): Table

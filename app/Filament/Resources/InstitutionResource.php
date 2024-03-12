@@ -21,11 +21,7 @@ class InstitutionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(250),
-            ]);
+            ->schema(Institution::getForm());
     }
 
     public static function table(Table $table): Table

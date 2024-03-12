@@ -21,20 +21,7 @@ class AddressResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('street')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\TextInput::make('city')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\TextInput::make('region')
-                    ->required()
-                    ->maxLength(3),
-                Forms\Components\TextInput::make('country')
-                    ->required()
-                    ->maxLength(250),
-            ]);
+            ->schema(Address::getForm());
     }
 
     public static function table(Table $table): Table

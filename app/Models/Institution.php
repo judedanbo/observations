@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -33,5 +34,14 @@ class Institution extends Model
     public function leaders(): BelongsToMany
     {
         return $this->belongsToMany(Leader::class);
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->maxLength(250),
+        ];
     }
 }

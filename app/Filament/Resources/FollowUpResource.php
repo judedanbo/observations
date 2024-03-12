@@ -21,25 +21,7 @@ class FollowUpResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('observation_id')
-                    ->relationship('observation', 'title')
-                    ->required(),
-                Forms\Components\Select::make('action_id')
-                    ->relationship('action', 'title')
-                    ->required(),
-                Forms\Components\Select::make('finding_id')
-                    ->relationship('finding', 'title')
-                    ->required(),
-                Forms\Components\Select::make('recommendation_id')
-                    ->relationship('recommendation', 'title')
-                    ->required(),
-            ]);
+            ->schema(FollowUp::getForm());
     }
 
     public static function table(Table $table): Table

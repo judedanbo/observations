@@ -14,7 +14,7 @@ class DocumentFactory extends Factory
         return [
             'title' => $this->faker->sentence(4),
             'description' => $this->faker->text(),
-            'file' => $this->faker->word(),
+            'file' => $this->faker->file(),
         ];
     }
 }

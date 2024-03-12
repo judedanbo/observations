@@ -21,15 +21,7 @@ class DepartmentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('short_name')
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(255),
-            ]);
+            ->schema(Department::getForm());
     }
 
     public static function table(Table $table): Table

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -65,5 +67,18 @@ class Document extends Model
     public function followUps(): BelongsToMany
     {
         return $this->belongsToMany(FollowUp::class);
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('title')
+                ->required()
+                ->maxLength(250),
+            Textarea::make('description')
+                ->columnSpanFull(),
+            TextInput::make('file')
+                ->maxLength(255),
+        ];
     }
 }

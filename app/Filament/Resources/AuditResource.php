@@ -21,20 +21,7 @@ class AuditResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('planned_start_date'),
-                Forms\Components\DatePicker::make('planned_end_date'),
-                Forms\Components\DatePicker::make('actual_start_date'),
-                Forms\Components\DatePicker::make('actual_end_date'),
-                Forms\Components\TextInput::make('year')
-                    ->required()
-                    ->numeric(),
-            ]);
+            ->schema(Audit::getForm());
     }
 
     public static function table(Table $table): Table

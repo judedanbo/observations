@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,5 +31,24 @@ class Leader extends Model
     public function institutions(): BelongsToMany
     {
         return $this->belongsToMany(Institution::class);
+    }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('staff_number')
+                ->maxLength(15),
+            TextInput::make('name')
+                ->required()
+                ->maxLength(250),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(250),
+            DatePicker::make('start_date')
+                ->native(false)
+                ->required(),
+            DatePicker::make('end_date')
+                ->native(false),
+        ];
     }
 }

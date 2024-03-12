@@ -21,16 +21,7 @@ class FindingResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('observation_id')
-                    ->relationship('observation', 'title')
-                    ->required(),
-            ]);
+            ->schema(Finding::getForm());
     }
 
     public static function table(Table $table): Table

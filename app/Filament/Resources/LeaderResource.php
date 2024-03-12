@@ -21,19 +21,7 @@ class LeaderResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('staff_number')
-                    ->maxLength(15),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(250),
-                Forms\Components\DatePicker::make('start_date')
-                    ->required(),
-                Forms\Components\DatePicker::make('end_date'),
-            ]);
+            ->schema(Leader::getForm());
     }
 
     public static function table(Table $table): Table
