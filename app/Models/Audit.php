@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -78,6 +80,28 @@ class Audit extends Model
             TextInput::make('year')
                 ->required()
                 ->numeric(),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Audit::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
         ];
     }
 }

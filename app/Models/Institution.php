@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +43,29 @@ class Institution extends Model
         return [
             TextInput::make('name')
                 ->required()
+                ->columnSpanFull()
                 ->maxLength(250),
+            Actions::make([
+                Action::make('star')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->color('gray')
+                    ->size('sm')
+                    ->outlined()
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Institution::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ]),
         ];
     }
 }

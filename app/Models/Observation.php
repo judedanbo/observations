@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,9 +27,9 @@ class Observation extends Model
         'id' => 'integer',
     ];
 
-    public function audits(): BelongsToMany
+    public function audit(): BelongsTo
     {
-        return $this->belongsToMany(Audit::class);
+        return $this->belongsTo(Audit::class);
     }
 
     public function actions(): BelongsToMany
@@ -61,6 +64,28 @@ class Observation extends Model
                 ->required()
                 ->maxLength(250),
             RichEditor::make('criteria')
+                ->columnSpanFull(),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Observation::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
                 ->columnSpanFull(),
         ];
     }

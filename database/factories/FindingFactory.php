@@ -13,8 +13,8 @@ class FindingFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->text(),
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(15),
             'observation_id' => Observation::factory(),
         ];
     }

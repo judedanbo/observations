@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -61,14 +63,37 @@ class Finding extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make('title')
-                ->required()
-                ->maxLength(250),
-            RichEditor::make('description')
-                ->columnSpanFull(),
             Select::make('observation_id')
                 ->relationship('observation', 'title')
                 ->required(),
+            TextInput::make('title')
+                ->required()
+                ->columnSpanFull()
+                ->maxLength(250),
+            RichEditor::make('description')
+                ->columnSpanFull(),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Finding::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
         ];
     }
 }

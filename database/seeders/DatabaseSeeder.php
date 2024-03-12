@@ -22,5 +22,28 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
+        $statuses = [
+            [
+                'id' => 1,
+                'name' => 'Scheduled',
+                'description' => 'Audit scheduled but not started yet',
+            ],
+            [
+                'id' => 2,
+                'name' => 'In Progress',
+                'description' => 'Audit in progress',
+            ],
+            [
+                'id' => 3,
+                'name' => 'Completed',
+                'description' => 'Audit is completed and report is issued',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Terminated',
+                'description' => 'Audit terminated or cancelled before completion',
+            ],
+        ];
+        \App\Models\Status::insert($statuses);
     }
 }

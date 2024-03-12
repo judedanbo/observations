@@ -13,7 +13,7 @@ class StaffFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'staff_number' => $this->faker->regexify('[A-Za-z0-9]{10}'),
+            'staff_number' => $this->faker->regexify('[A-Za-z0-9]{9}'),
             'email' => $this->faker->safeEmail(),
         ];
     }

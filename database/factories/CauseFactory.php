@@ -12,10 +12,11 @@ class CauseFactory extends Factory
 
     public function definition(): array
     {
+        $finding = Finding::inRandomOrder()->first()->id;
         return [
             'title' => $this->faker->sentence(4),
             'description' => $this->faker->text(),
-            'finding_id' => Finding::factory(),
+            'finding_id' =>  $finding,
         ];
     }
 }
