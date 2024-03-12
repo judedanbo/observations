@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Traits\LogAllTraits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogAllTraits;
 
     protected $fillable = [
         'street',
@@ -21,6 +22,7 @@ class Address extends Model
     protected $casts = [
         'id' => 'integer',
     ];
+
 
     public function institutions(): BelongsToMany
     {

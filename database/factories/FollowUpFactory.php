@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Action;
 use App\Models\Finding;
 use App\Models\FollowUp;
 use App\Models\Observation;
 use App\Models\Recommendation;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FollowUpFactory extends Factory
 {

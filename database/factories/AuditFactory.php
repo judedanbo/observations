@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Audit;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuditFactory extends Factory
 {

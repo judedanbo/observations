@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
+use App\Http\Traits\LogAllTraits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Document extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, SoftDeletes, LogAllTraits;
 
     protected $fillable = [
         'title',
@@ -66,14 +65,5 @@ class Document extends Model
     public function followUps(): BelongsToMany
     {
         return $this->belongsToMany(FollowUp::class);
-    }
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['name',
-            'short_name',
-            'description',
-        ]);
     }
 }
