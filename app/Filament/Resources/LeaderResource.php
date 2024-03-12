@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\LeaderResource\Pages;
+use App\Filament\Resources\LeaderResource\RelationManagers;
+use App\Models\Leader;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class LeaderResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Leader::class;
 
-    protected static ?string $navigationGroup = 'GAS';
+    protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -25,13 +25,17 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('staff_number')
+                    ->maxLength(15),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(250),
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
-                    ->maxLength(255),
+                Forms\Components\DatePicker::make('start_date')
+                    ->required(),
+                Forms\Components\DatePicker::make('end_date'),
             ]);
     }
 
@@ -39,10 +43,18 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('staff_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,9 +87,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListLeaders::route('/'),
+            'create' => Pages\CreateLeader::route('/create'),
+            'edit' => Pages\EditLeader::route('/{record}/edit'),
         ];
     }
 }

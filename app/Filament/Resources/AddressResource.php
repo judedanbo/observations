@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\AddressResource\Pages;
+use App\Filament\Resources\AddressResource\RelationManagers;
+use App\Models\Address;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class AddressResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Address::class;
 
-    protected static ?string $navigationGroup = 'GAS';
+    protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -25,13 +25,18 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('street')
                     ->required()
                     ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
-                    ->maxLength(255),
+                Forms\Components\TextInput::make('city')
+                    ->required()
+                    ->maxLength(250),
+                Forms\Components\TextInput::make('region')
+                    ->required()
+                    ->maxLength(3),
+                Forms\Components\TextInput::make('country')
+                    ->required()
+                    ->maxLength(250),
             ]);
     }
 
@@ -39,9 +44,13 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('street')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
+                Tables\Columns\TextColumn::make('city')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('region')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('country')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -75,9 +84,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListAddresses::route('/'),
+            'create' => Pages\CreateAddress::route('/create'),
+            'edit' => Pages\EditAddress::route('/{record}/edit'),
         ];
     }
 }

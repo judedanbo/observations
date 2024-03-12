@@ -14,6 +14,7 @@ class DepartmentFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'short_name' => $this->faker->regexify('[A-Za-z0-9]{10}'),
             'description' => $this->faker->text(),
         ];
     }

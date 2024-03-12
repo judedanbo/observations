@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\StatusResource\Pages;
+use App\Filament\Resources\StatusResource\RelationManagers;
+use App\Models\Status;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class StatusResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Status::class;
 
     protected static ?string $navigationGroup = 'GAS';
 
@@ -25,13 +25,12 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
+                Forms\Components\TextInput::make('description')
                     ->maxLength(255),
+                Forms\Components\DatePicker::make('date'),
             ]);
     }
 
@@ -39,10 +38,13 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
+                Tables\Columns\TextColumn::make('description')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,9 +77,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListStatuses::route('/'),
+            'create' => Pages\CreateStatus::route('/create'),
+            'edit' => Pages\EditStatus::route('/{record}/edit'),
         ];
     }
 }

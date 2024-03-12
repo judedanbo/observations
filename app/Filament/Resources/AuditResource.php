@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\AuditResource\Pages;
+use App\Filament\Resources\AuditResource\RelationManagers;
+use App\Models\Audit;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class AuditResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Audit::class;
 
-    protected static ?string $navigationGroup = 'GAS';
+    protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,8 +30,13 @@ class DocumentResource extends Resource
                     ->maxLength(250),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
-                    ->maxLength(255),
+                Forms\Components\DatePicker::make('planned_start_date'),
+                Forms\Components\DatePicker::make('planned_end_date'),
+                Forms\Components\DatePicker::make('actual_start_date'),
+                Forms\Components\DatePicker::make('actual_end_date'),
+                Forms\Components\TextInput::make('year')
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -41,8 +46,21 @@ class DocumentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('planned_start_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('planned_end_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('actual_start_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('actual_end_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('year')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,9 +93,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListAudits::route('/'),
+            'create' => Pages\CreateAudit::route('/create'),
+            'edit' => Pages\EditAudit::route('/{record}/edit'),
         ];
     }
 }

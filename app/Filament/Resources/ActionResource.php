@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\ActionResource\Pages;
+use App\Filament\Resources\ActionResource\RelationManagers;
+use App\Models\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class ActionResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Action::class;
 
-    protected static ?string $navigationGroup = 'GAS';
+    protected static ?string $navigationGroup = 'Clients';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,8 +30,18 @@ class DocumentResource extends Resource
                     ->maxLength(250),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
-                    ->maxLength(255),
+                Forms\Components\Select::make('observation_id')
+                    ->relationship('observation', 'title')
+                    ->required(),
+                Forms\Components\Select::make('follow_up_id')
+                    ->relationship('followUp', 'title')
+                    ->required(),
+                Forms\Components\Select::make('finding_id')
+                    ->relationship('finding', 'title')
+                    ->required(),
+                Forms\Components\Select::make('recommendation_id')
+                    ->relationship('recommendation', 'title')
+                    ->required(),
             ]);
     }
 
@@ -41,8 +51,18 @@ class DocumentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('observation.title')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('followUp.title')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('finding.title')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('recommendation.title')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,9 +95,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListActions::route('/'),
+            'create' => Pages\CreateAction::route('/create'),
+            'edit' => Pages\EditAction::route('/{record}/edit'),
         ];
     }
 }

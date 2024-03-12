@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\StaffResource\Pages;
+use App\Filament\Resources\StaffResource\RelationManagers;
+use App\Models\Staff;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class StaffResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Staff::class;
 
     protected static ?string $navigationGroup = 'GAS';
 
@@ -25,12 +25,15 @@ class DocumentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(250),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
+                    ->maxLength(200),
+                Forms\Components\TextInput::make('staff_number')
+                    ->required()
+                    ->maxLength(10),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required()
                     ->maxLength(255),
             ]);
     }
@@ -39,9 +42,11 @@ class DocumentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
+                Tables\Columns\TextColumn::make('staff_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -75,9 +80,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListStaff::route('/'),
+            'create' => Pages\CreateStaff::route('/create'),
+            'edit' => Pages\EditStaff::route('/{record}/edit'),
         ];
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\DocumentResource\Pages;
-use App\Filament\Resources\DocumentResource\RelationManagers;
-use App\Models\Document;
+use App\Filament\Resources\EffectResource\Pages;
+use App\Filament\Resources\EffectResource\RelationManagers;
+use App\Models\Effect;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,11 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class DocumentResource extends Resource
+class EffectResource extends Resource
 {
-    protected static ?string $model = Document::class;
+    protected static ?string $model = Effect::class;
 
-    protected static ?string $navigationGroup = 'GAS';
+    protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -30,8 +30,9 @@ class DocumentResource extends Resource
                     ->maxLength(250),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('file')
-                    ->maxLength(255),
+                Forms\Components\Select::make('finding_id')
+                    ->relationship('finding', 'title')
+                    ->required(),
             ]);
     }
 
@@ -41,8 +42,9 @@ class DocumentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('file')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('finding.title')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -75,9 +77,9 @@ class DocumentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            'index' => Pages\ListEffects::route('/'),
+            'create' => Pages\CreateEffect::route('/create'),
+            'edit' => Pages\EditEffect::route('/{record}/edit'),
         ];
     }
 }
