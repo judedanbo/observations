@@ -12,9 +12,9 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->jobTitle() . ' Department',
             'short_name' => $this->faker->regexify('[A-Za-z0-9]{10}'),
-            'description' => $this->faker->text(),
+            'description' => $this->faker->realText(100),
         ];
     }
 }

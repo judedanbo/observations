@@ -12,10 +12,11 @@ class UnitFactory extends Factory
 
     public function definition(): array
     {
+        $department = Department::inRandomOrder()->first()->id;
         return [
-            'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
-            'department_id' => Department::factory(),
+            'name' => $this->faker->jobTitle() . ' Unit',
+            'description' => $this->faker->realText(100),
+            'department_id' => $department,
         ];
     }
 }

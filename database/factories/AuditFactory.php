@@ -15,8 +15,8 @@ class AuditFactory extends Factory
         $plannedEndDate = $plannedDate->addMonths($this->faker->numberBetween(1, 3));
         $actualDate = now()->addMonths($this->faker->numberBetween(1, 12));
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->text(),
+            'title' => $this->faker->realText(100),
+            'description' => $this->faker->realText(200),
             'planned_start_date' => $plannedDate,
             'planned_end_date' => $plannedEndDate,
             'actual_start_date' => $actualDate,

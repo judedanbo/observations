@@ -66,7 +66,8 @@ class Audit extends Model
         return [
             TextInput::make('title')
                 ->required()
-                ->maxLength(250),
+                ->maxLength(250)
+                ->columnSpanFull(),
             Textarea::make('description')
                 ->columnSpanFull(),
             DatePicker::make('planned_start_date')

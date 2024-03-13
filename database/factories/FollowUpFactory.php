@@ -15,13 +15,20 @@ class FollowUpFactory extends Factory
 
     public function definition(): array
     {
+        $observation = Observation::inRandomOrder()->with(['findings' => function ($query) {
+            $query->with('recommendations');
+        }])->get();
+        $observationID = $observation->first()->id;
+        $finding = $observation->first()->findings?->first();
+        $findingId = $finding?->id;
+        $recommendation = $finding?->recommendations?->first();
+        $recommendationId = $recommendation?->id;
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->text(),
-            'observation_id' => Observation::factory(),
-            'action_id' => Action::factory(),
-            'finding_id' => Finding::factory(),
-            'recommendation_id' => Recommendation::factory(),
+            'title' => $this->faker->realText(100),
+            'description' => $this->faker->realText(200),
+            'observation_id' => $observationID,
+            'finding_id' => $findingId,
+            'recommendation_id' => $recommendationId,
         ];
     }
 }

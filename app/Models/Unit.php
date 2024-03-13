@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,14 +35,40 @@ class Unit extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make('name')
-                ->required()
-                ->maxLength(100),
-            TextInput::make('description')
-                ->maxLength(255),
             Select::make('department_id')
+                ->label('Department name')
                 ->relationship('department', 'name')
                 ->required(),
+            TextInput::make('name')
+                ->label('Unit Name')
+                ->required()
+                ->maxLength(100)
+                ->columnStart(1),
+            TextInput::make('description')
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Unit::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
         ];
     }
 }

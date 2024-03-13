@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +81,28 @@ class Document extends Model
                 ->columnSpanFull(),
             TextInput::make('file')
                 ->maxLength(255),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Document::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
         ];
     }
 }

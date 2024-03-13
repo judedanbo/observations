@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title', 250);
             $table->text('description')->nullable();
             $table->foreignId('observation_id');
-            $table->foreignId('follow_up_id');
+            // $table->foreignId('follow_up_id');
             $table->foreignId('finding_id');
             $table->foreignId('recommendation_id');
             $table->timestamps();

@@ -12,10 +12,11 @@ class FindingFactory extends Factory
 
     public function definition(): array
     {
+        $observation = Observation::inRandomOrder()->first()->id;
         return [
-            'title' => $this->faker->sentence(),
-            'description' => $this->faker->paragraph(15),
-            'observation_id' => Observation::factory(),
+            'title' => $this->faker->realText(100),
+            'description' => $this->faker->realText(500),
+            'observation_id' => $observation,
         ];
     }
 }

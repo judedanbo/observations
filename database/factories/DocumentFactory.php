@@ -12,9 +12,9 @@ class DocumentFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->text(),
-            'file' => $this->faker->file(),
+            'title' => $this->faker->realText(100),
+            'description' => $this->faker->realText(200),
+            'file' => $this->faker->regexify('[A-Za-z0-9]{20}') . '.' . $this->faker->fileExtension(),
         ];
     }
 }

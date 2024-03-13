@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -20,7 +22,6 @@ class FollowUp extends Model
         'title',
         'description',
         'observation_id',
-        'action_id',
         'finding_id',
         'recommendation_id',
     ];
@@ -43,11 +44,6 @@ class FollowUp extends Model
         return $this->belongsTo(Observation::class);
     }
 
-    public function action(): BelongsTo
-    {
-        return $this->belongsTo(Action::class);
-    }
-
     public function finding(): BelongsTo
     {
         return $this->belongsTo(Finding::class);
@@ -61,23 +57,66 @@ class FollowUp extends Model
     public static function getForm(): array
     {
         return [
+            Select::make('observation_id')
+                ->relationship('observation', 'title')
+                ->required()
+                ->columnSpanFull(),
+            Select::make('finding_id')
+                ->relationship('finding', 'title')
+                ->required()
+                ->columnSpanFull(),
+            Select::make('recommendation_id')
+                ->relationship('recommendation', 'title')
+                ->required()
+                ->columnSpanFull(),
             TextInput::make('title')
                 ->required()
                 ->maxLength(250),
             RichEditor::make('description')
                 ->columnSpanFull(),
-            Select::make('observation_id')
-                ->relationship('observation', 'title')
-                ->required(),
-            Select::make('action_id')
-                ->relationship('action', 'title')
-                ->required(),
-            Select::make('finding_id')
-                ->relationship('finding', 'title')
-                ->required(),
-            Select::make('recommendation_id')
-                ->relationship('recommendation', 'title')
-                ->required(),
+            Actions::make([
+                Action::make('save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = FollowUp::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
+
+            // Actions::make([
+            //     Action::make('Save')
+            //         ->label('Generate data')
+            //         ->icon('heroicon-m-arrow-path')
+            //         ->outlined()
+            //         ->color('gray')
+            //         ->visible(function (string $operation) {
+            //             if ($operation !== 'create') {
+            //                 return false;
+            //             }
+            //             if (!app()->environment('local')) {
+            //                 return false;
+            //             }
+            //             return true;
+            //         })
+            //         ->action(function ($livewire) {
+            //             $data = Action::factory()->make()->toArray();
+            //             $livewire->form->fill($data);
+            //         }),
+            // ])
         ];
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -46,14 +48,37 @@ class Effect extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make('title')
-                ->required()
-                ->maxLength(250),
-            RichEditor::make('description')
-                ->columnSpanFull(),
             Select::make('finding_id')
                 ->relationship('finding', 'title')
                 ->required(),
+            TextInput::make('title')
+                ->required()
+                ->maxLength(250)
+                ->columnSpanFull(),
+            RichEditor::make('description')
+                ->columnSpanFull(),
+            Actions::make([
+                Action::make('Save')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Effect::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ])
+                ->label('Actions')
+                ->columnSpanFull(),
         ];
     }
 }

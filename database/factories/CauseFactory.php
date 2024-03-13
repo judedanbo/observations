@@ -14,8 +14,8 @@ class CauseFactory extends Factory
     {
         $finding = Finding::inRandomOrder()->first()->id;
         return [
-            'title' => $this->faker->sentence(4),
-            'description' => $this->faker->text(),
+            'title' => $this->faker->realText(100),
+            'description' => $this->faker->realText(500),
             'finding_id' =>  $finding,
         ];
     }

@@ -3,18 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FollowUpResource\Pages;
+use App\Filament\Resources\FollowUpResource\RelationManagers;
 use App\Models\FollowUp;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FollowUpResource extends Resource
 {
     protected static ?string $model = FollowUp::class;
-
-    protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -33,9 +34,6 @@ class FollowUpResource extends Resource
                 Tables\Columns\TextColumn::make('observation.title')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('action.title')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('finding.title')
                     ->numeric()
                     ->sortable(),
@@ -47,6 +45,10 @@ class FollowUpResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

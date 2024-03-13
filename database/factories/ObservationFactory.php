@@ -12,8 +12,8 @@ class ObservationFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(),
-            'criteria' => $this->faker->paragraph(10),
+            'title' => $this->faker->realText(100),
+            'criteria' => $this->faker->realText(500),
         ];
     }
 }
