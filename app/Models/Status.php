@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +19,6 @@ class Status extends Model
     protected $fillable = [
         'name',
         'description',
-        'date',
     ];
 
     protected $casts = [
@@ -62,9 +63,29 @@ class Status extends Model
                 ->required()
                 ->maxLength(250),
             TextInput::make('description')
-                ->maxLength(255),
-            DatePicker::make('date')
-                ->native(false),
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Actions::make([
+                Action::make('generate')
+                    ->label('Generate data')
+                    ->icon('heroicon-m-arrow-path')
+                    ->outlined()
+                    ->color('gray')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+                        if (!app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->action(function ($livewire) {
+                        $data = Status::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    })
+            ])
+                ->columnSpanFull()
         ];
     }
 }

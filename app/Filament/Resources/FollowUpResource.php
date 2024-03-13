@@ -17,6 +17,8 @@ class FollowUpResource extends Resource
 {
     protected static ?string $model = FollowUp::class;
 
+    protected static ?string $navigationGroup = 'GAS';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

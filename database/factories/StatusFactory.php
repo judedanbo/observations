@@ -13,8 +13,7 @@ class StatusFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
-            'date' => $this->faker->date(),
+            'description' => $this->faker->realText(100),
         ];
     }
 }

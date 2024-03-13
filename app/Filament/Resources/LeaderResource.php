@@ -14,7 +14,7 @@ class LeaderResource extends Resource
 {
     protected static ?string $model = Leader::class;
 
-    protected static ?string $navigationGroup = 'Audit';
+    protected static ?string $navigationGroup = 'GAS';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
