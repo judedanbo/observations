@@ -37,7 +37,7 @@ class ActionPolicy
      */
     public function update(User $user, Action $action): bool
     {
-        return $user->can('view action');
+        return $user->can('update action');
     }
 
     /**

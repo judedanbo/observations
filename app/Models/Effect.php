@@ -50,6 +50,13 @@ class Effect extends Model
         return [
             Select::make('finding_id')
                 ->relationship('finding', 'title')
+                ->editOptionForm(Finding::getForm())
+                ->searchable()
+                ->searchPrompt('Search findings...')
+                ->noSearchResultsMessage('No findings found.')
+                ->loadingMessage('Loading findings...')
+                ->placeholder('Select for search for an audit finding')
+                ->preload()
                 ->required(),
             TextInput::make('title')
                 ->required()

@@ -50,7 +50,15 @@ class Cause extends Model
         return [
             Select::make('finding_id')
                 ->relationship('finding', 'title')
-                ->required(),
+                ->editOptionForm(Finding::getForm())
+                ->searchable()
+                ->searchPrompt('Search audit findings...')
+                ->noSearchResultsMessage('No audit findings found.')
+                ->loadingMessage('Loading audit findings...')
+                ->placeholder('Select for search for an audit finding')
+                ->preload()
+                ->required()
+                ->columnSpanFull(),
             TextInput::make('title')
                 ->required()
                 ->columnSpanFull()

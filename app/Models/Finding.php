@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Observation;
 
 class Finding extends Model
 {
@@ -65,6 +66,13 @@ class Finding extends Model
         return [
             Select::make('observation_id')
                 ->relationship('observation', 'title')
+                ->editOptionForm(Observation::getForm())
+                ->searchable()
+                ->searchPrompt('Search observations...')
+                ->noSearchResultsMessage('No observations found.')
+                ->loadingMessage('Loading observations...')
+                ->placeholder('Select for search for a observation')
+                ->preload()
                 ->required(),
             TextInput::make('title')
                 ->required()
