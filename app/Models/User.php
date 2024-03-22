@@ -32,4 +32,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function isAdministrator(): bool
+    {
+        return $this->hasRole('super-administrator') || $this->hasRole('system-administrator');
+    }
 }

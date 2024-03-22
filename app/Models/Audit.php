@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\AuditStatusEnum;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -26,6 +30,7 @@ class Audit extends Model
         'actual_start_date',
         'actual_end_date',
         'year',
+        'status'
     ];
 
     protected $casts = [
@@ -34,7 +39,20 @@ class Audit extends Model
         'planned_end_date' => 'date',
         'actual_start_date' => 'date',
         'actual_end_date' => 'date',
+        'status' =>  AuditStatusEnum::class,
     ];
+    // disable softDelete global scope for superadmin
+
+    // public static function booted()
+    // {
+    //     static::addGlobalScope('admin', function (Builder $builder) {
+    //         // $user  = auth()->user()->hasRole(['super-administrator', 'system-administrator']);
+    //         // dd($user);
+    //         // if (auth()->user()->hasRole(['super-administrator', 'system-administrator'])) {
+    //         $builder->withoutGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope');
+    //         // }
+    //     });
+    // }
 
     public function institutions(): BelongsToMany
     {
@@ -46,10 +64,126 @@ class Audit extends Model
         return $this->belongsToMany(Team::class);
     }
 
-    public function statuses(): BelongsToMany
+    public function auditTeams(): HasMany
     {
-        return $this->belongsToMany(Status::class);
+        return $this->hasMany(AuditTeam::class);
     }
+
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->where('status', AuditStatusEnum::IN_PROGRESS);
+    }
+
+    public function scopeScheduled(Builder $query): Builder
+    {
+        return  $query->where('status', AuditStatusEnum::PLANNED);
+    }
+    public function scopeIssued(Builder $query): Builder
+    {
+        return $query->where('status', AuditStatusEnum::ISSUED);
+    }
+    public function scopeTransmitted(Builder $query): Builder
+    {
+        return $query->where('status', AuditStatusEnum::TRANSMITTED);
+    }
+
+    public function scopeTerminated(Builder $query): Builder
+    {
+        return $query->where('status', AuditStatusEnum::TERMINATED);
+    }
+    public function scopeArchived(Builder $query): Builder
+    {
+        return $query->where('status', AuditStatusEnum::ARCHIVED);
+    }
+
+    public function scopeSearchPlannedStart(Builder $query, array $data): Builder
+    {
+        return $query->when(
+            $data['planned_start_date_from'],
+            fn (Builder $query, $value) => $query->whereDate('planned_start_date', '>=', $value)
+        )
+            ->when(
+                $data['planned_start_date_to'],
+                fn (Builder $query, $value) => $query->whereDate('planned_start_date', '<=', $value)
+            );
+    }
+
+    public function scopeSearchActualStart(Builder $query, array $data): Builder
+    {
+        return $query->when(
+            $data['actual_start_date_from'],
+            fn (Builder $query, $value) => $query->whereDate('actual_start_date', '>=', $value)
+        )
+            ->when(
+                $data['actual_start_date_to'],
+                fn (Builder $query, $value) => $query->whereDate('actual_start_date', '<=', $value)
+            );
+    }
+
+    public function start()
+    {
+        $this->status = AuditStatusEnum::IN_PROGRESS;
+        $this->save();
+    }
+    public function issue()
+    {
+        $this->status = AuditStatusEnum::ISSUED;
+        $this->save();
+    }
+    public function transmit()
+    {
+        $this->status = AuditStatusEnum::TRANSMITTED;
+        $this->save();
+    }
+
+    public function terminate()
+    {
+        $this->status = AuditStatusEnum::TERMINATED;
+        $this->save();
+    }
+    public function archive()
+    {
+        $this->status = AuditStatusEnum::ARCHIVED;
+        $this->save();
+    }
+
+    public function createTeam(array|int|null $team = null): Team
+    {
+
+        if ($this->teams()->count() > 0) {
+            if (gettype($team) === 'integer') {
+                return Team::where('id', $team)->first();
+            }
+        }
+        if (gettype($team) === 'array') {
+            return $this->teams()->create(['name' => $team['name']]);
+        }
+        return $this->teams()->create(['name' => $this->title . ' Team']);
+    }
+
+    public function addTeam($team)
+    {
+        $this->teams()->attach($team);
+    }
+
+    public function addTeamMember(array|int|null $team, array $member)
+    {
+        // dd($team);
+        // dd($member);
+        $team = $this->createTeam($team);
+        if ($team === null) {
+            return;
+        }
+        // dd($team->staff()->sync($member['staff']));
+        // $newTeam  = $this->teams()->attach($team['team_id']);
+        $team->staff()?->sync($member);
+    }
+
+    // public function statuses(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Status::class)
+    //         ->withTimestamps();
+    // }
 
     public function documents(): BelongsToMany
     {

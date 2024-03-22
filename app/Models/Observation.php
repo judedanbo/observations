@@ -65,28 +65,28 @@ class Observation extends Model
                 ->maxLength(250),
             RichEditor::make('criteria')
                 ->columnSpanFull(),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Observation::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
-                ->columnSpanFull(),
+            // Actions::make([
+            //     Action::make('Save')
+            //         ->label('Generate data')
+            //         ->icon('heroicon-m-arrow-path')
+            //         ->outlined()
+            //         ->color('gray')
+            //         ->visible(function (string $operation) {
+            //             if ($operation !== 'create') {
+            //                 return false;
+            //             }
+            //             if (!app()->environment('local')) {
+            //                 return false;
+            //             }
+            //             return true;
+            //         })
+            //         ->action(function ($livewire) {
+            //             $data = Observation::factory()->make()->toArray();
+            //             $livewire->form->fill($data);
+            //         }),
+            // ])
+            //     ->label('Actions')
+            //     ->columnSpanFull(),
         ];
     }
 }

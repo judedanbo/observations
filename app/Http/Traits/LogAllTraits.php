@@ -11,6 +11,7 @@ trait LogAllTraits
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logFillable();
+            ->logFillable()
+            ->logOnlyDirty();
     }
 }

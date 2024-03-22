@@ -25,11 +25,21 @@ class StatusSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'name' => 'Completed',
+                'name' => 'Issued',
                 'description' => 'Audit is completed and Management is issued',
             ],
             [
                 'id' => 4,
+                'name' => 'Transmitted',
+                'description' => 'Audit is report has been submitted to the parliament',
+            ],
+            [
+                'id' => 5,
+                'name' => 'Archived',
+                'description' => 'Completed audits with no further action required',
+            ],
+            [
+                'id' => 9,
                 'name' => 'Terminated',
                 'description' => 'Audit terminated or cancelled before completion',
             ],

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Audit;
+use App\Observers\AuditObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Audit::observe(AuditObserver::class);
     }
 }

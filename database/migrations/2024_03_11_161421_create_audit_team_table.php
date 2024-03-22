@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('audit_team', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('audit_id');
             $table->foreignId('team_id');
             $table->timestamps();
