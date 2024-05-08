@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 250);
             $table->text('criteria')->nullable();
+            $table->foreignId('audit_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
         });

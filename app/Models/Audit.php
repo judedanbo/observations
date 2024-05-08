@@ -123,11 +123,13 @@ class Audit extends Model
     public function start()
     {
         $this->status = AuditStatusEnum::IN_PROGRESS;
+        $this->actual_start_date = now();
         $this->save();
     }
     public function issue()
     {
         $this->status = AuditStatusEnum::ISSUED;
+        $this->actual_end_date = now();
         $this->save();
     }
     public function transmit()
@@ -193,6 +195,17 @@ class Audit extends Model
     public function observations(): HasMany
     {
         return $this->hasMany(Observation::class);
+    }
+
+    public function getScheduleAttribute(): string
+    {
+        if ($this->planned_start_date === null || $this->planned_end_date === null) {
+            return 'Not scheduled';
+        }
+        if ($this->planned_start_date === $this->planned_end_date) {
+            return $this->planned_start_date->format('d M Y');
+        }
+        return $this->planned_start_date->format('d M Y') . ' - ' . $this->planned_end_date->format('d M Y');
     }
 
     public static function getForm(): array

@@ -62,6 +62,7 @@ class Observation extends Model
         return [
             TextInput::make('title')
                 ->required()
+                ->live()
                 ->maxLength(250),
             RichEditor::make('criteria')
                 ->columnSpanFull(),

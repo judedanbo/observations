@@ -19,7 +19,7 @@ class AuditFactory extends Factory
             'description' => $this->faker->realText(200),
             'planned_start_date' => $plannedDate,
             'planned_end_date' => $plannedEndDate,
-            'actual_start_date' => $actualDate,
+            'actual_start_date' => null,
             'actual_end_date' => null,
             'year' => $plannedDate->year,
         ];

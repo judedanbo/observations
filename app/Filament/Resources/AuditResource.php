@@ -9,6 +9,7 @@ use App\Models\Observation;
 use App\Models\Staff;
 use App\Models\Team;
 use Carbon\Carbon;
+use Faker\Provider\ar_EG\Text;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
@@ -16,6 +17,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Group as ComponentsGroup;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -51,7 +56,7 @@ class AuditResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Audit title')
+                    ->label('Audit Title')
                     ->searchable()
                     ->wrap()
                     ->description(fn (Audit $record) => Str::of($record->description)->limit(90)),
@@ -64,8 +69,7 @@ class AuditResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('actual_start_date')
                     ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('planned_end_date')
                     ->date()
                     ->sortable()
@@ -180,7 +184,8 @@ class AuditResource extends Resource
                                 ->body('The audit has been started')
                                 ->send();
                         }),
-                    Tables\Actions\Action::make('add_team')
+                    // TODO add support for multiple teams with relationships 
+                    Tables\Actions\Action::make('audit_team')
                         ->slideOver()
                         ->label('Manage Audit Team')
                         ->icon('heroicon-o-user-plus')
@@ -189,8 +194,7 @@ class AuditResource extends Resource
                             || $record->status === AuditStatusEnum::IN_PROGRESS)
                         ->form(
                             [
-                                Repeater::make('auditTeams')
-                                    ->relationship('auditTeams')
+                                Repeater::make('audit_teams')
                                     ->schema([
                                         Select::make('team_id')
                                             ->live(onBlur: true)
@@ -246,6 +250,9 @@ class AuditResource extends Resource
                             [
                                 Repeater::make('observations')
                                     ->schema(components: Observation::getForm())
+                                    ->collapsible()
+                                    ->reorderableWithButtons()
+                                    ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
                             ]
                         )
                         ->label('Create Observations')
@@ -331,6 +338,55 @@ class AuditResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->columns(['sm' => 1, 'lg' => 3])
+            ->schema([
+                Section::make('Audit Status')
+                    ->columnSpan(['lg' => 3, 'xl' => 2])
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('year')
+                            ->label('Audit Year'),
+                        TextEntry::make('status')
+                            ->label('Audit Status')
+                            ->badge(),
+                        TextEntry::make('observations')
+                            ->label('Observations')
+                            ->badge()
+                            ->getStateUsing(fn (Audit $record) => $record->observations()->count()),
+                    ]),
+                Section::make('Time Schedule')
+                    ->columns(2)
+                    ->columnSpan(['lg' => 3, 'xl' => 1])
+                    ->schema([
+                        TextEntry::make('planned_start_date')
+                            ->label('Planned Start Date')
+                            ->date('j M Y'),
+                        TextEntry::make('planned_end_date')
+                            ->label('Planned End Date')
+                            ->date('j M Y'),
+                        TextEntry::make('actual_start_date')
+                            ->label('Actual Start Date')
+                            ->date('j M Y'),
+                        TextEntry::make('actual_end_date')
+                            ->label('Actual End Date')
+                            ->date('j M Y'),
+                    ]),
+                Section::make(
+                    'Audit Information',
+                )
+                    ->schema([
+                        TextEntry::make('title')
+                            ->label('Audit Title'),
+                        TextEntry::make('description')
+                            ->label('Audit Description'),
+
+                    ]),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -344,6 +400,7 @@ class AuditResource extends Resource
             'index' => Pages\ListAudits::route('/'),
             'create' => Pages\CreateAudit::route('/create'),
             // 'edit' => Pages\EditAudit::route('/{record}/edit'),
+            'view' => Pages\ViewAudit::route('/{record}'),
         ];
     }
 }
