@@ -156,7 +156,32 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore effect']);
         Permission::create(['name' => 'destroy effect']);
 
+        // region permissions
+        Permission::create(['name' => 'view all regions']);
+        Permission::create(['name' => 'view region']);
+        Permission::create(['name' => 'create region']);
+        Permission::create(['name' => 'update region']);
+        Permission::create(['name' => 'delete region']);
+        Permission::create(['name' => 'restore region']);
+        Permission::create(['name' => 'destroy region']);
 
+        // district permissions
+        Permission::create(['name' => 'view all districts']);
+        Permission::create(['name' => 'view district']);
+        Permission::create(['name' => 'create district']);
+        Permission::create(['name' => 'update district']);
+        Permission::create(['name' => 'delete district']);
+        Permission::create(['name' => 'restore district']);
+        Permission::create(['name' => 'destroy district']);
+
+        //  report permissions
+        Permission::create(['name' => 'view all reports']);
+        Permission::create(['name' => 'view report']);
+        Permission::create(['name' => 'create report']);
+        Permission::create(['name' => 'update report']);
+        Permission::create(['name' => 'delete report']);
+        Permission::create(['name' => 'restore report']);
+        Permission::create(['name' => 'destroy report']);
 
         // create roles and assign created permissions
 

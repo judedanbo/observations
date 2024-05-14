@@ -6,12 +6,14 @@ use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Observation extends Model
@@ -32,7 +34,7 @@ class Observation extends Model
         return $this->belongsTo(Audit::class);
     }
 
-    public function actions(): BelongsToMany
+    public function auditActions(): BelongsToMany
     {
         return $this->belongsToMany(Action::class);
     }
@@ -47,9 +49,9 @@ class Observation extends Model
         return $this->hasMany(Finding::class);
     }
 
-    public function recommendations(): HasMany
+    public function recommendations(): HasManyThrough
     {
-        return $this->hasMany(Recommendation::class);
+        return $this->hasManyThrough(Recommendation::class, Finding::class);
     }
 
     public function followUps(): HasMany
@@ -57,9 +59,15 @@ class Observation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm($auditId = null): array
     {
         return [
+            Select::make('audit_id')
+                ->hidden(function () use ($auditId) {
+                    return $auditId !== null;
+                })
+                ->relationship('audit', 'title')
+                ->required(),
             TextInput::make('title')
                 ->required()
                 ->live()

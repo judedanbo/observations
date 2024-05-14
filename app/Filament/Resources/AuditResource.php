@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\AuditStatusEnum;
 use App\Filament\Resources\AuditResource\Pages;
+use App\Filament\Resources\AuditResource\RelationManagers\ObservationsRelationManager;
 use App\Models\Audit;
 use App\Models\Observation;
 use App\Models\Staff;
@@ -389,9 +390,7 @@ class AuditResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [ObservationsRelationManager::class];
     }
 
     public static function getPages(): array

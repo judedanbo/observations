@@ -122,19 +122,18 @@ class ViewAudit extends ViewRecord
                         fn (Audit $record) =>
                         $record->status === AuditStatusEnum::IN_PROGRESS
                     )
-                    ->action(function (array $data) {
+                    ->action(function (Audit $record, array $data) {
                         collect($data['observations'])->each(function ($observation) {
                             // $observation->addTeamMember($team: null, $member: );
                         });
-                        $audit = Audit::find($data['id']);
-                        $audit->observations()->createMany($data['observations']);
+                        $record->observations()->createMany($data['observations']);
                     }),
                 Action::make('issue')
                     ->label('Issue audit report')
                     ->icon('heroicon-o-document-duplicate')
                     ->visible(
-                        fn (Audit $record) =>
-                        $record->status === AuditStatusEnum::IN_PROGRESS
+                        // fn (Audit $record) =>
+                        // $record->status === AuditStatusEnum::IN_PROGRESS
                     )
                     ->action(fn (Audit $record) => $record->issue())
                     ->requiresConfirmation()

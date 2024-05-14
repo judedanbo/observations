@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Institution extends Model
@@ -17,6 +18,7 @@ class Institution extends Model
 
     protected $fillable = [
         'name',
+        'district_id',
     ];
 
     protected $casts = [
@@ -36,6 +38,11 @@ class Institution extends Model
     public function leaders(): BelongsToMany
     {
         return $this->belongsToMany(Leader::class);
+    }
+
+    function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 
     public static function getForm(): array

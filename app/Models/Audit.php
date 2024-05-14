@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\AuditStatusEnum;
 use App\Http\Traits\LogAllTraits;
+use App\Imports\ObservationImport;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -54,6 +55,13 @@ class Audit extends Model
     //     });
     // }
 
+    public function importObservations(string $file)
+    {
+        // dd($file);
+        (new ObservationImport)->import($file);
+        // dd($data);
+    }
+
     public function institutions(): BelongsToMany
     {
         return $this->belongsToMany(Institution::class);
@@ -72,6 +80,11 @@ class Audit extends Model
     public function scopeInProgress(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::IN_PROGRESS);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 
     public function scopeScheduled(Builder $query): Builder
