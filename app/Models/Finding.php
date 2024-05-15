@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AuditTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -24,11 +25,17 @@ class Finding extends Model
         'title',
         'description',
         'observation_id',
+        'type',
+        'amount',
+        'surcharge_amount'
     ];
 
     protected $casts = [
         'id' => 'integer',
         'observation_id' => 'integer',
+        'type' => 'array',
+        'amount' => 'decimal:2',
+        'surcharge_amount' => 'decimal:2'
     ];
 
     public function statuses(): BelongsToMany
@@ -74,9 +81,19 @@ class Finding extends Model
                 ->placeholder('Select for search for a observation')
                 ->preload()
                 ->required(),
+            Select::make('type')
+                ->enum(AuditTypeEnum::class)
+                ->options(AuditTypeEnum::class)
+                ->multiple()
+                ->native(false)
+                ->label('Select finding Type')
+                ->required(),
             TextInput::make('title')
                 ->required()
                 ->columnSpanFull()
+                ->maxLength(250),
+            TextInput::make('amount')
+                ->required()
                 ->maxLength(250),
             RichEditor::make('description')
                 ->columnSpanFull(),

@@ -65,8 +65,8 @@ class DocumentResource extends Resource
     {
         return [
             'index' => Pages\ListDocuments::route('/'),
-            'create' => Pages\CreateDocument::route('/create'),
-            'edit' => Pages\EditDocument::route('/{record}/edit'),
+            // 'create' => Pages\CreateDocument::route('/create'),
+            // 'edit' => Pages\EditDocument::route('/{record}/edit'),
         ];
     }
 }

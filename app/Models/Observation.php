@@ -21,12 +21,14 @@ class Observation extends Model
     use HasFactory, SoftDeletes, LogAllTraits;
 
     protected $fillable = [
+        'audit_id', // 'audit_id' is the foreign key
         'title',
         'criteria',
     ];
 
     protected $casts = [
         'id' => 'integer',
+        'audit_id' => 'integer',
     ];
 
     public function audit(): BelongsTo

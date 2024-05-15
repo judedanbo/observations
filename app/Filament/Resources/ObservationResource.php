@@ -63,8 +63,8 @@ class ObservationResource extends Resource
     {
         return [
             'index' => Pages\ListObservations::route('/'),
-            'create' => Pages\CreateObservation::route('/create'),
-            'edit' => Pages\EditObservation::route('/{record}/edit'),
+            // 'create' => Pages\CreateObservation::route('/create'),
+            // 'edit' => Pages\EditObservation::route('/{record}/edit'),
         ];
     }
 }

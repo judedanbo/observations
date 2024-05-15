@@ -71,8 +71,8 @@ class DistrictResource extends Resource
     {
         return [
             'index' => Pages\ListDistricts::route('/'),
-            'create' => Pages\CreateDistrict::route('/create'),
-            'edit' => Pages\EditDistrict::route('/{record}/edit'),
+            // 'create' => Pages\CreateDistrict::route('/create'),
+            // 'edit' => Pages\EditDistrict::route('/{record}/edit'),
         ];
     }
 }

@@ -73,8 +73,8 @@ class LeaderResource extends Resource
     {
         return [
             'index' => Pages\ListLeaders::route('/'),
-            'create' => Pages\CreateLeader::route('/create'),
-            'edit' => Pages\EditLeader::route('/{record}/edit'),
+            // 'create' => Pages\CreateLeader::route('/create'),
+            // 'edit' => Pages\EditLeader::route('/{record}/edit'),
         ];
     }
 }

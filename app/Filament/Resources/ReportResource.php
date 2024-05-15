@@ -54,6 +54,7 @@ class ReportResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('implementation_date')
+                    ->date()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('implementation_status')
                     ->searchable(),

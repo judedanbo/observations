@@ -28,11 +28,24 @@ class FindingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('observation.title')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Finding')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Finding Type')
+                    ->badge()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->numeric()
+                    ->alignRight()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('surcharge_amount')
+                    ->numeric()
+                    ->alignRight()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -46,7 +59,8 @@ class FindingResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -66,8 +80,8 @@ class FindingResource extends Resource
     {
         return [
             'index' => Pages\ListFindings::route('/'),
-            'create' => Pages\CreateFinding::route('/create'),
-            'edit' => Pages\EditFinding::route('/{record}/edit'),
+            // 'create' => Pages\CreateFinding::route('/create'),
+            // 'edit' => Pages\EditFinding::route('/{record}/edit'),
         ];
     }
 }

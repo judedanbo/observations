@@ -45,19 +45,17 @@ class Staff extends Model
     {
         return [
             TextInput::make('name')
+                ->required(),
+            // Group::make()
+            // ->schema([
+            TextInput::make('staff_number')
                 ->required()
-                ->maxLength(200),
-            Group::make()
-                ->columns(2)
-                ->schema([
-                    TextInput::make('staff_number')
-                        ->required()
-                        ->maxLength(10),
-                    TextInput::make('email')
-                        ->suffix('@audit.gov.gh')
-                        ->required()
-                        ->maxLength(255),
-                ])
+                ->maxLength(10),
+            TextInput::make('email')
+                ->suffix('@audit.gov.gh')
+                ->required()
+                ->maxLength(255),
+            // ])
             // Actions::make([
             //     Action::make('Save')
             //         ->label('Generate data')

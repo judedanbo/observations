@@ -68,8 +68,8 @@ class StatusResource extends Resource
     {
         return [
             'index' => Pages\ListStatuses::route('/'),
-            'create' => Pages\CreateStatus::route('/create'),
-            'edit' => Pages\EditStatus::route('/{record}/edit'),
+            // 'create' => Pages\CreateStatus::route('/create'),
+            // 'edit' => Pages\EditStatus::route('/{record}/edit'),
         ];
     }
 }

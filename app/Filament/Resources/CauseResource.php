@@ -46,7 +46,8 @@ class CauseResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -66,8 +67,8 @@ class CauseResource extends Resource
     {
         return [
             'index' => Pages\ListCauses::route('/'),
-            'create' => Pages\CreateCause::route('/create'),
-            'edit' => Pages\EditCause::route('/{record}/edit'),
+            // 'create' => Pages\CreateCause::route('/create'),
+            // 'edit' => Pages\EditCause::route('/{record}/edit'),
         ];
     }
 }

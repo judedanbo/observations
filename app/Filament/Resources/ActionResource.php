@@ -55,7 +55,8 @@ class ActionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -75,8 +76,8 @@ class ActionResource extends Resource
     {
         return [
             'index' => Pages\ListActions::route('/'),
-            'create' => Pages\CreateAction::route('/create'),
-            'edit' => Pages\EditAction::route('/{record}/edit'),
+            // 'create' => Pages\CreateAction::route('/create'),
+            // 'edit' => Pages\EditAction::route('/{record}/edit'),
         ];
     }
 }

@@ -49,13 +49,15 @@ class ListReports extends ListRecords
                         ->enum(AuditDepartmentEnum::class)
                         ->options(AuditDepartmentEnum::class)
                         ->native(false)
-                        ->label('Select Audit Type'),
+                        ->label('Select Audit Type')
+                        ->required(),
                     FileUpload::make('filename')
+                        ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                         ->required()
                 ])
                 ->action(function (array $data) {
                     $file  = public_path('storage/' . $data['filename']);
-                    (new ObservationImport($data['audit_section']))->import($file,);
+                    (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
                 })
                 ->after(function () {
                     Notification::make('Observations Loaded')

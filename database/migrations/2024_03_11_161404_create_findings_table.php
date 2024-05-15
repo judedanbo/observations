@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('findings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('observation_id');
             $table->string('title', 250);
             $table->text('description')->nullable();
-            $table->foreignId('observation_id');
             $table->timestamps();
             $table->softDeletes();
         });

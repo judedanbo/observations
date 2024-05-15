@@ -63,8 +63,8 @@ class InstitutionResource extends Resource
     {
         return [
             'index' => Pages\ListInstitutions::route('/'),
-            'create' => Pages\CreateInstitution::route('/create'),
-            'edit' => Pages\EditInstitution::route('/{record}/edit'),
+            // 'create' => Pages\CreateInstitution::route('/create'),
+            // 'edit' => Pages\EditInstitution::route('/{record}/edit'),
         ];
     }
 }

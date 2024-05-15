@@ -79,8 +79,8 @@ class FollowUpResource extends Resource
     {
         return [
             'index' => Pages\ListFollowUps::route('/'),
-            'create' => Pages\CreateFollowUp::route('/create'),
-            'edit' => Pages\EditFollowUp::route('/{record}/edit'),
+            // 'create' => Pages\CreateFollowUp::route('/create'),
+            // 'edit' => Pages\EditFollowUp::route('/{record}/edit'),
         ];
     }
 }

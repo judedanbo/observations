@@ -46,7 +46,8 @@ class EffectResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -66,8 +67,8 @@ class EffectResource extends Resource
     {
         return [
             'index' => Pages\ListEffects::route('/'),
-            'create' => Pages\CreateEffect::route('/create'),
-            'edit' => Pages\EditEffect::route('/{record}/edit'),
+            // 'create' => Pages\CreateEffect::route('/create'),
+            // 'edit' => Pages\EditEffect::route('/{record}/edit'),
         ];
     }
 }
