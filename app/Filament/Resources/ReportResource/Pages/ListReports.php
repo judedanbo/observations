@@ -57,14 +57,24 @@ class ListReports extends ListRecords
                 ])
                 ->action(function (array $data) {
                     $file  = public_path('storage/' . $data['filename']);
-                    (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+                    try {
+                        $data = (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+                        Notification::make('Observations Loaded')
+                            ->title('Observations Loaded')
+                            ->body('Observations have been loaded successfully.')
+                            ->success()
+                            ->send();
+                    } catch (\Exception $e) {
+                        Notification::make('Observations Load Failed')
+                            ->title('Observations Load Failed')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->persistent()
+                            ->send();
+                    }
+                    // (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
                 })
                 ->after(function () {
-                    Notification::make('Observations Loaded')
-                        ->title('Observations Loaded')
-                        ->body('Observations have been loaded successfully.')
-                        ->success()
-                        ->send();
                 }),
 
         ];

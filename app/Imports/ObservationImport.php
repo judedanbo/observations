@@ -15,8 +15,9 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ObservationImport implements ToCollection, WithHeadingRow
+class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
 {
     use Importable;
 
@@ -104,5 +105,43 @@ class ObservationImport implements ToCollection, WithHeadingRow
     public function headingRow(): int
     {
         return 4;
+    }
+
+    public function rules(): array
+    {
+        return [
+            '*.region' => 'required|max:50',
+            '*.district' => 'required|max:100',
+            '*.covered_entity' => 'required|max:250',
+            '*.report_financial_year' => 'required|integer|min:2000|max:2100',
+            '*.title_of_finding' => 'required|max:250',
+            '*.financial' => 'nullable|max:20',
+            '*.internal_control' => 'nullable|max:20',
+            '*.compliance' => 'nullable|max:20',
+            '*.amount' => 'nullable|decimal:0,4|min:1',
+            '*.recommendation' => 'required|max:250',
+            '*.report_paragraphs' => 'required|max:15',
+            '*.implementation_dateyear' => 'nullable|integer|min:36524|max:73049', // excel dates for 2000 to 2100
+            '*.implementation_status' => 'nullable|max:50',
+            '*.comments_if_any' => 'nullable|max:250',
+            '*.amount_recovered' => 'nullable|decimal:0,4',
+        ];
+    }
+
+    public function customValidationMessages(): array
+    {
+        return [
+            'implementation_dateyear.date' => 'The implementation date column of row :index must be a valid date.',
+            'implementation_dateyear.min' => 'The implementation date column of row :index must be between 2000 and 2100.',
+            'implementation_dateyear.max' => 'The implementation date column of row :index must be between 2000 and 2100.',
+        ];
+    }
+
+
+    public function customValidationAttributes(): array
+    {
+        return [
+            'implementation_dateyear' => 'Implementation date'
+        ];
     }
 }
