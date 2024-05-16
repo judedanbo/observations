@@ -47,12 +47,12 @@ class ObservationsRelationManager extends RelationManager
                     ->counts('recommendations')
                     ->alignRight()
                     ->numeric(),
-                Tables\Columns\TextColumn::make('actions')
-                    ->label('Auditee Action')
-                    // ->counts('id')
-                    ->alignRight()
-                    ->numeric(),
-                Tables\Columns\TextColumn::make('followUps')
+                // Tables\Columns\TextColumn::make('actions')
+                //     ->label('Auditee Action')
+                //     // ->counts('id')
+                //     ->alignRight()
+                //     ->numeric(),
+                Tables\Columns\TextColumn::make('followUps.description')
                     ->label('Audit Follow up')
                     ->alignRight()
                     ->numeric(),

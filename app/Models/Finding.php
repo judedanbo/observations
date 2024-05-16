@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Observation;
+use Filament\Forms\Components\Textarea;
 
 class Finding extends Model
 {
@@ -68,7 +69,7 @@ class Finding extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm(int|null $observationId = null): array
     {
         return [
             Select::make('observation_id')
@@ -80,11 +81,13 @@ class Finding extends Model
                 ->loadingMessage('Loading observations...')
                 ->placeholder('Select for search for a observation')
                 ->preload()
+                ->hidden(function () use ($observationId) {
+                    return $observationId !== null;
+                })
                 ->required(),
             Select::make('type')
                 ->enum(AuditTypeEnum::class)
                 ->options(AuditTypeEnum::class)
-                ->multiple()
                 ->native(false)
                 ->label('Select finding Type')
                 ->required(),
@@ -93,9 +96,9 @@ class Finding extends Model
                 ->columnSpanFull()
                 ->maxLength(250),
             TextInput::make('amount')
-                ->required()
+
                 ->maxLength(250),
-            RichEditor::make('description')
+            Textarea::make('description')
                 ->columnSpanFull(),
             Actions::make([
                 Action::make('Save')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ObservationStatusEnum;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -24,11 +25,13 @@ class Observation extends Model
         'audit_id', // 'audit_id' is the foreign key
         'title',
         'criteria',
+        'status'
     ];
 
     protected $casts = [
         'id' => 'integer',
         'audit_id' => 'integer',
+        'status' => ObservationStatusEnum::class
     ];
 
     public function audit(): BelongsTo
@@ -36,9 +39,9 @@ class Observation extends Model
         return $this->belongsTo(Audit::class);
     }
 
-    public function auditActions(): BelongsToMany
+    public function actions(): BelongsToMany
     {
-        return $this->belongsToMany(Action::class);
+        return $this->belongsToMany(Action::class, 'action_observation', 'observation_id', 'action_id');
     }
 
     public function statuses(): BelongsToMany
@@ -49,6 +52,16 @@ class Observation extends Model
     public function findings(): HasMany
     {
         return $this->hasMany(Finding::class);
+    }
+
+    public function causes(): HasManyThrough
+    {
+        return $this->hasManyThrough(Cause::class, Finding::class);
+    }
+
+    public function effects(): HasManyThrough
+    {
+        return $this->hasManyThrough(Effect::class, Finding::class);
     }
 
     public function recommendations(): HasManyThrough

@@ -7,6 +7,7 @@ use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,11 +24,13 @@ class Recommendation extends Model
         'title',
         'description',
         'finding_id',
+        'status'
     ];
 
     protected $casts = [
         'id' => 'integer',
         'finding_id' => 'integer',
+        // 'status' =>  ::class,
     ];
 
     public function statuses(): BelongsToMany
@@ -45,7 +48,7 @@ class Recommendation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm(int|null $findingId = null): array
     {
         return [
             Select::make('finding_id')
@@ -58,12 +61,17 @@ class Recommendation extends Model
                 ->placeholder('Select for search for an audit finding')
                 ->preload()
                 ->required()
+                // ->disabled(fn () => $findingId === null ? false : true)
+                // ->default($findingId ?? null)
+                // ->hidden(function () use ($findingId) {
+                //     return $findingId !== null;
+                // })
                 ->columnSpanFull(),
             TextInput::make('title')
                 ->required()
                 ->maxLength(250)
                 ->columnSpanFull(),
-            RichEditor::make('description')
+            Textarea::make('description')
                 ->columnSpanFull(),
             Actions::make([
                 Action::make('Save')
