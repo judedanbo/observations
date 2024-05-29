@@ -30,6 +30,16 @@ class TeamResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('audits.title')
+                    ->label('Audits')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('staff.name')
+                    ->label('Members')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

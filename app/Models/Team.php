@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,6 +46,18 @@ class Team extends Model
             TextInput::make('name')
                 ->required()
                 ->maxLength(250),
+
+            Select::make('staff_id')
+                ->relationship('staff', 'name')
+                ->searchable()
+                ->searchPrompt('Search for a staff member...')
+                ->noSearchResultsMessage('No staff members found.')
+                ->loadingMessage('Loading staff members...')
+                ->placeholder('Select a staff member')
+                ->editOptionForm(Staff::getForm())
+                ->createOptionForm(Staff::getForm())
+                ->preload()
+                ->multiple(),
             Actions::make([
                 Action::make('Save')
                     ->label('Generate data')

@@ -44,13 +44,13 @@ class Staff extends Model
     public static function getForm(): array
     {
         return [
+            TextInput::make('staff_number')
+                ->required()
+                ->maxLength(10),
             TextInput::make('name')
                 ->required(),
             // Group::make()
             // ->schema([
-            TextInput::make('staff_number')
-                ->required()
-                ->maxLength(10),
             TextInput::make('email')
                 ->suffix('@audit.gov.gh')
                 ->required()

@@ -15,16 +15,23 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ObservationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'observations';
 
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return true; //$ownerRecord->status === Status::Draft;
+    }
+
     public function isReadOnly(): bool
     {
         return false;
     }
+
     public function form(Form $form): Form
     {
         return $form
@@ -56,7 +63,8 @@ class ObservationsRelationManager extends RelationManager
                     ->label('Audit Follow up')
                     ->alignRight()
                     ->numeric(),
-                Tables\Columns\TextColumn::make('statuses.name'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()
@@ -87,6 +95,8 @@ class ObservationsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->url(fn (Observation $record): string => route('filament.admin.resources.observations.view', $record)),
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
@@ -105,5 +115,13 @@ class ObservationsRelationManager extends RelationManager
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
+    }
+
+    public static function getPages(): array
+    {
+        return [
+
+            // 'view' => Pages\::route('/{record}'),
+        ];
     }
 }

@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Enums\AuditStatusEnum;
 use App\Filament\Resources\AuditResource\Pages;
+use App\Filament\Resources\AuditResource\RelationManagers\InstitutionsRelationManager;
 use App\Filament\Resources\AuditResource\RelationManagers\ObservationsRelationManager;
+use App\Filament\Resources\AuditResource\RelationManagers\TeamsRelationManager;
 use App\Models\Audit;
 use App\Models\Observation;
 use App\Models\Staff;
@@ -345,22 +347,22 @@ class AuditResource extends Resource
             ->columns(['sm' => 1, 'lg' => 3])
             ->schema([
                 Section::make('Audit Status')
-                    ->columnSpan(['lg' => 3, 'xl' => 2])
+                    ->columnSpan(['lg' => 3, 'xl' => 1])
                     ->columns(3)
                     ->schema([
+                        TextEntry::make('status')
+                            ->label('')
+                            ->badge(),
                         TextEntry::make('year')
                             ->label('Audit Year'),
-                        TextEntry::make('status')
-                            ->label('Audit Status')
-                            ->badge(),
-                        TextEntry::make('observations')
-                            ->label('Observations')
-                            ->badge()
-                            ->getStateUsing(fn (Audit $record) => $record->observations()->count()),
+                        // TextEntry::make('observations')
+                        //     ->label('Observations')
+                        //     ->badge()
+                        //     ->getStateUsing(fn (Audit $record) => $record->observations()->count()),
                     ]),
                 Section::make('Time Schedule')
                     ->columns(2)
-                    ->columnSpan(['lg' => 3, 'xl' => 1])
+                    ->columnSpan(['lg' => 3, 'xl' => 2])
                     ->schema([
                         TextEntry::make('planned_start_date')
                             ->label('Planned Start Date')
@@ -378,6 +380,7 @@ class AuditResource extends Resource
                 Section::make(
                     'Audit Information',
                 )
+                    ->columnSpan(['lg' => 3])
                     ->schema([
                         TextEntry::make('title')
                             ->label('Audit Title'),
@@ -385,12 +388,30 @@ class AuditResource extends Resource
                             ->label('Audit Description'),
 
                     ]),
+                // Section::make(
+                //     'Auditee',
+                // )
+                //     ->columnSpan(['lg' => 3, 'xl' => 1])
+                //     ->schema([
+                //         TextEntry::make('institutions.title')
+                //             ->listWithLineBreaks()
+                //             ->limitList(3)
+                //             // ->relationship('institutions', 'name')
+                //             ->label('Auditee'),
+                //         TextEntry::make('description')
+                //             ->label('Audit Description'),
+
+                //     ]),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [ObservationsRelationManager::class];
+        return [
+            InstitutionsRelationManager::class,
+            TeamsRelationManager::class,
+            ObservationsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

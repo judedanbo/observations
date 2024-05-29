@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Audit extends Model
@@ -208,6 +209,11 @@ class Audit extends Model
     public function observations(): HasMany
     {
         return $this->hasMany(Observation::class);
+    }
+
+    public function findings(): HasManyThrough
+    {
+        return $this->hasManyThrough(Finding::class, Observation::class);
     }
 
     public function getScheduleAttribute(): string

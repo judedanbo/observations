@@ -74,6 +74,19 @@ class Observation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
+    public function review()
+    {
+        //  TODO: Implement send for review method.
+        $this->status = ObservationStatusEnum::IN_REVIEW;
+        $this->save();
+    }
+    public function issue()
+    {
+        //  TODO: Implement issue observation method.
+        $this->status = ObservationStatusEnum::ISSUED;
+        $this->save();
+    }
+
     public static function getForm($auditId = null): array
     {
         return [

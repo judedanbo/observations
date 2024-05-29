@@ -30,6 +30,11 @@ class Institution extends Model
         return $this->belongsToMany(Audit::class);
     }
 
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+
     public function addresses(): BelongsToMany
     {
         return $this->belongsToMany(Address::class);

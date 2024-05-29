@@ -37,6 +37,43 @@ class ObservationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->description(fn ($record) => $record->criteria)
+                    ->html()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cause.title')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('effect.title')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('findings.title')
+                    ->label('Findings')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->bulleted()
+                    ->expandableLimitedList()
+                    // ->counts('findings')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('recommendations.title')
+                    ->label('Recommendations')
+                    ->listWithLineBreaks()
+                    ->bulleted()
+                    ->limitList(3)
+                    ->expandableLimitedList()
+                    ->searchable(),
+                // Tables\Columns\TextColumn::make('audit.title')
+                //     // ->description(fn ($record) => $record->criteria)
+                //     ->searchable(),
+                // Tables\Columns\TextColumn::make('actions.title')
+                //     // ->badge()
+                //     ->searchable(),
+                Tables\Columns\TextColumn::make('followUps.title')
+                    // ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

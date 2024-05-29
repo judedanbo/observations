@@ -62,7 +62,7 @@ enum ObservationStatusEnum: string implements HasLabel, HasDescription, HasColor
         return match ($this) {
             self::DRAFT => Color::Orange,
             self::IN_REVIEW => Color::Purple,
-            self::ISSUED => Color::Purple,
+            self::ISSUED => Color::Cyan,
             self::RECEIVED => Color::Green,
             self::RESPONDED => Color::Blue,
             self::TEAM_RESOLVED => Color::Gray,
