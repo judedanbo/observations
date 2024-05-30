@@ -31,7 +31,14 @@ class RecommendationResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('finding.title')
-                    ->numeric()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->bulleted()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('followUps.title')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->bulleted()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

@@ -26,6 +26,7 @@ class ObservationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -107,7 +108,7 @@ class ObservationResource extends Resource
         return [
             FindingsRelationManager::class,
             RecommendationsRelationManager::class,
-            // ActionsRelationManager::class,
+            ActionsRelationManager::class,
             FollowUpsRelationManager::class
         ];
     }

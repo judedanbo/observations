@@ -8,7 +8,7 @@ use Filament\Widgets\ChartWidget;
 class AuditStatusChart extends ChartWidget
 {
     protected static ?string $heading = 'Audit Status';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 1;
     protected static ?string $maxHeight = '300px';
     protected static ?array $options = [];
 

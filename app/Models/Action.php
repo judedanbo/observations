@@ -67,7 +67,7 @@ class Action extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm($observationId = null): array
     {
         return [
             Select::make('observation_id')
@@ -79,6 +79,7 @@ class Action extends Model
                         $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->whereHas('findings', fn (Builder $query) => $query->where('id', $findingId)));
                     }
                 )
+                ->default($observationId)
                 ->editOptionForm(Observation::getForm())
                 ->searchable()
                 ->searchPrompt('Search observation...')

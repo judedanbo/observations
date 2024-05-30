@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Enums\ObservationStatusEnum;
 use App\Http\Traits\LogAllTraits;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -39,9 +37,9 @@ class Observation extends Model
         return $this->belongsTo(Audit::class);
     }
 
-    public function actions(): BelongsToMany
+    public function actions(): HasMany
     {
-        return $this->belongsToMany(Action::class, 'action_observation', 'observation_id', 'action_id');
+        return $this->HasMany(Action::class,);
     }
 
     public function statuses(): BelongsToMany

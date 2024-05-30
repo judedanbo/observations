@@ -7,7 +7,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum AuditTypeEnum: string implements HasLabel, HasDescription, HasColor
+enum FindingTypeEnum: string implements HasLabel, HasDescription, HasColor
 {
   case FIN = 'financial';
   case COM = 'compliance';

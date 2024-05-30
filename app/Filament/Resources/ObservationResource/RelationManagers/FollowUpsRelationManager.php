@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
+use App\Models\FollowUp;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -14,14 +15,14 @@ class FollowUpsRelationManager extends RelationManager
 {
     protected static string $relationship = 'followUps';
 
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(FollowUp::getForm());
     }
 
     public function table(Table $table): Table

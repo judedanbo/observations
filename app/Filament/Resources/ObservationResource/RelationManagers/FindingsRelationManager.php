@@ -36,6 +36,8 @@ class FindingsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->description(fn (Finding $record): string  | null =>  $record->description),
+                Tables\Columns\TextColumn::make('type')
+                    ->badge(),
                 Tables\Columns\TextColumn::make('causes.title'),
                 Tables\Columns\TextColumn::make('effects.title'),
                 Tables\Columns\TextColumn::make('amount')

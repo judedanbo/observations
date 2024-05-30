@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
+use App\Models\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -14,14 +15,15 @@ class ActionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'actions';
 
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
+
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Action::getForm($this->getOwnerRecord()->id));
     }
 
     public function table(Table $table): Table
@@ -29,7 +31,12 @@ class ActionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('observation.title'),
+                Tables\Columns\TextColumn::make('finding.title'),
+                Tables\Columns\TextColumn::make('recommendation.title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Management Action')
+                    ->description(fn (Action $record): string | null => $record->description),
             ])
             ->filters([
                 //

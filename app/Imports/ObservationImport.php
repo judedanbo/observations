@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Enums\ObservationStatusEnum;
 use App\Models\Audit;
 use App\Models\District;
 use App\Models\Finding;
@@ -59,16 +60,14 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
             $observation = Observation::create([
                 'audit_id' => $audit->id,
                 'title' => $row['title_of_finding'],
+                'status' => ObservationStatusEnum::ISSUED,
             ]);
+            $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
 
             $finding = Finding::create([
                 'observation_id' => $observation->id,
                 'title' => $row['title_of_finding'],
-                'type' => [
-                    $row['financial'] !== null ? 'Financial' : '',
-                    $row['internal_control'] !== null ? 'Internal Control' : '',
-                    $row['compliance'] !== null ? 'Compliance' : ''
-                ],
+                'type' => $type,
                 'amount' => $row['amount'],
                 'surcharge_amount' => $row['surcharge_amount'] ?? null,
             ]);

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\AuditTypeEnum;
+use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -34,7 +34,7 @@ class Finding extends Model
     protected $casts = [
         'id' => 'integer',
         'observation_id' => 'integer',
-        'type' => 'array',
+        'type' => FindingTypeEnum::class,
         'amount' => 'decimal:2',
         'surcharge_amount' => 'decimal:2'
     ];
@@ -86,8 +86,8 @@ class Finding extends Model
                 })
                 ->required(),
             Select::make('type')
-                ->enum(AuditTypeEnum::class)
-                ->options(AuditTypeEnum::class)
+                ->enum(FindingTypeEnum::class)
+                ->options(FindingTypeEnum::class)
                 ->native(false)
                 ->label('Select finding Type')
                 ->required(),
