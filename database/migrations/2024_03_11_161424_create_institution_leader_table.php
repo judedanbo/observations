@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('institution_leader', function (Blueprint $table) {
             $table->foreignId('institution_id');
             $table->foreignId('leader_id');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

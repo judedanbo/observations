@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AuditStatusEnum;
+use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use App\Imports\ObservationImport;
 use Filament\Forms\Components\Actions;
@@ -32,6 +33,7 @@ class Audit extends Model
         'actual_start_date',
         'actual_end_date',
         'year',
+        'type',
         'status'
     ];
 
@@ -42,25 +44,12 @@ class Audit extends Model
         'actual_start_date' => 'date',
         'actual_end_date' => 'date',
         'status' =>  AuditStatusEnum::class,
+        'type' => FindingTypeEnum::class
     ];
-    // disable softDelete global scope for superadmin
-
-    // public static function booted()
-    // {
-    //     static::addGlobalScope('admin', function (Builder $builder) {
-    //         // $user  = auth()->user()->hasRole(['super-administrator', 'system-administrator']);
-    //         // dd($user);
-    //         // if (auth()->user()->hasRole(['super-administrator', 'system-administrator'])) {
-    //         $builder->withoutGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope');
-    //         // }
-    //     });
-    // }
 
     public function importObservations(string $file)
     {
-        // dd($file);
         (new ObservationImport)->import($file);
-        // dd($data);
     }
 
     public function institutions(): BelongsToMany
@@ -246,7 +235,8 @@ class Audit extends Model
                 ->native(false),
             TextInput::make('year')
                 ->required()
-                ->numeric(),
+                ->numeric()
+                ->default(date('Y')),
             Actions::make([
                 Action::make('Save')
                     ->label('Generate data')

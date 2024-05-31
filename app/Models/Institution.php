@@ -42,7 +42,9 @@ class Institution extends Model
 
     public function leaders(): BelongsToMany
     {
-        return $this->belongsToMany(Leader::class);
+        return $this->belongsToMany(Leader::class)
+            ->withPivot('start_date', 'end_date')
+            ->withTimestamps();
     }
 
     function reports(): HasMany

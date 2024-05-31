@@ -344,10 +344,10 @@ class AuditResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->columns(['sm' => 1, 'lg' => 3])
+            ->columns(['sm' => 1, 'lg' => 2, 'xl' => 4])
             ->schema([
                 Section::make('Audit Status')
-                    ->columnSpan(['lg' => 3, 'xl' => 1])
+                    ->columnSpan(['lg' => 3, 'xl' => 2])
                     ->columns(3)
                     ->schema([
                         TextEntry::make('status')
@@ -355,6 +355,14 @@ class AuditResource extends Resource
                             ->badge(),
                         TextEntry::make('year')
                             ->label('Audit Year'),
+                        TextEntry::make('title')
+                            ->columnStart(1)
+                            ->columnSpanFull()
+                            ->label('Audit'),
+                        TextEntry::make('description')
+                            ->columnStart(1)
+                            ->columnSpanFull()
+                            ->label(''),
                         // TextEntry::make('observations')
                         //     ->label('Observations')
                         //     ->badge()
@@ -377,17 +385,16 @@ class AuditResource extends Resource
                             ->label('Actual End Date')
                             ->date('j M Y'),
                     ]),
-                Section::make(
-                    'Audit Information',
-                )
-                    ->columnSpan(['lg' => 3])
-                    ->schema([
-                        TextEntry::make('title')
-                            ->label('Audit Title'),
-                        TextEntry::make('description')
-                            ->label('Audit Description'),
-
-                    ]),
+                // Section::make(
+                //     'Audit Information',
+                // )
+                //     ->columnSpan(['lg' => 3])
+                //     ->schema([
+                //         TextEntry::make('title')
+                //             ->label('Audit Title'),
+                //         TextEntry::make('description')
+                //             ->label('Audit Description'),
+                //     ]),
                 // Section::make(
                 //     'Auditee',
                 // )

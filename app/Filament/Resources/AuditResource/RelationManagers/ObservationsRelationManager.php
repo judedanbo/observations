@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AuditResource\RelationManagers;
 
 use App\Enums\AuditDepartmentEnum;
+use App\Enums\AuditStatusEnum;
 use App\Models\Audit;
 use App\Models\Observation;
 use Filament\Forms\Components\FileUpload;
@@ -29,7 +30,8 @@ class ObservationsRelationManager extends RelationManager
 
     public function isReadOnly(): bool
     {
-        return false;
+        return $this->getOwnerRecord()->status !== AuditStatusEnum::IN_PROGRESS;
+        false;
     }
 
     public function form(Form $form): Form
@@ -72,6 +74,7 @@ class ObservationsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
                 Action::make('Load Observations')
+                    ->visible(fn () => $this->getOwnerRecord()->status === AuditStatusEnum::IN_PROGRESS)
                     ->form([
                         Select::make('audit_type')
                             ->enum(AuditDepartmentEnum::class)
