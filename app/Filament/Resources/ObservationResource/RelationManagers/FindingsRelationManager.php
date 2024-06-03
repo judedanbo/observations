@@ -43,6 +43,13 @@ class FindingsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('amount')
                     ->numeric()
                     ->alignRight(),
+                Tables\Columns\TextColumn::make('surcharge_amount')
+                    ->numeric()
+                    ->alignRight(),
+                Tables\Columns\TextColumn::make('recoveries_sum')
+                    ->label('Amount Recovered')
+                    ->numeric()
+                    ->alignRight(),
             ])
             ->filters([
                 //
@@ -57,6 +64,8 @@ class FindingsRelationManager extends RelationManager
                     Action::make('Add Effect')
                         ->icon('heroicon-o-megaphone'),
                     Action::make('Surcharge')
+                        ->icon('heroicon-o-banknotes'),
+                    Action::make('Record Recovery')
                         ->icon('heroicon-o-banknotes'),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),

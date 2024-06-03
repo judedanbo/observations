@@ -25,6 +25,7 @@ class AuditsTable extends BaseWidget
         $observationStatus = $this->filters['observation_status'];
 
         return $table
+            ->recordUrl(fn (Audit $record): string => route('filament.admin.resources.audits.view', $record))
             ->query(
                 Audit::query()
                     ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))

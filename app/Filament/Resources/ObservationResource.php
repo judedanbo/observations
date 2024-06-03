@@ -11,7 +11,9 @@ use App\Filament\Resources\ObservationResource\RelationManagers\RecommendationsR
 use App\Models\Observation;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -24,7 +26,7 @@ class ObservationResource extends Resource
 
     protected static ?string $navigationGroup = 'Audit';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-eye';
 
 
     public static function form(Form $form): Form
@@ -117,29 +119,35 @@ class ObservationResource extends Resource
         return $infolist
             ->schema(
                 [
-                    Section::make('Audit Information')
-                        ->schema([
-                            TextEntry::make('audit.title')
-                                ->label('Audit Title'),
-                        ]),
-                    Section::make('Observation Information')
-                        ->columns(2)
-                        ->schema([
-                            TextEntry::make('title')
-                                ->label('Observation Title'),
-                            TextEntry::make('status')
-                                ->label('')
-                                ->badge()
-                                ->alignRight(),
-
-                            TextEntry::make('causes.title')
-                                ->label('Cause'),
-                            TextEntry::make('effects.title')
-                                ->label('Effect'),
-                            // TextEntry::make('findings.title')
-                            //     ->label('Recommendation'),
-                        ]),
-
+                    Split::make([
+                        Section::make('Audit Information')
+                            ->heading('Audit Information (Audit Title, Observation Title, Status)')
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('audit.title')
+                                    ->label('Audit Title')
+                                    ->columnSpan(2),
+                                TextEntry::make('status')
+                                    ->label('')
+                                    ->badge()
+                                    ->alignRight(),
+                                TextEntry::make('title')
+                                    ->label('Observation Title')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+                    Split::make([
+                        Section::make('Observation Information')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('causes.title')
+                                    ->label('Cause'),
+                                TextEntry::make('effects.title')
+                                    ->label('Effect'),
+                                // TextEntry::make('findings.title')
+                                //     ->label('Recommendation'),
+                            ]),
+                    ]),
                 ]
             );
     }

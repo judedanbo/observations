@@ -45,6 +45,11 @@ class AuditUniverseTable extends BaseWidget
                     ->counts('reports')
                     ->numeric()
                     ->alignRight(),
-            ]);
+            ])
+            ->recordUrl(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record));
+        // ->actions([
+        //     Tables\Actions\ViewAction::make()
+        //         ->url(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record)),
+        // ]);
     }
 }

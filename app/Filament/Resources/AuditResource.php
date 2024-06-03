@@ -42,7 +42,7 @@ class AuditResource extends Resource
 
     protected static ?string $navigationGroup = 'Audit';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {

@@ -69,6 +69,21 @@ class Finding extends Model
         return $this->hasMany(FollowUp::class);
     }
 
+    public function recoveries(): HasMany
+    {
+        return $this->hasMany(Recovery::class);
+    }
+
+    public function directives(): HasMany
+    {
+        return $this->hasMany(Parliament::class);
+    }
+
+    public function getRecoveriesSumAttribute()
+    {
+        return $this->recoveries()->sum('amount');
+    }
+
     public static function getForm(int|null $observationId = null): array
     {
         return [
@@ -95,11 +110,14 @@ class Finding extends Model
                 ->required()
                 ->columnSpanFull()
                 ->maxLength(250),
-            TextInput::make('amount')
-
-                ->maxLength(250),
             Textarea::make('description')
                 ->columnSpanFull(),
+            TextInput::make('amount')
+                ->numeric()
+                ->minValue(0.01),
+            TextInput::make('surcharge_amount')
+                ->numeric()
+                ->minValue(0.01),
             Actions::make([
                 Action::make('Save')
                     ->label('Generate data')

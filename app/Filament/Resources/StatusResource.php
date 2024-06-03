@@ -16,6 +16,11 @@ class StatusResource extends Resource
 
     protected static ?string $navigationGroup = 'GAS';
 
+    public static function canAccess(): bool
+    {
+        return false;
+    }
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

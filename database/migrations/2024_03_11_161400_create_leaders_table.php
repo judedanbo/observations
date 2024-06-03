@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('staff_number', 15)->nullable();
             $table->string('name', 250);
             $table->string('title', 250);
+            $table->string('position', 250);
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->timestamps();

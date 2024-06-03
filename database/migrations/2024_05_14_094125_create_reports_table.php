@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('institution_id')->constrained();
             $table->foreignId('audit_id')->constrained();
+            $table->foreignId('finding_id')->constrained();
             $table->string('section')->nullable();
             $table->string('paragraphs', 20);
             $table->string('title');
-            $table->string('type')->nullable();
+            $table->string('type', 20)->nullable();
             $table->unsignedInteger('amount')->nullable();
             $table->longText('recommendation')->nullable();
             $table->unsignedInteger('amount_recovered')->nullable();

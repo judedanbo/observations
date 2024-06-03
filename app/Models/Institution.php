@@ -37,7 +37,13 @@ class Institution extends Model
 
     public function addresses(): BelongsToMany
     {
-        return $this->belongsToMany(Address::class);
+        return $this->belongsToMany(Address::class)
+            ->latest();
+    }
+
+    public function getCurrentAddressAttribute()
+    {
+        return $this->addresses()->first();
     }
 
     public function leaders(): BelongsToMany

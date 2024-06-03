@@ -70,15 +70,16 @@ class AuditStatusChart extends ChartWidget
                 'legend' => [
                     'display' => true,
                     'position' => 'right',
-                ],
-                'datalabels' => [
-                    'display' => true,
-                    'color' => '#fff',
-                    'font' => [
-                        'weight' => 'bold',
+                    'title' => [
+                        'display' => true,
+                        'text' => 'Audit Status',
+                        'padding' => 10,
+                        'font' => [
+                            'size' => 12,
+                        ],
                     ],
-                    // 'formatter' => fn ($value, $context) => $value,
                 ],
+
             ],
             'scales' => [
                 'y' => [

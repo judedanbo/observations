@@ -2,12 +2,10 @@
 
 namespace App\Enums;
 
-use Filament\Support\Colors\Color;
-use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum AuditDepartmentEnum: string implements HasLabel, HasDescription, HasColor
+enum AuditDepartmentEnum: string implements HasLabel, HasDescription
 {
   case CGAD = 'central_government';
   case CAD_SOE = 'commercial__soe_audit';
@@ -36,12 +34,12 @@ enum AuditDepartmentEnum: string implements HasLabel, HasDescription, HasColor
     };
   }
 
-  public function getColor(): string | array | null
-  {
-    return match ($this) {
-      self::FIN => Color::Orange,
-      self::COM => Color::Purple,
-      self::INT => Color::Blue,
-    };
-  }
+  // public function getColor(): string | array | null
+  // {
+  //   return match ($this) {
+  //     self::FIN => Color::Orange,
+  //     self::COM => Color::Purple,
+  //     self::INT => Color::Blue,
+  //   };
+  // }
 }

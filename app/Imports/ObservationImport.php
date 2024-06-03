@@ -63,7 +63,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
                 'status' => ObservationStatusEnum::ISSUED,
             ]);
             $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
-
+            // dd($type);
             $finding = Finding::create([
                 'observation_id' => $observation->id,
                 'title' => $row['title_of_finding'],
@@ -77,18 +77,17 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
                 'title' => $row['recommendation'],
             ]);
 
+            // $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
+            // dd($type);
             $report = Report::firstOrCreate(
                 [
                     'institution_id' => $institution->id,
                     'audit_id' => $audit->id,
+                    'finding_id' => $finding->id,
                     'paragraphs' => $row['report_paragraphs'],
                     'title' => $row['title_of_finding'],
                     'section' => $this->audit_section,
-                    'type' => [
-                        $row['financial'] !== null ? 'Financial' : '',
-                        $row['internal_control'] !== null ? 'Internal Control' : '',
-                        $row['compliance'] !== null ? 'Compliance' : ''
-                    ],
+                    'type' => $type,
                     'amount' => $row['amount'],
                     'recommendation' => $row['recommendation'],
                     'amount_recovered' => $row['amount_recovered'],

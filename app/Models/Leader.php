@@ -40,10 +40,12 @@ class Leader extends Model
         return [
             TextInput::make('staff_number')
                 ->maxLength(15),
-            TextInput::make('name')
+            TextInput::make('title')
+                ->columnStart(1)
                 ->required()
                 ->maxLength(250),
-            TextInput::make('title')
+            TextInput::make('name')
+                ->columnSpanFull()
                 ->required()
                 ->maxLength(250),
             DatePicker::make('start_date')

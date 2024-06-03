@@ -16,7 +16,7 @@ class ActionResource extends Resource
 
     protected static ?string $navigationGroup = 'Clients';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-vertical';
 
     public static function form(Form $form): Form
     {

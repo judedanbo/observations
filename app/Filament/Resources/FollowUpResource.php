@@ -19,7 +19,7 @@ class FollowUpResource extends Resource
 
     protected static ?string $navigationGroup = 'GAS';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     public static function form(Form $form): Form
     {

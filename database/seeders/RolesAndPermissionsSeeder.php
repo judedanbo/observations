@@ -183,6 +183,27 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore report']);
         Permission::create(['name' => 'destroy report']);
 
+        //  recovery permissions
+        Permission::create(['name' => 'view all recoveries']);
+        Permission::create(['name' => 'view recovery']);
+        Permission::create(['name' => 'create recovery']);
+        Permission::create(['name' => 'update recovery']);
+        Permission::create(['name' => 'delete recovery']);
+        Permission::create(['name' => 'restore recovery']);
+        Permission::create(['name' => 'destroy recovery']);
+
+        // parliament recommendation permission
+
+        Permission::create(['name' => 'view all parliament recommendations']);
+        Permission::create(['name' => 'view parliament recommendation']);
+        Permission::create(['name' => 'create parliament recommendation']);
+        Permission::create(['name' => 'update parliament recommendation']);
+        Permission::create(['name' => 'delete parliament recommendation']);
+        Permission::create(['name' => 'restore parliament recommendation']);
+        Permission::create(['name' => 'destroy parliament recommendation']);
+
+
+
         // create roles and assign created permissions
 
         // this can be done as separate statements
