@@ -16,6 +16,7 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
+
     protected function getStats(): array
     {
         $startDate = $this->filters['start_date'];
@@ -133,7 +134,7 @@ class StatsOverview extends BaseWidget
                 ->description('Total number of observations')
                 ->color('success')
                 ->chart($observationStats),
-            Stat::make('Recovery', Number::format(
+            Stat::make('Amount', Number::format(
                 Finding::query()
                     ->when($startDate, function ($query, $startDate) {
                         $query->whereHas('observation.audit', function ($query) use ($startDate) {
@@ -168,6 +169,84 @@ class StatsOverview extends BaseWidget
                         }
                     )
                     ->sum('amount'),
+                2
+            )),
+            Stat::make('Surcharge', Number::format(
+                Finding::query()
+                    ->when($startDate, function ($query, $startDate) {
+                        $query->whereHas('observation.audit', function ($query) use ($startDate) {
+                            $query->where('created_at', '>=', $startDate);
+                        });
+                        // $query->where('created_at', '>=', $startDate);
+                    })
+                    ->when($endDate, function ($query, $endDate) {
+                        $query->whereHas('observation.audit', function ($query) use ($endDate) {
+                            $query->where('created_at', '<=', $endDate);
+                        });
+                    })
+                    //  $query->where('created_at', '<=', $endDate))
+                    ->when(
+                        $auditStatus,
+                        function ($query, $auditStatus) {
+                            $query->whereHas('observation.audit', fn ($query) => $query->where('status', $auditStatus));
+                        }
+                    )
+                    ->when(
+                        $findingType,
+                        function ($query, $findingType) {
+                            $query->where('type', $findingType);
+                        }
+                    )
+                    ->when(
+                        $unitDepartment,
+                        function ($query, $unitDepartment) {
+                            $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
+                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                            });
+                        }
+                    )
+                    ->sum('surcharge_amount'),
+                2
+            ))
+                ->description('Total number of observations')
+                ->color('success')
+                ->chart($recoveryStats),
+            Stat::make('Recoveries', Number::format(
+                Finding::query()
+                    ->join('recoveries', 'findings.id', '=', 'recoveries.finding_id')
+                    ->when($startDate, function ($query, $startDate) {
+                        $query->whereHas('observation.audit', function ($query) use ($startDate) {
+                            $query->where('created_at', '>=', $startDate);
+                        });
+                        // $query->where('created_at', '>=', $startDate);
+                    })
+                    ->when($endDate, function ($query, $endDate) {
+                        $query->whereHas('observation.audit', function ($query) use ($endDate) {
+                            $query->where('created_at', '<=', $endDate);
+                        });
+                    })
+                    //  $query->where('created_at', '<=', $endDate))
+                    ->when(
+                        $auditStatus,
+                        function ($query, $auditStatus) {
+                            $query->whereHas('observation.audit', fn ($query) => $query->where('status', $auditStatus));
+                        }
+                    )
+                    ->when(
+                        $findingType,
+                        function ($query, $findingType) {
+                            $query->where('type', $findingType);
+                        }
+                    )
+                    ->when(
+                        $unitDepartment,
+                        function ($query, $unitDepartment) {
+                            $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
+                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                            });
+                        }
+                    )
+                    ->sum('recoveries.amount'),
                 2
             ))
                 ->description('Total number of observations')

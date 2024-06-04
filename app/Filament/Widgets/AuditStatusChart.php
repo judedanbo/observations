@@ -11,8 +11,8 @@ class AuditStatusChart extends ChartWidget
     use InteractsWithPageFilters;
 
     protected static ?string $heading = 'Audit Status';
-    protected static ?int $sort = 1;
-    protected static ?string $maxHeight = '180px';
+    protected static ?int $sort = 2;
+    // protected static ?string $maxHeight = '180px';
     protected static ?array $options = [];
 
     protected int | string | array $columnSpan = [

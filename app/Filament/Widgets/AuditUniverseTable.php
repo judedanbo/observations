@@ -11,9 +11,9 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class AuditUniverseTable extends BaseWidget
 {
     use InteractsWithPageFilters;
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 8;
     protected int | string | array $columnSpan = [
-        'md' => 2,
+        'md' => 3,
         // 'xl' => 3,
     ];
     public function table(Table $table): Table

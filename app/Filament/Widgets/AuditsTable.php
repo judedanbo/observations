@@ -12,7 +12,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class AuditsTable extends BaseWidget
 {
     use InteractsWithPageFilters;
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 3;
     protected int | string | array $columnSpan = ['md' => 4,];
 
     public function table(Table $table): Table

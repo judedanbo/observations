@@ -10,7 +10,7 @@ class ObservationStatusChart extends ChartWidget
 {
     use InteractsWithPageFilters;
     protected static ?string $heading = 'Observation status by year';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 4;
     protected int | string | array $columnSpan = [
         'md' => 2,
         // 'xl' => 3,

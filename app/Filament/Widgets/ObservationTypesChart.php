@@ -11,7 +11,7 @@ class ObservationTypesChart extends ChartWidget
 {
     use InteractsWithPageFilters;
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
     protected int | string | array $columnSpan = [
         'md' => 2,
         // 'xl' => 3,
