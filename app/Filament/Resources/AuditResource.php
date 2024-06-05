@@ -63,16 +63,21 @@ class AuditResource extends Resource
                     ->searchable()
                     ->wrap()
                     ->description(fn (Audit $record) => Str::of($record->description)->limit(90)),
+                Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Audit Status')
                     ->sortable()
                     ->badge(),
+                Tables\Columns\TextColumn::make('schedule')
+                    ->size('sm'),
                 Tables\Columns\TextColumn::make('planned_start_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('actual_start_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('planned_end_date')
                     ->date()
                     ->sortable()

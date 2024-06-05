@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 250);
             $table->text('description')->nullable();
+            $table->text('type', 30)->nullable();
             $table->date('planned_start_date')->nullable();
             $table->date('planned_end_date')->nullable();
             $table->date('actual_start_date')->nullable();

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AuditStatusEnum;
+use App\Enums\AuditTypeEnum;
 use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use App\Imports\ObservationImport;
+use Carbon\Carbon;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Livewire\Component;
 
 class Audit extends Model
 {
@@ -44,7 +47,7 @@ class Audit extends Model
         'actual_start_date' => 'date',
         'actual_end_date' => 'date',
         'status' =>  AuditStatusEnum::class,
-        'type' => FindingTypeEnum::class
+        'type' => AuditTypeEnum::class
     ];
 
     public function importObservations(string $file)
@@ -207,13 +210,36 @@ class Audit extends Model
 
     public function getScheduleAttribute(): string
     {
-        if ($this->planned_start_date === null || $this->planned_end_date === null) {
+        if ($this->planned_start_date === null) {
+            if ($this->planned_end_date !== null) {
+                return 'To end ' . $this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+            }
             return 'Not scheduled';
         }
-        if ($this->planned_start_date === $this->planned_end_date) {
+        if ($this->planned_start_date->gt(now())) {
+            return 'To start ' . $this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+        }
+        if ($this->planned_start_date->lt(now())) {
+            if ($this->status === AuditStatusEnum::PLANNED) {
+                return 'planned start passed ' . $this->planned_start_date->diffForHumans([
+                    'options' => Carbon::ONE_DAY_WORDS
+                ]);
+            }
+            if ($this->planned_end_date?->lt(now())) {
+                if ($this->status === AuditStatusEnum::IN_PROGRESS) {
+                    return 'passed due' . $this->planned_end_date->diffForHumans([
+                        'options' => Carbon::ONE_DAY_WORDS
+                    ]);
+                }
+            }
+            // return 'On time';
+        }
+        if ($this->planned_start_date->eq($this->planned_end_date)) {
+            // dd('same');
             return $this->planned_start_date->format('d M Y');
         }
-        return $this->planned_start_date->format('d M Y') . ' - ' . $this->planned_end_date->format('d M Y');
+        return 'On time';
+        // return $this->planned_start_date->format('d M Y') . ' - ' . $this->planned_end_date->format('d M Y');
     }
 
     public static function getForm(): array
@@ -223,6 +249,17 @@ class Audit extends Model
                 ->required()
                 ->maxLength(250)
                 ->columnSpanFull(),
+            Select::make('type')
+                ->options(AuditTypeEnum::class)
+                ->native(false)
+                ->required(),
+            TextInput::make('year')
+                ->label('Audit year')
+                ->required()
+                ->numeric()
+                ->maxValue(date('Y'))
+                ->minValue(date('Y', strtotime('-10 years')))
+                ->default(date('Y')),
             Textarea::make('description')
                 ->columnSpanFull(),
             DatePicker::make('planned_start_date')
@@ -233,32 +270,31 @@ class Audit extends Model
                 ->native(false),
             DatePicker::make('actual_end_date')
                 ->native(false),
-            TextInput::make('year')
-                ->required()
-                ->numeric()
-                ->default(date('Y')),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Audit::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
-                ->columnSpanFull(),
+            // Actions::make([
+            //     Action::make('Save')
+            //         ->label('Generate data')
+            //         ->icon('heroicon-m-arrow-path')
+            //         ->outlined()
+            //         ->color('gray')
+            //         ->visible(function (string $operation) {
+            //             if ($operation !== 'create') {
+            //                 return false;
+            //             }
+            //             if (!app()->environment('local')) {
+            //                 return false;
+            //             }
+            //             return true;
+            //         })
+            //         ->action(function (Component $livewire) {
+            //             // $this->fillForm();
+            //             $data = Audit::factory()->make()->toArray();
+
+            //             dd($livewire->table);
+            //             $livewire->form->fill($data);
+            //         }),
+            // ])
+            //     ->label('Actions')
+            //     ->columnSpanFull(),
         ];
     }
 }
