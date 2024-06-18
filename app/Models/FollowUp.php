@@ -56,7 +56,7 @@ class FollowUp extends Model
         return $this->belongsTo(Recommendation::class);
     }
 
-    public static function getForm(): array
+    public static function getForm(?int $findingId = null): array
     {
         return [
             Select::make('observation_id')
@@ -130,49 +130,6 @@ class FollowUp extends Model
                 ->maxLength(250),
             RichEditor::make('description')
                 ->columnSpanFull(),
-            Actions::make([
-                Action::make('save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = FollowUp::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
-                ->columnSpanFull(),
-
-            // Actions::make([
-            //     Action::make('Save')
-            //         ->label('Generate data')
-            //         ->icon('heroicon-m-arrow-path')
-            //         ->outlined()
-            //         ->color('gray')
-            //         ->visible(function (string $operation) {
-            //             if ($operation !== 'create') {
-            //                 return false;
-            //             }
-            //             if (!app()->environment('local')) {
-            //                 return false;
-            //             }
-            //             return true;
-            //         })
-            //         ->action(function ($livewire) {
-            //             $data = Action::factory()->make()->toArray();
-            //             $livewire->form->fill($data);
-            //         }),
-            // ])
         ];
     }
 }

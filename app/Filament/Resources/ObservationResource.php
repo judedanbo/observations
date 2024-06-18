@@ -131,21 +131,15 @@ class ObservationResource extends Resource
                                     ->label('')
                                     ->badge()
                                     ->alignRight(),
-                                TextEntry::make('title')
-                                    ->label('Observation Title')
-                                    ->columnSpanFull(),
                             ]),
                     ]),
                     Split::make([
                         Section::make('Observation Information')
                             ->columns(2)
                             ->schema([
-                                TextEntry::make('causes.title')
-                                    ->label('Cause'),
-                                TextEntry::make('effects.title')
-                                    ->label('Effect'),
-                                // TextEntry::make('findings.title')
-                                //     ->label('Recommendation'),
+                                TextEntry::make('title')
+                                    ->label('Observation Title')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
                 ]

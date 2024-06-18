@@ -45,7 +45,7 @@ class Effect extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm(?int $findingId = null): array
     {
         return [
             Select::make('finding_id')
@@ -57,34 +57,15 @@ class Effect extends Model
                 ->loadingMessage('Loading findings...')
                 ->placeholder('Select for search for an audit finding')
                 ->preload()
+                ->hidden(function () use ($findingId) {
+                    return $findingId !== null;
+                })
                 ->required(),
             TextInput::make('title')
                 ->required()
                 ->maxLength(250)
                 ->columnSpanFull(),
             RichEditor::make('description')
-                ->columnSpanFull(),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Effect::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
                 ->columnSpanFull(),
         ];
     }

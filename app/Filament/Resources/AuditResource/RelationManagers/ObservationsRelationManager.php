@@ -72,8 +72,19 @@ class ObservationsRelationManager extends RelationManager
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->icon('heroicon-o-plus')
+                    ->outlined()
+                    ->successRedirectUrl(fn (Observation $record) => route('filament.admin.resources.observations.view', $record))
+                    ->successNotification(
+                        Notification::make('Observation Created')
+                            ->title('Observation Created')
+                            ->body('The observation has been created successfully.')
+                            ->success()
+                    ),
                 Action::make('Load Observations')
+                    ->outlined()
+                    ->icon('heroicon-o-document-text')
                     ->visible(fn () => $this->getOwnerRecord()->status === AuditStatusEnum::IN_PROGRESS)
                     ->form([
                         Select::make('audit_type')
@@ -123,7 +134,6 @@ class ObservationsRelationManager extends RelationManager
     public static function getPages(): array
     {
         return [
-
             // 'view' => Pages\::route('/{record}'),
         ];
     }

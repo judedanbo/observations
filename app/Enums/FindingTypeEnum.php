@@ -32,7 +32,7 @@ enum FindingTypeEnum: string implements HasLabel, HasDescription, HasColor
   public function getColor(): string | array | null
   {
     return match ($this) {
-      self::FIN => Color::Orange,
+      self::FIN => Color::Red,
       self::COM => Color::Purple,
       self::INT => Color::Blue,
     };

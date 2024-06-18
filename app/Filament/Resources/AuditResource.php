@@ -16,6 +16,7 @@ use Faker\Provider\ar_EG\Text;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -257,7 +258,14 @@ class AuditResource extends Resource
                         ->form(
                             [
                                 Repeater::make('observations')
-                                    ->schema(components: Observation::getForm())
+                                    ->schema(components: [
+                                        TextInput::make('title')
+                                            ->required()
+                                            ->live()
+                                            ->maxLength(250),
+                                        RichEditor::make('criteria')
+                                            ->columnSpanFull(),
+                                    ])
                                     ->collapsible()
                                     ->reorderableWithButtons()
                                     ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
@@ -269,13 +277,20 @@ class AuditResource extends Resource
                             fn (Audit $record) =>
                             $record->status === AuditStatusEnum::IN_PROGRESS
                         )
-                        ->action(function (array $data) {
+                        ->action(function (array $data, $record) {
                             collect($data['observations'])->each(function ($observation) {
                                 // $observation->addTeamMember($team: null, $member: );
                             });
-                            $audit = Audit::find($data['id']);
-                            $audit->observations()->createMany($data['observations']);
-                        }),
+                            // $audit = Audit::find($data['id']);
+                            $record->observations()->createMany($data['observations']);
+                        })
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Observations Created')
+                                ->body('The observations have been created successfully.')
+
+                        ),
                     Tables\Actions\Action::make('issue')
                         ->label('Issue audit report')
                         ->icon('heroicon-o-document-duplicate')

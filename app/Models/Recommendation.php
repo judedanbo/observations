@@ -63,37 +63,15 @@ class Recommendation extends Model
                 ->required()
                 // ->disabled(fn () => $findingId === null ? false : true)
                 // ->default($findingId ?? null)
-                // ->hidden(function () use ($findingId) {
-                //     return $findingId !== null;
-                // })
+                ->hidden(function () use ($findingId) {
+                    return $findingId !== null;
+                })
                 ->columnSpanFull(),
             TextInput::make('title')
                 ->required()
                 ->maxLength(250)
                 ->columnSpanFull(),
             Textarea::make('description')
-                ->columnSpanFull(),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Recommendation::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
                 ->columnSpanFull(),
         ];
     }

@@ -45,7 +45,7 @@ class Cause extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(): array
+    public static function getForm(?int $findingId = null): array
     {
         return [
             Select::make('finding_id')
@@ -58,34 +58,15 @@ class Cause extends Model
                 ->placeholder('Select for search for an audit finding')
                 ->preload()
                 ->required()
+                ->hidden(function () use ($findingId) {
+                    return $findingId !== null;
+                })
                 ->columnSpanFull(),
             TextInput::make('title')
                 ->required()
                 ->columnSpanFull()
                 ->maxLength(250),
             RichEditor::make('description')
-                ->columnSpanFull(),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Cause::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
                 ->columnSpanFull(),
         ];
     }

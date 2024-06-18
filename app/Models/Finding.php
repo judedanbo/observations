@@ -16,7 +16,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Observation;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Builder;
 
 class Finding extends Model
 {
@@ -83,8 +85,44 @@ class Finding extends Model
     {
         return $this->recoveries()->sum('amount');
     }
+    public function scopeFinancial(Builder $query): Builder
+    {
+        return $query->where('type', FindingTypeEnum::FIN);
+    }
+    public function scopeControl(Builder $query): Builder
+    {
+        return $query->where('type', FindingTypeEnum::INT);
+    }
+    public function scopeCompliance(Builder $query): Builder
+    {
+        return $query->where('type', FindingTypeEnum::COM);
+    }
 
-    public static function getForm(int|null $observationId = null): array
+    // public function surcharge(?float $amount = null)
+    // {
+    //     if ($amount) {
+    //         $this->surcharge_amount = $amount;
+    //         $this->save();
+    //     }
+    // }
+
+    // public function recover($data)
+    // {
+    //     $this->recoveries()->create($data);
+    //     $this->save();
+    // }
+    // public function addCause($data)
+    // {
+    //     $this->causes()->create($data);
+    //     $this->save();
+    // }
+    // public function addEffect($data)
+    // {
+    //     $this->effects()->create($data);
+    //     $this->save();
+    // }
+
+    public static function getForm(?int $observationId = null): array
     {
         return [
             Select::make('observation_id')
@@ -105,41 +143,25 @@ class Finding extends Model
                 ->options(FindingTypeEnum::class)
                 ->native(false)
                 ->label('Select finding Type')
-                ->required(),
+                ->required()
+                ->columnSpan(1),
             TextInput::make('title')
                 ->required()
                 ->columnSpanFull()
                 ->maxLength(250),
             Textarea::make('description')
+                ->label('Details')
                 ->columnSpanFull(),
-            TextInput::make('amount')
-                ->numeric()
-                ->minValue(0.01),
-            TextInput::make('surcharge_amount')
-                ->numeric()
-                ->minValue(0.01),
-            Actions::make([
-                Action::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (!app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Finding::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
-                ->columnSpanFull(),
+            Fieldset::make('Amounts/Surcharge')
+                ->schema([
+                    TextInput::make('amount')
+                        ->numeric()
+                        ->minValue(0.01),
+                    TextInput::make('surcharge_amount')
+                        ->numeric()
+                        ->minValue(0.01),
+                ])
+
         ];
     }
 }

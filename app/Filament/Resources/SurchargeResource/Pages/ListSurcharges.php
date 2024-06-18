@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\FindingResource\Pages;
+namespace App\Filament\Resources\SurchargeResource\Pages;
 
-use App\Filament\Resources\FindingResource;
+use App\Filament\Resources\SurchargeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
-class ListFindings extends ListRecords
+class ListSurcharges extends ListRecords
 {
-    protected static string $resource = FindingResource::class;
+    protected static string $resource = SurchargeResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->slideOver(),
+            Actions\CreateAction::make(),
         ];
     }
     public function getTabs(): array
