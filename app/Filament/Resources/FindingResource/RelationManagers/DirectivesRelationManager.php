@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\FindingResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -22,9 +25,17 @@ class DirectivesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('pac_directive')
+                TextInput::make('pac_directive')
                     ->required()
+                    ->columnSpanFull()
                     ->maxLength(255),
+                TextInput::make('client_responsible_officer'),
+                TextInput::make('gas_assigned_officer')
+                    ->columnStart(1),
+                DatePicker::make('pac_directive_date')
+                    // ->columnStart(1)
+                    ->native(false)
+                    ->default(now()),
             ]);
     }
 
@@ -34,6 +45,8 @@ class DirectivesRelationManager extends RelationManager
             ->recordTitleAttribute('pac_directive')
             ->columns([
                 Tables\Columns\TextColumn::make('pac_directive'),
+                Tables\Columns\TextColumn::make('client_responsible_officer'),
+                Tables\Columns\TextColumn::make('gas_assigned_officer'),
             ])
             ->filters([
                 //

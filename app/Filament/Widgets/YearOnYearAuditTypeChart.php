@@ -6,7 +6,7 @@ use Filament\Widgets\ChartWidget;
 
 class YearOnYearAuditTypeChart extends ChartWidget
 {
-    protected static ?string $heading = 'Year on year Audit type';
+    protected static ?string $heading = 'Year on year audit recommendation by audit type';
     protected static ?int $sort = 7;
     protected int | string | array $columnSpan = [
         'md' => 6,

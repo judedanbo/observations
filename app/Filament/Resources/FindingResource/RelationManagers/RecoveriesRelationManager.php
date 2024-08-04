@@ -29,7 +29,13 @@ class RecoveriesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('amount')
             ->columns([
-                Tables\Columns\TextColumn::make('amount'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Date')
+                    ->date(),
+                Tables\Columns\TextColumn::make('amount')
+                    ->numeric()
+                    ->alignRight(),
+                Tables\Columns\TextColumn::make('comments'),
             ])
             ->filters([
                 //

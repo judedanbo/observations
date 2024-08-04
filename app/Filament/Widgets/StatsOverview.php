@@ -16,7 +16,9 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
-
+    protected int | string | array $columnSpan = [
+        'md' => 6,
+    ];
     protected function getStats(): array
     {
         $startDate = $this->filters['start_date'];
@@ -25,8 +27,6 @@ class StatsOverview extends BaseWidget
         $findingType = $this->filters['finding_type'];
         $unitDepartment = $this->filters['unit_department'];
         $observationStatus = $this->filters['observation_status'];
-
-
 
         $auditStats = Trend::model(Audit::class)
             ->between(
@@ -67,7 +67,6 @@ class StatsOverview extends BaseWidget
             ->pluck('aggregate')
             ->toArray();
 
-        // dd($recoveryStats);
         return [
             Stat::make('Audits Universe', Number::format(
                 Institution::query()
@@ -108,7 +107,6 @@ class StatsOverview extends BaseWidget
                             $query->where('created_at', '<=', $endDate);
                         });
                     })
-                    //  $query->where('created_at', '<=', $endDate))
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
@@ -140,14 +138,12 @@ class StatsOverview extends BaseWidget
                         $query->whereHas('observation.audit', function ($query) use ($startDate) {
                             $query->where('created_at', '>=', $startDate);
                         });
-                        // $query->where('created_at', '>=', $startDate);
                     })
                     ->when($endDate, function ($query, $endDate) {
                         $query->whereHas('observation.audit', function ($query) use ($endDate) {
                             $query->where('created_at', '<=', $endDate);
                         });
                     })
-                    //  $query->where('created_at', '<=', $endDate))
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
@@ -177,14 +173,12 @@ class StatsOverview extends BaseWidget
                         $query->whereHas('observation.audit', function ($query) use ($startDate) {
                             $query->where('created_at', '>=', $startDate);
                         });
-                        // $query->where('created_at', '>=', $startDate);
                     })
                     ->when($endDate, function ($query, $endDate) {
                         $query->whereHas('observation.audit', function ($query) use ($endDate) {
                             $query->where('created_at', '<=', $endDate);
                         });
                     })
-                    //  $query->where('created_at', '<=', $endDate))
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
@@ -218,14 +212,12 @@ class StatsOverview extends BaseWidget
                         $query->whereHas('observation.audit', function ($query) use ($startDate) {
                             $query->where('created_at', '>=', $startDate);
                         });
-                        // $query->where('created_at', '>=', $startDate);
                     })
                     ->when($endDate, function ($query, $endDate) {
                         $query->whereHas('observation.audit', function ($query) use ($endDate) {
                             $query->where('created_at', '<=', $endDate);
                         });
                     })
-                    //  $query->where('created_at', '<=', $endDate))
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
+use App\Enums\AuditStatusEnum;
+use App\Enums\ObservationStatusEnum;
 use App\Models\Finding;
 use App\Models\Recovery;
 use Filament\Actions\Action;
@@ -26,6 +28,19 @@ class FindingsRelationManager extends RelationManager
 
     public function isReadOnly(): bool
     {
+        $status = $this->getOwnerRecord()->status->value;
+        if ($status === AuditStatusEnum::ISSUED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::TERMINATED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::ARCHIVED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::ARCHIVED->value) {
+            return true;
+        }
         return false;
     }
 
@@ -33,12 +48,7 @@ class FindingsRelationManager extends RelationManager
     {
         return $form
             ->schema(
-                [
-                    Repeater::make('findings')
-                        ->schema(
-                            Finding::getForm($this->getOwnerRecord()->id)
-                        ),
-                ]
+                Finding::getForm($this->getOwnerRecord()->id)
             );
     }
 

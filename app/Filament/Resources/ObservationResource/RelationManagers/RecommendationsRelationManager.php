@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
+use App\Enums\AuditStatusEnum;
 use App\Models\Recommendation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,6 +19,19 @@ class RecommendationsRelationManager extends RelationManager
 
     public function isReadOnly(): bool
     {
+        $status = $this->getOwnerRecord()->status->value;
+        if ($status === AuditStatusEnum::ISSUED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::TERMINATED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::ARCHIVED->value) {
+            return true;
+        }
+        if ($status === AuditStatusEnum::ARCHIVED->value) {
+            return true;
+        }
         return false;
     }
 

@@ -9,7 +9,7 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 class ObservationStatusChart extends ChartWidget
 {
     use InteractsWithPageFilters;
-    protected static ?string $heading = 'Observation status by year';
+    protected static ?string $heading = 'Observation status';
     protected static ?int $sort = 4;
     protected int | string | array $columnSpan = [
         'md' => 2,

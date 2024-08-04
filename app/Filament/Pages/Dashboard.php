@@ -21,7 +21,7 @@ class Dashboard extends PagesDashboard
   public function getColumns(): int | string | array
   {
     return [
-      'md' => 2,
+      'lg' => 3,
       'xl' => 6,
     ];
   }

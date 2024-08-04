@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Observation extends Model
 {
@@ -72,6 +73,43 @@ class Observation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
+    public function scopeDraft(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::DRAFT);
+    }
+    public function scopeInReview(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::IN_REVIEW);
+    }
+    public function scopeIssued(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::ISSUED);
+    }
+    public function scopeTeamResolved(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::TEAM_RESOLVED);
+    }
+    public function scopeReported(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::REPORTED);
+    }
+    public function scopeDaResolved(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::DA_RESOLVED);
+    }
+    public function scopeRaResolved(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::RA_RESOLVED);
+    }
+    public function scopeAgResolved(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::AG_RESOLVED);
+    }
+    public function scopePacResolved(Builder $query)
+    {
+        return $query->where('status', ObservationStatusEnum::PAC_RESOLVED);
+    }
+
     public function review()
     {
         //  TODO: Implement send for review method.
@@ -82,6 +120,24 @@ class Observation extends Model
     {
         //  TODO: Implement issue observation method.
         $this->status = ObservationStatusEnum::ISSUED;
+        $this->save();
+    }
+    public function receive()
+    {
+        //  TODO: Implement issue observation method.
+        $this->status = ObservationStatusEnum::RECEIVED;
+        $this->save();
+    }
+    public function respond()
+    {
+        //  TODO: Implement issue observation method.
+        $this->status = ObservationStatusEnum::RESPONDED;
+        $this->save();
+    }
+    public function resolve(ObservationStatusEnum $by)
+    {
+        //  TODO: Implement issue observation method.
+        $this->status = $by;
         $this->save();
     }
 

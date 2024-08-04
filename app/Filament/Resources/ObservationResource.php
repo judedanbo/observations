@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ObservationStatusEnum;
 use App\Filament\Resources\ObservationResource\Pages;
 use App\Filament\Resources\ObservationResource\RelationManagers\ActionsRelationManager;
 use App\Filament\Resources\ObservationResource\RelationManagers\AuditActionsRelationManager;
@@ -16,6 +17,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -40,8 +42,6 @@ class ObservationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn ($record) => $record->criteria)
-                    ->html()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -93,7 +93,24 @@ class ObservationResource extends Resource
             ->actions(
                 ActionGroup::make(
                     [
-                        Tables\Actions\EditAction::make(),
+                        Tables\Actions\Action::make('sent for review')
+                            ->icon('heroicon-o-paper-airplane')
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::DRAFT)
+                            ->label('Send for review')
+                            ->action(fn (Observation $record) => $record->review()),
+
+                        Tables\Actions\Action::make('issue')
+                            ->icon('heroicon-o-paper-airplane')
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::IN_REVIEW)
+                            ->label('Issue Observation')
+                            ->action(fn (Observation $record) => $record->issue()),
+                        // Tables\Actions\Action::make('received')
+                        //     ->icon('heroicon-o-paper-airplane')
+                        //     ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::IN_REVIEW)
+                        //     ->label('Issue Observation')
+                        //     ->action(fn (Observation $record) => $record->issue()),
+                        Tables\Actions\EditAction::make()
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::DRAFT),
                         Tables\Actions\ViewAction::make(),
                     ]
                 )
@@ -135,10 +152,14 @@ class ObservationResource extends Resource
                     ]),
                     Split::make([
                         Section::make('Observation Information')
+                            ->collapsible()
                             ->columns(2)
                             ->schema([
                                 TextEntry::make('title')
                                     ->label('Observation Title')
+                                    ->columnSpanFull(),
+                                TextEntry::make('criteria')
+                                    ->html()
                                     ->columnSpanFull(),
                             ]),
                     ]),
