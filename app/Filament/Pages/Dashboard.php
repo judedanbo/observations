@@ -18,7 +18,7 @@ class Dashboard extends PagesDashboard
 {
     use HasFiltersForm;
 
-    public function getColumns(): int|string|array
+    public function getColumns(): int | string | array
     {
         return [
             'lg' => 3,

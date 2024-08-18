@@ -29,7 +29,6 @@ class RecommendationsRelationManager extends RelationManager
         if ($status === AuditStatusEnum::ARCHIVED->value) {
             return true;
         }
-
         return false;
     }
 
@@ -46,10 +45,10 @@ class RecommendationsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('finding.title'),
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn (Recommendation $record): ?string => $record->description),
+                    ->description(fn(Recommendation $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Recommendations')
-                    ->description(fn (Recommendation $record): ?string => $record->description),
+                    ->description(fn(Recommendation $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('followUps.title'),
             ])
             ->filters([

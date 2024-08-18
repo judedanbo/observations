@@ -16,10 +16,9 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
-    protected int|string|array $columnSpan = [
+    protected int | string | array $columnSpan = [
         'md' => 6,
     ];
-
     protected function getStats(): array
     {
         $startDate = $this->filters['start_date'];
@@ -72,7 +71,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Audits Universe', Number::format(
                 Institution::query()
                     ->when($unitDepartment, function ($query, $unitDepartment) {
-                        return $query->whereHas('audits', fn ($query) => $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment)));
+                        return $query->whereHas('audits', fn($query) => $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment)));
                     })
                     ->count()
             ))
@@ -81,15 +80,15 @@ class StatsOverview extends BaseWidget
                 ->chart($institutionStats),
             Stat::make('Total Audits', Number::format(
                 Audit::query()
-                    ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
-                    ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
-                    ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
+                    ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
+                    ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+                    ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
+                    ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
                     ->when($findingType, function ($query, $findingType) {
-                        return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
+                        return $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
                     })
                     ->when($unitDepartment, function ($query, $unitDepartment) {
-                        return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                        return $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                     })
                     ->count()
             ))
@@ -111,20 +110,20 @@ class StatsOverview extends BaseWidget
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
-                            $query->whereHas('audit', fn ($query) => $query->where('status', $auditStatus));
+                            $query->whereHas('audit', fn($query) => $query->where('status', $auditStatus));
                         }
                     )
                     ->when(
                         $findingType,
                         function ($query, $findingType) {
-                            $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
+                            $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
                         }
                     )
                     ->when(
                         $unitDepartment,
                         function ($query, $unitDepartment) {
                             $query->whereHas('audit', function ($query) use ($unitDepartment) {
-                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                                $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                             });
                         }
                     )
@@ -148,7 +147,7 @@ class StatsOverview extends BaseWidget
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
-                            $query->whereHas('observation.audit', fn ($query) => $query->where('status', $auditStatus));
+                            $query->whereHas('observation.audit', fn($query) => $query->where('status', $auditStatus));
                         }
                     )
                     ->when(
@@ -161,7 +160,7 @@ class StatsOverview extends BaseWidget
                         $unitDepartment,
                         function ($query, $unitDepartment) {
                             $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
-                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                                $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                             });
                         }
                     )
@@ -183,7 +182,7 @@ class StatsOverview extends BaseWidget
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
-                            $query->whereHas('observation.audit', fn ($query) => $query->where('status', $auditStatus));
+                            $query->whereHas('observation.audit', fn($query) => $query->where('status', $auditStatus));
                         }
                     )
                     ->when(
@@ -196,7 +195,7 @@ class StatsOverview extends BaseWidget
                         $unitDepartment,
                         function ($query, $unitDepartment) {
                             $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
-                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                                $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                             });
                         }
                     )
@@ -222,7 +221,7 @@ class StatsOverview extends BaseWidget
                     ->when(
                         $auditStatus,
                         function ($query, $auditStatus) {
-                            $query->whereHas('observation.audit', fn ($query) => $query->where('status', $auditStatus));
+                            $query->whereHas('observation.audit', fn($query) => $query->where('status', $auditStatus));
                         }
                     )
                     ->when(
@@ -235,7 +234,7 @@ class StatsOverview extends BaseWidget
                         $unitDepartment,
                         function ($query, $unitDepartment) {
                             $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
-                                $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                                $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                             });
                         }
                     )
