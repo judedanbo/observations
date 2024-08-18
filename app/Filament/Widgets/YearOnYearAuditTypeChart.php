@@ -7,8 +7,10 @@ use Filament\Widgets\ChartWidget;
 class YearOnYearAuditTypeChart extends ChartWidget
 {
     protected static ?string $heading = 'Year on year audit recommendation by audit type';
+
     protected static ?int $sort = 7;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 6,
         // 'xl' => 3,
     ];
@@ -23,7 +25,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -32,7 +34,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(255, 99, 132, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -41,7 +43,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -50,7 +52,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -59,7 +61,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -68,7 +70,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 92, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -77,7 +79,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -86,7 +88,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 92, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -95,7 +97,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -104,7 +106,7 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -113,11 +115,11 @@ class YearOnYearAuditTypeChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => ['2022', '2023', '2023',],
+            'labels' => ['2022', '2023', '2023'],
         ];
     }
 

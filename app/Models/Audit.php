@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\AuditStatusEnum;
 use App\Enums\AuditTypeEnum;
-use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use App\Imports\ObservationImport;
 use Carbon\Carbon;
@@ -14,7 +13,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +24,7 @@ use Livewire\Component;
 
 class Audit extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -37,7 +35,7 @@ class Audit extends Model
         'actual_end_date',
         'year',
         'type',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -46,8 +44,8 @@ class Audit extends Model
         'planned_end_date' => 'date',
         'actual_start_date' => 'date',
         'actual_end_date' => 'date',
-        'status' =>  AuditStatusEnum::class,
-        'type' => AuditTypeEnum::class
+        'status' => AuditStatusEnum::class,
+        'type' => AuditTypeEnum::class,
     ];
 
     public function importObservations(string $file)
@@ -82,12 +80,14 @@ class Audit extends Model
 
     public function scopeScheduled(Builder $query): Builder
     {
-        return  $query->where('status', AuditStatusEnum::PLANNED);
+        return $query->where('status', AuditStatusEnum::PLANNED);
     }
+
     public function scopeIssued(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::ISSUED);
     }
+
     public function scopeTransmitted(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::TRANSMITTED);
@@ -97,6 +97,7 @@ class Audit extends Model
     {
         return $query->where('status', AuditStatusEnum::TERMINATED);
     }
+
     public function scopeArchived(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::ARCHIVED);
@@ -132,12 +133,14 @@ class Audit extends Model
         $this->actual_start_date = now();
         $this->save();
     }
+
     public function issue()
     {
         $this->status = AuditStatusEnum::ISSUED;
         $this->actual_end_date = now();
         $this->save();
     }
+
     public function transmit()
     {
         $this->status = AuditStatusEnum::TRANSMITTED;
@@ -149,6 +152,7 @@ class Audit extends Model
         $this->status = AuditStatusEnum::TERMINATED;
         $this->save();
     }
+
     public function archive()
     {
         $this->status = AuditStatusEnum::ARCHIVED;
@@ -166,7 +170,8 @@ class Audit extends Model
         if (gettype($team) === 'array') {
             return $this->teams()->create(['name' => $team['name']]);
         }
-        return $this->teams()->create(['name' => $this->title . ' Team']);
+
+        return $this->teams()->create(['name' => $this->title.' Team']);
     }
 
     public function addTeam($team)
@@ -176,13 +181,10 @@ class Audit extends Model
 
     public function addTeamMember(array|int|null $team, array $member)
     {
-        // dd($team);
-        // dd($member);
         $team = $this->createTeam($team);
         if ($team === null) {
             return;
         }
-        // dd($team->staff()->sync($member['staff']));
         // $newTeam  = $this->teams()->attach($team['team_id']);
         $team->staff()?->sync($member);
     }
@@ -212,32 +214,33 @@ class Audit extends Model
     {
         if ($this->planned_start_date === null) {
             if ($this->planned_end_date !== null) {
-                return 'To end ' . $this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+                return 'To end '.$this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
             }
+
             return 'Not scheduled';
         }
         if ($this->planned_start_date->gt(now())) {
-            return 'To start ' . $this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+            return 'To start '.$this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
         }
         if ($this->planned_start_date->lt(now())) {
             if ($this->status === AuditStatusEnum::PLANNED) {
-                return 'planned start passed ' . $this->planned_start_date->diffForHumans([
-                    'options' => Carbon::ONE_DAY_WORDS
+                return 'planned start passed '.$this->planned_start_date->diffForHumans([
+                    'options' => Carbon::ONE_DAY_WORDS,
                 ]);
             }
             if ($this->planned_end_date?->lt(now())) {
                 if ($this->status === AuditStatusEnum::IN_PROGRESS) {
-                    return 'passed due' . $this->planned_end_date->diffForHumans([
-                        'options' => Carbon::ONE_DAY_WORDS
+                    return 'passed due'.$this->planned_end_date->diffForHumans([
+                        'options' => Carbon::ONE_DAY_WORDS,
                     ]);
                 }
             }
             // return 'On time';
         }
         if ($this->planned_start_date->eq($this->planned_end_date)) {
-            // dd('same');
             return $this->planned_start_date->format('d M Y');
         }
+
         return 'On time';
         // return $this->planned_start_date->format('d M Y') . ' - ' . $this->planned_end_date->format('d M Y');
     }
@@ -289,7 +292,6 @@ class Audit extends Model
             //             // $this->fillForm();
             //             $data = Audit::factory()->make()->toArray();
 
-            //             dd($livewire->table);
             //             $livewire->form->fill($data);
             //         }),
             // ])

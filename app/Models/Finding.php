@@ -4,25 +4,21 @@ namespace App\Models;
 
 use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Observation;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Builder;
 
 class Finding extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -30,7 +26,7 @@ class Finding extends Model
         'observation_id',
         'type',
         'amount',
-        'surcharge_amount'
+        'surcharge_amount',
     ];
 
     protected $casts = [
@@ -38,7 +34,7 @@ class Finding extends Model
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
         'amount' => 'decimal:2',
-        'surcharge_amount' => 'decimal:2'
+        'surcharge_amount' => 'decimal:2',
     ];
 
     public function statuses(): BelongsToMany
@@ -85,14 +81,17 @@ class Finding extends Model
     {
         return $this->recoveries()->sum('amount');
     }
+
     public function scopeFinancial(Builder $query): Builder
     {
         return $query->where('type', FindingTypeEnum::FIN);
     }
+
     public function scopeControl(Builder $query): Builder
     {
         return $query->where('type', FindingTypeEnum::INT);
     }
+
     public function scopeCompliance(Builder $query): Builder
     {
         return $query->where('type', FindingTypeEnum::COM);
@@ -160,7 +159,7 @@ class Finding extends Model
                     TextInput::make('surcharge_amount')
                         ->numeric()
                         ->minValue(0.01),
-                ])
+                ]),
 
         ];
     }

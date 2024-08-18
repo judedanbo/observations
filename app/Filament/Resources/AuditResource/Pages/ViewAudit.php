@@ -8,7 +8,6 @@ use App\Models\Audit;
 use App\Models\Observation;
 use App\Models\Staff;
 use App\Models\Team;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -33,8 +32,7 @@ class ViewAudit extends ViewRecord
                     ->label(fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED ? 'Start audit' : 'Resume audit')
                     ->icon('heroicon-o-play-circle')
                     ->visible(
-                        fn (Audit $record) =>
-                        $record->status === AuditStatusEnum::PLANNED
+                        fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED
                             || $record->status === AuditStatusEnum::TERMINATED
                     )
                     ->action(fn (Audit $record) => $record->start())
@@ -45,13 +43,12 @@ class ViewAudit extends ViewRecord
                             ->body('The audit has been started')
                             ->send();
                     }),
-                // TODO add support for multiple teams with relationships 
+                // TODO add support for multiple teams with relationships
                 Action::make('audit_team')
                     ->slideOver()
                     ->label('Manage Audit Team')
                     ->icon('heroicon-o-user-plus')
-                    ->visible(fn (Audit $record) =>
-                    $record->status === AuditStatusEnum::PLANNED
+                    ->visible(fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED
                         || $record->status === AuditStatusEnum::IN_PROGRESS)
                     ->form(
                         [
@@ -66,7 +63,7 @@ class ViewAudit extends ViewRecord
                                         ->editOptionForm(Team::getForm())
                                         ->createOptionForm(Team::getForm())
                                         ->preload()
-                                        ->default(fn (Audit|null $record) => $record?->teams()->first()?->id ?? null)
+                                        ->default(fn (?Audit $record) => $record?->teams()->first()?->id ?? null)
                                         ->searchable()
                                         ->label('Team')
                                         ->required(),
@@ -83,16 +80,15 @@ class ViewAudit extends ViewRecord
                                         ->createOptionForm(Staff::getForm())
                                         ->createOptionUsing(function ($data) {
                                             return Staff::create($data)->id;
-                                        })
+                                        }),
 
                                 ])
                                 ->reorderableWithButtons()
-                                ->collapsible()
+                                ->collapsible(),
                             // ->itemLabel(fn (array $state): ?string => $state['team_id'] ?? null)
                         ]
                     )
                     ->action(function (Audit $record, array $data) {
-                        // dd($data);
                         collect($data['audit_team'])->each(function ($team) use ($record) {
                             $record->addTeamMember(team: $team['team_id'], member: $team['staff']);
                         });
@@ -113,14 +109,13 @@ class ViewAudit extends ViewRecord
                                 ->schema(components: Observation::getForm())
                                 ->collapsible()
                                 ->reorderableWithButtons()
-                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
                         ]
                     )
                     ->label('Create Observations')
                     ->icon('heroicon-o-document-text')
                     ->visible(
-                        fn (Audit $record) =>
-                        $record->status === AuditStatusEnum::IN_PROGRESS
+                        fn (Audit $record) => $record->status === AuditStatusEnum::IN_PROGRESS
                     )
                     ->action(function (Audit $record, array $data) {
                         collect($data['observations'])->each(function ($observation) {
@@ -148,8 +143,7 @@ class ViewAudit extends ViewRecord
                     ->label('Initiate transmission')
                     ->icon('heroicon-o-paper-airplane')
                     ->visible(
-                        fn (Audit $record) =>
-                        $record->status === AuditStatusEnum::ISSUED
+                        fn (Audit $record) => $record->status === AuditStatusEnum::ISSUED
                     )
                     ->action(fn (Audit $record) => $record->transmit())
                     ->after(function () {
@@ -187,7 +181,7 @@ class ViewAudit extends ViewRecord
                             ->title('Audit terminated')
                             ->body('The audit has been ended')
                             ->send();
-                    })
+                    }),
             ]),
         ];
     }

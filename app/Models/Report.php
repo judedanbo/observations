@@ -10,7 +10,6 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,6 +45,7 @@ class Report extends Model
     {
         return $this->belongsTo(Audit::class);
     }
+
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
@@ -64,7 +64,6 @@ class Report extends Model
 
     public function recommend($data)
     {
-        // dd($this->recommendations);
         $this->recommendations()->create($data);
     }
 
@@ -72,14 +71,17 @@ class Report extends Model
     {
         return $this->where('section', AuditDepartmentEnum::CGAD);
     }
+
     public function scopeCad()
     {
         return $this->where('section', AuditDepartmentEnum::CAD_SOE);
     }
+
     public function scopeSpecial()
     {
         return $this->where('section', AuditDepartmentEnum::SPECIAL);
     }
+
     public function scopePerformance()
     {
         return $this->where('section', AuditDepartmentEnum::PSAD);

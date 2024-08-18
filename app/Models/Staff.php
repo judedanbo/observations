@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Staff extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'name',

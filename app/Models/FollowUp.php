@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -18,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FollowUp extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -88,7 +86,6 @@ class FollowUp extends Model
                     name: 'finding',
                     titleAttribute: 'title',
                     modifyQueryUsing: function (Builder $query, Get $get) {
-                        // dd($get('observation_id'));
                         $query->when(
                             $get('observation_id'),
                             fn (Builder $query, $observationId) => $query->where('observation_id', $observationId)

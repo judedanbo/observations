@@ -2,11 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Action;
-use App\Models\Finding;
 use App\Models\FollowUp;
 use App\Models\Observation;
-use App\Models\Recommendation;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FollowUpFactory extends Factory
@@ -23,6 +20,7 @@ class FollowUpFactory extends Factory
         $findingId = $finding?->id;
         $recommendation = $finding?->recommendations?->first();
         $recommendationId = $recommendation?->id;
+
         return [
             'title' => $this->faker->realText(100),
             'description' => $this->faker->realText(200),

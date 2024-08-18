@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EffectResource\Pages;
 use App\Models\Effect;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -17,10 +16,12 @@ class EffectResource extends Resource
     protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-down-on-square-stack';
+
     public static function canViewAny(): bool
     {
         return false;
     }
+
     public static function form(Form $form): Form
     {
         return $form

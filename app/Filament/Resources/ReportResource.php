@@ -20,11 +20,9 @@ class ReportResource extends Resource
 
     protected static ?string $label = 'Excel Imports';
 
-
     protected static ?string $model = Report::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-paper-clip';
-
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -44,7 +42,7 @@ class ReportResource extends Resource
                                 ->columnSpanFull(),
                             TextEntry::make('finding.title')
                                 ->columnSpanFull(),
-                        ])
+                        ]),
                 ]),
                 Split::make([
                     Section::make('Implementation')
@@ -55,7 +53,7 @@ class ReportResource extends Resource
                             TextEntry::make('implementation_status'),
                             TextEntry::make('comments')
                                 ->columnSpanFull(),
-                        ])
+                        ]),
                 ]),
                 Split::make([
                     Section::make('Observation')
@@ -84,10 +82,10 @@ class ReportResource extends Resource
                             //     ->date(),
                             // TextEntry::make('implementation_status'),
                             // TextEntry::make('comments'),
-                        ])
+                        ]),
                 ])
                     ->columnStart(1)
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
 
             ]);
     }
@@ -163,7 +161,7 @@ class ReportResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RecommendationsRelationManager::class
+            RecommendationsRelationManager::class,
         ];
     }
 

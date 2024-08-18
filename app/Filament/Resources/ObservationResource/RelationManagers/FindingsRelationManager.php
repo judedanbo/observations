@@ -3,13 +3,7 @@
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
 use App\Enums\AuditStatusEnum;
-use App\Enums\ObservationStatusEnum;
 use App\Models\Finding;
-use App\Models\Recovery;
-use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Forms;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -18,9 +12,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\HtmlString;
 
 class FindingsRelationManager extends RelationManager
 {
@@ -41,6 +32,7 @@ class FindingsRelationManager extends RelationManager
         if ($status === AuditStatusEnum::ARCHIVED->value) {
             return true;
         }
+
         return false;
     }
 
@@ -58,7 +50,7 @@ class FindingsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn (Finding $record): string  | null =>  $record->description),
+                    ->description(fn (Finding $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
                 Tables\Columns\TextColumn::make('causes.title')
@@ -145,7 +137,7 @@ class FindingsRelationManager extends RelationManager
                                 ->step(0.01)
                                 ->required(),
                             TextInput::make('comments')
-                                ->columnSpanFull()
+                                ->columnSpanFull(),
                         ])
                         ->action(function ($data, $record) {
                             $record->recoveries()->create($data);
@@ -153,7 +145,7 @@ class FindingsRelationManager extends RelationManager
                         }),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

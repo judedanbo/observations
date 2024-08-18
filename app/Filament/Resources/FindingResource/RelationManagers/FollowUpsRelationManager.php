@@ -3,21 +3,20 @@
 namespace App\Filament\Resources\FindingResource\RelationManagers;
 
 use App\Models\FollowUp;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class FollowUpsRelationManager extends RelationManager
 {
     protected static string $relationship = 'followUps';
+
     public function isReadOnly(): bool
     {
         return false;
     }
+
     public function form(Form $form): Form
     {
         return $form

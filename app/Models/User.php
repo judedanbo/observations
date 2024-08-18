@@ -14,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes, LogAllTraits;
+    use HasApiTokens, HasFactory, HasRoles, LogAllTraits, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -26,7 +26,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
 
     protected $casts = [
         'email_verified_at' => 'datetime',

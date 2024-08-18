@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -57,9 +57,10 @@ class Unit extends Model
                         if ($operation !== 'create') {
                             return false;
                         }
-                        if (!app()->environment('local')) {
+                        if (! app()->environment('local')) {
                             return false;
                         }
+
                         return true;
                     })
                     ->action(function ($livewire) {

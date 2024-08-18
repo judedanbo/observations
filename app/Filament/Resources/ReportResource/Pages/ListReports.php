@@ -6,13 +6,11 @@ use App\Enums\AuditDepartmentEnum;
 use App\Filament\Resources\ReportResource;
 use App\Imports\ObservationImport;
 use App\Models\Audit;
-use App\Models\Report;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Resources\Components\Tab;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\Action;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -36,6 +34,7 @@ class ListReports extends ListRecords
 
         ];
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -53,10 +52,10 @@ class ListReports extends ListRecords
                         ->required(),
                     FileUpload::make('filename')
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                        ->required()
+                        ->required(),
                 ])
                 ->action(function (array $data) {
-                    $file  = public_path('storage/' . $data['filename']);
+                    $file = public_path('storage/'.$data['filename']);
                     try {
                         $data = (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
                         Notification::make('Observations Loaded')

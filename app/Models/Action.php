@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Action extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -146,9 +146,10 @@ class Action extends Model
                         if ($operation !== 'create') {
                             return false;
                         }
-                        if (!app()->environment('local')) {
+                        if (! app()->environment('local')) {
                             return false;
                         }
+
                         return true;
                     })
                     ->action(function ($livewire) {
@@ -157,7 +158,7 @@ class Action extends Model
                     }),
             ])
                 ->label('Actions')
-                ->columnSpanFull()
+                ->columnSpanFull(),
         ];
     }
 }

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Leader extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'staff_number',
@@ -63,9 +63,10 @@ class Leader extends Model
                         if ($operation !== 'create') {
                             return false;
                         }
-                        if (!app()->environment('local')) {
+                        if (! app()->environment('local')) {
                             return false;
                         }
+
                         return true;
                     })
                     ->action(function ($livewire) {

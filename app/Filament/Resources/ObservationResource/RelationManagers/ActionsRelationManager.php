@@ -3,13 +3,10 @@
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
 use App\Models\Action;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ActionsRelationManager extends RelationManager
 {
@@ -36,7 +33,7 @@ class ActionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('recommendation.title'),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Management Action')
-                    ->description(fn (Action $record): string | null => $record->description),
+                    ->description(fn (Action $record): ?string => $record->description),
             ])
             ->filters([
                 //

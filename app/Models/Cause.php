@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -17,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cause extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',

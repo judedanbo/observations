@@ -7,8 +7,10 @@ use Filament\Widgets\ChartWidget;
 class YearOnYearObservationsChart extends ChartWidget
 {
     protected static ?string $heading = 'Year on year finding type';
+
     protected static ?int $sort = 6;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 2,
         // 'xl' => 3,
     ];
@@ -23,7 +25,7 @@ class YearOnYearObservationsChart extends ChartWidget
                     'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -32,7 +34,7 @@ class YearOnYearObservationsChart extends ChartWidget
                     'backgroundColor' => 'rgba(255, 99, 132, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -41,11 +43,11 @@ class YearOnYearObservationsChart extends ChartWidget
                     'backgroundColor' => 'rgba(75, 192, 192, 0.5)',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => ['2022', '2023', '2023',],
+            'labels' => ['2022', '2023', '2023'],
         ];
     }
 

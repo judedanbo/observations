@@ -11,11 +11,14 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class AuditUniverseTable extends BaseWidget
 {
     use InteractsWithPageFilters;
+
     protected static ?int $sort = 8;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 3,
         // 'xl' => 3,
     ];
+
     public function table(Table $table): Table
     {
         $unitDepartment = $this->filters['unit_department'];

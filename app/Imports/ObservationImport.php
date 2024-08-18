@@ -29,7 +29,6 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
         $this->audit_section = $audit_section;
     }
 
-
     public function collection(Collection $collection)
     {
         $loaded = 0;
@@ -50,7 +49,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
             ]);
 
             $audit = Audit::firstOrCreate([
-                'title' => 'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
+                'title' => 'Audit of '.$row['covered_entity'].' '.$row['report_financial_year'],
                 'year' => $row['report_financial_year'],
                 'status' => 'issued',
             ]);
@@ -63,7 +62,6 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
                 'status' => ObservationStatusEnum::ISSUED,
             ]);
             $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
-            // dd($type);
             $finding = Finding::create([
                 'observation_id' => $observation->id,
                 'title' => $row['title_of_finding'],
@@ -78,7 +76,6 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
             ]);
 
             // $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
-            // dd($type);
             $report = Report::firstOrCreate(
                 [
                     'institution_id' => $institution->id,
@@ -94,7 +91,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
                     'surcharge_amount' => null,
                     'implementation_date' => Carbon::createFromTimestamp(($row['implementation_dateyear'] - 25569) * 86400)->toDateString(),
                     'implementation_status' => $row['implementation_status'],
-                    'comments' => $row['comments_if_any']
+                    'comments' => $row['comments_if_any'],
                 ]
             );
         }
@@ -135,11 +132,10 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation
         ];
     }
 
-
     public function customValidationAttributes(): array
     {
         return [
-            'implementation_dateyear' => 'Implementation date'
+            'implementation_dateyear' => 'Implementation date',
         ];
     }
 }

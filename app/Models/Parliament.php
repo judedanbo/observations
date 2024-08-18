@@ -67,7 +67,6 @@ class Parliament extends Model
                 ->default(now()),
             // DatePicker::make('implementation_date'),
 
-
         ];
     }
 }

@@ -4,8 +4,8 @@ namespace App\Filament\Resources\FindingResource\Pages;
 
 use App\Filament\Resources\FindingResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListFindings extends ListRecords
@@ -19,6 +19,7 @@ class ListFindings extends ListRecords
                 ->slideOver(),
         ];
     }
+
     public function getTabs(): array
     {
         return [

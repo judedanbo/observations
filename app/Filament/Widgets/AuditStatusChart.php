@@ -11,11 +11,13 @@ class AuditStatusChart extends ChartWidget
     use InteractsWithPageFilters;
 
     protected static ?string $heading = 'Audit Status';
+
     protected static ?int $sort = 2;
+
     // protected static ?string $maxHeight = '180px';
     protected static ?array $options = [];
 
-    protected int | string | array $columnSpan = [
+    protected int|string|array $columnSpan = [
         'md' => 2,
         // 'xl' => 3,
     ];
@@ -29,7 +31,7 @@ class AuditStatusChart extends ChartWidget
         $unitDepartment = $this->filters['unit_department'];
         $observationStatus = $this->filters['observation_status'];
 
-        $data  =  Audit::query()
+        $data = Audit::query()
             ->selectRaw('status, count(*) as count')
             ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
             ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
@@ -43,19 +45,19 @@ class AuditStatusChart extends ChartWidget
             })
             ->groupBy('status')
             ->get();
+
         // ->mapWithKeys(fn ($item) => [$item->status => $item->count])
         // ->toArray();
-        // dd($data->map(fn ($item) => 'rgb(' . $item->status->getColor()['500'] . ')'));
         return [
             'datasets' => [
                 [
                     // 'label' => 'Blog posts created',
                     'data' => $data->pluck('count'),
-                    'backgroundColor' => $data->map(fn ($item) => 'rgb(' . $item->status->getColor()['500'] . ')'),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->status->getColor()['500'].')'),
                     // 'borderColor' => '#FF0000',
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
             ],

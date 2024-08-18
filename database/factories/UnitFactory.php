@@ -13,8 +13,9 @@ class UnitFactory extends Factory
     public function definition(): array
     {
         $department = Department::inRandomOrder()->first()->id;
+
         return [
-            'name' => $this->faker->jobTitle() . ' Unit',
+            'name' => $this->faker->jobTitle().' Unit',
             'description' => $this->faker->realText(100),
             'department_id' => $department,
         ];

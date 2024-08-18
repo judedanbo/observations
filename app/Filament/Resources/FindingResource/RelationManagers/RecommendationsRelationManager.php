@@ -3,13 +3,10 @@
 namespace App\Filament\Resources\FindingResource\RelationManagers;
 
 use App\Models\Recommendation;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RecommendationsRelationManager extends RelationManager
 {
@@ -19,6 +16,7 @@ class RecommendationsRelationManager extends RelationManager
     {
         return false;
     }
+
     public function form(Form $form): Form
     {
         return $form

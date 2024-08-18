@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\District;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DistrictPolicy
 {
@@ -27,7 +26,6 @@ class DistrictPolicy
     {
         return $user->can('update district');
     }
-
 
     public function delete(User $user, District $district): bool
     {

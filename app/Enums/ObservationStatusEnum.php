@@ -7,7 +7,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum ObservationStatusEnum: string implements HasLabel, HasDescription, HasColor
+enum ObservationStatusEnum: string implements HasColor, HasDescription, HasLabel
 {
     case DRAFT = 'draft';
     case IN_REVIEW = 'in_review';
@@ -38,8 +38,6 @@ enum ObservationStatusEnum: string implements HasLabel, HasDescription, HasColor
         };
     }
 
-
-
     public function getDescription(): string
     {
         return match ($this) {
@@ -57,7 +55,7 @@ enum ObservationStatusEnum: string implements HasLabel, HasDescription, HasColor
         };
     }
 
-    public function getColor(): string | array | null
+    public function getColor(): string|array|null
     {
         return match ($this) {
             self::DRAFT => Color::Orange,

@@ -10,7 +10,6 @@ use App\Filament\Resources\FindingResource\RelationManagers\FollowUpsRelationMan
 use App\Filament\Resources\FindingResource\RelationManagers\RecommendationsRelationManager;
 use App\Filament\Resources\FindingResource\RelationManagers\RecoveriesRelationManager;
 use App\Models\Finding;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -32,6 +31,7 @@ class FindingResource extends Resource
         return $form
             ->schema(Finding::getForm());
     }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
@@ -125,7 +125,7 @@ class FindingResource extends Resource
             RecommendationsRelationManager::class,
             FollowUpsRelationManager::class,
             RecoveriesRelationManager::class,
-            DirectivesRelationManager::class
+            DirectivesRelationManager::class,
         ];
     }
 

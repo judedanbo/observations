@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Document;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -109,7 +108,6 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore finding']);
         Permission::create(['name' => 'destroy finding']);
 
-
         // Department permissions
         Permission::create(['name' => 'create department']);
         Permission::create(['name' => 'update department']);
@@ -126,7 +124,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore unit']);
         Permission::create(['name' => 'destroy unit']);
 
-        // 
+        //
 
         // action permissions
         Permission::create(['name' => 'create action']);
@@ -202,8 +200,6 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore parliament recommendation']);
         Permission::create(['name' => 'destroy parliament recommendation']);
 
-
-
         // create roles and assign created permissions
 
         // this can be done as separate statements
@@ -235,7 +231,6 @@ class RolesAndPermissionsSeeder extends Seeder
             ->givePermissionTo([]);
         Role::create(['name' => 'Parliamentarian'])
             ->givePermissionTo([]);
-
 
         // $role->givePermissionTo('update articles');
     }

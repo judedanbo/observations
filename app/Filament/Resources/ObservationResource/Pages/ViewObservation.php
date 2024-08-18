@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ObservationResource\Pages;
 use App\Enums\ObservationStatusEnum;
 use App\Filament\Resources\ObservationResource;
 use App\Models\Observation;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;

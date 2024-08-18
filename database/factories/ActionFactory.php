@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Action;
-use App\Models\Finding;
 use App\Models\FollowUp;
 use App\Models\Observation;
 use App\Models\Recommendation;
@@ -23,6 +22,7 @@ class ActionFactory extends Factory
         $findingId = $finding?->id;
         $recommendation = $finding?->recommendations?->first();
         $recommendationId = $recommendation?->id;
+
         return [
             'title' => $this->faker->realText(100),
             'description' => $this->faker->realText(500),

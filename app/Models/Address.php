@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Address extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'street',
@@ -23,7 +23,6 @@ class Address extends Model
     protected $casts = [
         'id' => 'integer',
     ];
-
 
     public function institutions(): BelongsToMany
     {

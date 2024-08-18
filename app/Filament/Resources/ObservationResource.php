@@ -5,21 +5,19 @@ namespace App\Filament\Resources;
 use App\Enums\ObservationStatusEnum;
 use App\Filament\Resources\ObservationResource\Pages;
 use App\Filament\Resources\ObservationResource\RelationManagers\ActionsRelationManager;
-use App\Filament\Resources\ObservationResource\RelationManagers\AuditActionsRelationManager;
 use App\Filament\Resources\ObservationResource\RelationManagers\FindingsRelationManager;
 use App\Filament\Resources\ObservationResource\RelationManagers\FollowUpsRelationManager;
 use App\Filament\Resources\ObservationResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Observation;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 
 class ObservationResource extends Resource
@@ -29,7 +27,6 @@ class ObservationResource extends Resource
     protected static ?string $navigationGroup = 'Audit';
 
     protected static ?string $navigationIcon = 'heroicon-o-eye';
-
 
     public static function form(Form $form): Form
     {
@@ -128,9 +125,10 @@ class ObservationResource extends Resource
             FindingsRelationManager::class,
             RecommendationsRelationManager::class,
             ActionsRelationManager::class,
-            FollowUpsRelationManager::class
+            FollowUpsRelationManager::class,
         ];
     }
+
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist

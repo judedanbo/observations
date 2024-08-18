@@ -15,12 +15,12 @@ class District extends Model
 
     protected $fillable = [
         'name',
-        'region_id'
+        'region_id',
     ];
 
     protected $casts = [
         'id' => 'integer',
-        'region_id' => 'integer'
+        'region_id' => 'integer',
     ];
 
     public function region(): BelongsTo

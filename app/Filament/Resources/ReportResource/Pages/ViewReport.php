@@ -5,13 +5,11 @@ namespace App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource;
 use App\Models\Parliament;
 use App\Models\Report;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Tables\Actions\AssociateAction;
 
 class ViewReport extends ViewRecord
 {
@@ -31,9 +29,10 @@ class ViewReport extends ViewRecord
                     ->form(Parliament::getForm($this->record->finding_id))
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['finding_id'] = $this->record->finding_id;
+
                         return $data;
                     })
-                    ->action(fn (Report $record, array $data) => $record->recommend($data))
+                    ->action(fn (Report $record, array $data) => $record->recommend($data)),
                 // ->after(function () {
                 //     Notification::make()
                 //         ->success()

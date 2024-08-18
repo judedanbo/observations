@@ -4,14 +4,11 @@ namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
 use App\Enums\AuditStatusEnum;
 use App\Models\Recommendation;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RecommendationsRelationManager extends RelationManager
 {
@@ -32,6 +29,7 @@ class RecommendationsRelationManager extends RelationManager
         if ($status === AuditStatusEnum::ARCHIVED->value) {
             return true;
         }
+
         return false;
     }
 
@@ -48,10 +46,10 @@ class RecommendationsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('finding.title'),
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn (Recommendation $record): string|null => $record->description),
+                    ->description(fn (Recommendation $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('title')
                     ->label('Recommendations')
-                    ->description(fn (Recommendation $record): string|null => $record->description),
+                    ->description(fn (Recommendation $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('followUps.title'),
             ])
             ->filters([
@@ -64,7 +62,7 @@ class RecommendationsRelationManager extends RelationManager
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

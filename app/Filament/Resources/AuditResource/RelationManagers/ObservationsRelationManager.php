@@ -31,7 +31,7 @@ class ObservationsRelationManager extends RelationManager
     public function isReadOnly(): bool
     {
         return $this->getOwnerRecord()->status !== AuditStatusEnum::IN_PROGRESS;
-        false;
+
     }
 
     public function form(Form $form): Form
@@ -69,7 +69,7 @@ class ObservationsRelationManager extends RelationManager
                     ->badge(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -93,10 +93,10 @@ class ObservationsRelationManager extends RelationManager
                             ->native(false)
                             ->label('Select Audit Type'),
                         FileUpload::make('filename')
-                            ->required()
+                            ->required(),
                     ])
                     ->action(function (array $data) {
-                        $file  = public_path('storage/' . $data['filename']);
+                        $file = public_path('storage/'.$data['filename']);
                         $audit = Audit::find($this->getOwnerRecord()->id);
                         $audit->importObservations($file);
                     })
@@ -116,7 +116,7 @@ class ObservationsRelationManager extends RelationManager
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
-                ])
+                ]),
                 // Tables\Actions\DetachAction::make(),
             ])
             ->bulkActions([

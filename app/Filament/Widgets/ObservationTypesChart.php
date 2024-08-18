@@ -12,10 +12,12 @@ class ObservationTypesChart extends ChartWidget
     use InteractsWithPageFilters;
 
     protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 2,
         // 'xl' => 3,
     ];
+
     protected static ?string $heading = 'Finding by types';
 
     protected function getData(): array
@@ -27,7 +29,7 @@ class ObservationTypesChart extends ChartWidget
         $unitDepartment = $this->filters['unit_department'];
         $observationStatus = $this->filters['observation_status'];
 
-        $data  =  Finding::query()
+        $data = Finding::query()
             // ->join('findings', 'observations.id', '=', 'findings.observation_id')
             ->selectRaw('type, count(*) as count')
             ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
@@ -61,20 +63,17 @@ class ObservationTypesChart extends ChartWidget
             ->groupBy('type')
             ->get();
 
-        // dd($data->map(fn ($item) =>  $item->type->getColor()));
-
         // 'rgb(' . $item->status->getColor()['500'] . ')'
-
 
         return [
             'datasets' => [
                 [
                     'label' => 'Findings types',
-                    'backgroundColor' => $data->map(fn ($item) => 'rgb(' . $item->type->getColor()['500'] . ')'),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->type->getColor()['500'].')'),
                     'data' => $data->map(fn ($item) => $item->count),
                     'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
             ],

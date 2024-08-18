@@ -6,13 +6,9 @@ use App\Enums\AuditStatusEnum;
 use App\Filament\Resources\AuditResource;
 use App\Models\Audit;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
-use Filament\Tables\Table;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-
-use function PHPUnit\Framework\callback;
 
 class ListAudits extends ListRecords
 {
@@ -50,11 +46,11 @@ class ListAudits extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->archived()),
             'terminated' => Tab::make('Terminated')
                 ->badge($this->auditStatuses[AuditStatusEnum::TERMINATED->value] ?? 0)
-                ->modifyQueryUsing(fn (Builder $query) => $query->terminated())
-
+                ->modifyQueryUsing(fn (Builder $query) => $query->terminated()),
 
         ];
     }
+
     protected function getHeaderActions(): array
     {
         return [

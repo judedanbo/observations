@@ -7,11 +7,14 @@ use Filament\Widgets\ChartWidget;
 class ParliamentDirectivesChart extends ChartWidget
 {
     protected static ?string $heading = 'PAC directives by year';
+
     protected static ?int $sort = 8;
-    protected int | string | array $columnSpan = [
+
+    protected int|string|array $columnSpan = [
         'md' => 3,
         // 'xl' => 3,
     ];
+
     protected function getData(): array
     {
         return [
@@ -22,7 +25,7 @@ class ParliamentDirectivesChart extends ChartWidget
                     'borderColor' => 'rgb(54, 162, 235)',
                     // 'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
@@ -31,22 +34,22 @@ class ParliamentDirectivesChart extends ChartWidget
                     'borderColor' => 'rgb(255, 99, 132)',
                     // 'borderWidth' => 0,
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
                 [
                     'label' => 'Closed Directives',
                     'data' => [24, 50, 200],
 
-                    "fill" => false,
+                    'fill' => false,
                     'borderColor' => 'rgb(75, 192, 192)',
-                    "tension" => '0.1',
+                    'tension' => '0.1',
                     'animation' => [
-                        'duration' => 1500
+                        'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => ['2022', '2023', '2023',]
+            'labels' => ['2022', '2023', '2023'],
         ];
     }
 

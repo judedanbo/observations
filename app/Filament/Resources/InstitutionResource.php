@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InstitutionResource\Pages;
 use App\Filament\Resources\InstitutionResource\RelationManagers\LeadersRelationManager;
 use App\Models\Institution;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
@@ -101,7 +100,7 @@ class InstitutionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            LeadersRelationManager::class
+            LeadersRelationManager::class,
         ];
     }
 

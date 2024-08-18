@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Status extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -75,17 +74,18 @@ class Status extends Model
                         if ($operation !== 'create') {
                             return false;
                         }
-                        if (!app()->environment('local')) {
+                        if (! app()->environment('local')) {
                             return false;
                         }
+
                         return true;
                     })
                     ->action(function ($livewire) {
                         $data = Status::factory()->make()->toArray();
                         $livewire->form->fill($data);
-                    })
+                    }),
             ])
-                ->columnSpanFull()
+                ->columnSpanFull(),
         ];
     }
 }

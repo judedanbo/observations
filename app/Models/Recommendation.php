@@ -3,9 +3,6 @@
 namespace App\Models;
 
 use App\Http\Traits\LogAllTraits;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -18,13 +15,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Recommendation extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'title',
         'description',
         'finding_id',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -48,7 +45,7 @@ class Recommendation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
-    public static function getForm(int|null $findingId = null): array
+    public static function getForm(?int $findingId = null): array
     {
         return [
             Select::make('finding_id')

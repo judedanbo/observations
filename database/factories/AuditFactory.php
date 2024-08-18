@@ -11,9 +11,10 @@ class AuditFactory extends Factory
 
     public function definition(): array
     {
-        $plannedDate =  now()->addMonths($this->faker->numberBetween(1, 12));
+        $plannedDate = now()->addMonths($this->faker->numberBetween(1, 12));
         $plannedEndDate = $plannedDate->addMonths($this->faker->numberBetween(1, 3));
         $actualDate = now()->addMonths($this->faker->numberBetween(1, 12));
+
         return [
             'title' => $this->faker->realText(100),
             'description' => $this->faker->realText(200),

@@ -7,6 +7,7 @@ use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,23 +15,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Builder;
 
 class Observation extends Model
 {
-    use HasFactory, SoftDeletes, LogAllTraits;
+    use HasFactory, LogAllTraits, SoftDeletes;
 
     protected $fillable = [
         'audit_id', // 'audit_id' is the foreign key
         'title',
         'criteria',
-        'status'
+        'status',
     ];
 
     protected $casts = [
         'id' => 'integer',
         'audit_id' => 'integer',
-        'status' => ObservationStatusEnum::class
+        'status' => ObservationStatusEnum::class,
     ];
 
     public function audit(): BelongsTo
@@ -40,7 +40,7 @@ class Observation extends Model
 
     public function actions(): HasMany
     {
-        return $this->HasMany(Action::class,);
+        return $this->HasMany(Action::class);
     }
 
     public function statuses(): BelongsToMany
@@ -77,34 +77,42 @@ class Observation extends Model
     {
         return $query->where('status', ObservationStatusEnum::DRAFT);
     }
+
     public function scopeInReview(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::IN_REVIEW);
     }
+
     public function scopeIssued(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::ISSUED);
     }
+
     public function scopeTeamResolved(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::TEAM_RESOLVED);
     }
+
     public function scopeReported(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::REPORTED);
     }
+
     public function scopeDaResolved(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::DA_RESOLVED);
     }
+
     public function scopeRaResolved(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::RA_RESOLVED);
     }
+
     public function scopeAgResolved(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::AG_RESOLVED);
     }
+
     public function scopePacResolved(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::PAC_RESOLVED);
@@ -116,24 +124,28 @@ class Observation extends Model
         $this->status = ObservationStatusEnum::IN_REVIEW;
         $this->save();
     }
+
     public function issue()
     {
         //  TODO: Implement issue observation method.
         $this->status = ObservationStatusEnum::ISSUED;
         $this->save();
     }
+
     public function receive()
     {
         //  TODO: Implement issue observation method.
         $this->status = ObservationStatusEnum::RECEIVED;
         $this->save();
     }
+
     public function respond()
     {
         //  TODO: Implement issue observation method.
         $this->status = ObservationStatusEnum::RESPONDED;
         $this->save();
     }
+
     public function resolve(ObservationStatusEnum $by)
     {
         //  TODO: Implement issue observation method.

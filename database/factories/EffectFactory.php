@@ -13,6 +13,7 @@ class EffectFactory extends Factory
     public function definition(): array
     {
         $finding = Finding::inRandomOrder()->first()->id;
+
         return [
             'title' => $this->faker->realText(100),
             'description' => $this->faker->realText(500),

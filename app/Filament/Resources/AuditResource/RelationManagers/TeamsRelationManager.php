@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\AuditResource\RelationManagers;
 
-use App\Models\Team;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TeamsRelationManager extends RelationManager
 {
@@ -17,6 +14,7 @@ class TeamsRelationManager extends RelationManager
     {
         return false;
     }
+
     protected static string $relationship = 'teams';
 
     public function form(Form $form): Form

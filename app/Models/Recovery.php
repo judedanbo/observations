@@ -16,12 +16,11 @@ class Recovery extends Model
     protected $fillable = [
         'finding_id',
         'amount',
-        'comments'
+        'comments',
     ];
 
-
     protected $casts = [
-        'amount' =>  'decimal:2',
+        'amount' => 'decimal:2',
     ];
 
     public function finding(): BelongsTo
@@ -45,7 +44,7 @@ class Recovery extends Model
                 ->step(0.01)
                 ->required(),
             TextInput::make('comments')
-                ->columnSpanFull()
+                ->columnSpanFull(),
         ];
     }
 }

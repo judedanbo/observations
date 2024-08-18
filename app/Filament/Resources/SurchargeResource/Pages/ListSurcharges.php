@@ -4,8 +4,8 @@ namespace App\Filament\Resources\SurchargeResource\Pages;
 
 use App\Filament\Resources\SurchargeResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
 
 class ListSurcharges extends ListRecords
@@ -18,6 +18,7 @@ class ListSurcharges extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
     public function getTabs(): array
     {
         return [

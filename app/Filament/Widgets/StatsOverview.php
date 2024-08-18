@@ -16,9 +16,10 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
-    protected int | string | array $columnSpan = [
+    protected int|string|array $columnSpan = [
         'md' => 6,
     ];
+
     protected function getStats(): array
     {
         $startDate = $this->filters['start_date'];

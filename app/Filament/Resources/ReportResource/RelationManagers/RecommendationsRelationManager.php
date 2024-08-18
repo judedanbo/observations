@@ -3,23 +3,18 @@
 namespace App\Filament\Resources\ReportResource\RelationManagers;
 
 use App\Models\Parliament;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RecommendationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'recommendations';
 
     protected static ?string $label = 'PAC Recommendations';
-
-
 
     public function isReadOnly(): bool
     {
@@ -72,7 +67,7 @@ class RecommendationsRelationManager extends RelationManager
                     // ->message('Recommendation marked as completed.'),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

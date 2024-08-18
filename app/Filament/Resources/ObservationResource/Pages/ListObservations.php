@@ -5,8 +5,8 @@ namespace App\Filament\Resources\ObservationResource\Pages;
 use App\Filament\Resources\ObservationResource;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListObservations extends ListRecords
 {
@@ -36,6 +36,7 @@ class ListObservations extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->pacResolved()),
         ];
     }
+
     protected function getHeaderActions(): array
     {
         return [
