@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ObservationResource\RelationManagers;
 
 use App\Enums\AuditStatusEnum;
-use App\Enums\ObservationStatusEnum;
 use App\Models\Finding;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -33,6 +32,7 @@ class FindingsRelationManager extends RelationManager
         if ($status === AuditStatusEnum::ARCHIVED->value) {
             return true;
         }
+
         return false;
     }
 
@@ -50,7 +50,7 @@ class FindingsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn(Finding $record): ?string => $record->description),
+                    ->description(fn (Finding $record): ?string => $record->description),
                 Tables\Columns\TextColumn::make('type')
                     ->badge(),
                 Tables\Columns\TextColumn::make('causes.title')
@@ -79,7 +79,7 @@ class FindingsRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
                     ->label('View')
-                    ->url(fn(Finding $record): string => route('filament.admin.resources.findings.view', $record->id)),
+                    ->url(fn (Finding $record): string => route('filament.admin.resources.findings.view', $record->id)),
                 ActionGroup::make([
                     Tables\Actions\Action::make('Add cause')
                         ->icon('heroicon-o-link')

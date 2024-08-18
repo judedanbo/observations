@@ -9,7 +9,9 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 class ObservationStatusChart extends ChartWidget
 {
     use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Observation status';
+
     protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = [
@@ -29,12 +31,12 @@ class ObservationStatusChart extends ChartWidget
         $data = Observation::query()
             ->selectRaw('observations.status, count(*) as count')
             // ->join('audits', 'observations.audit_id', '=', 'audits.id')
-            ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
-            ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+            ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
+            ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
             ->when(
                 $auditStatus,
                 function ($query, $auditStatus) {
-                    $query->whereHas('audit', fn($query) => $query->where('status', $auditStatus));
+                    $query->whereHas('audit', fn ($query) => $query->where('status', $auditStatus));
                 }
             )
             ->when(
@@ -46,14 +48,14 @@ class ObservationStatusChart extends ChartWidget
             ->when(
                 $findingType,
                 function ($query, $findingType) {
-                    $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                    $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
                 }
             )
             ->when(
                 $unitDepartment,
                 function ($query, $unitDepartment) {
                     $query->whereHas('audit', function ($query) use ($unitDepartment) {
-                        $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
+                        $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
                     });
                 }
             )
@@ -65,14 +67,14 @@ class ObservationStatusChart extends ChartWidget
                 [
                     'label' => 'Observation status',
                     'data' => $data->pluck('count')->toArray(),
-                    'backgroundColor' => $data->map(fn($item) => 'rgb(' . $item->status->getColor()['500'] . ')'),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->status->getColor()['500'].')'),
                     'borderWidth' => 0,
                     'animation' => [
                         'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => $data->map(fn($item) => $item->status->getLabel()),
+            'labels' => $data->map(fn ($item) => $item->status->getLabel()),
         ];
     }
 
