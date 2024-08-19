@@ -17,7 +17,7 @@ class CreateUser extends CreateRecord
             $data['password'] = bcrypt($data['password']);
         } else {
             // unset($data['password']);
-            $data['password'] = bcrypt($data['password']);
+            $data['password'] = bcrypt('password');
         }
 
         return $data;
