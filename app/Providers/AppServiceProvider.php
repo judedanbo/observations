@@ -8,6 +8,7 @@ use App\Observers\AuditObserver;
 use App\Observers\ObservationObserver;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (env('APP_ENV') !== 'local') {
+            $this->app['request']->server->set('HTTPS', 'on');
+            URL::forceScheme('https');
+        }
+
+
         Audit::observe(AuditObserver::class);
         Observation::observe(ObservationObserver::class);
         CreateAction::configureUsing(function ($action) {

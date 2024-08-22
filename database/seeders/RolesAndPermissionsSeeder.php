@@ -215,6 +215,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'restore observation',
                 'destroy observation',
             ]);
+        Role::create(['name' => 'user']);
         Role::create(['name' => 'Staff'])
             ->givePermissionTo([]);
         Role::create(['name' => 'Audit Manager'])
