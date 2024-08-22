@@ -31,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-
         Audit::observe(AuditObserver::class);
         Observation::observe(ObservationObserver::class);
         CreateAction::configureUsing(function ($action) {

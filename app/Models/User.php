@@ -54,7 +54,7 @@ class User extends Authenticatable implements FilamentUser
             TextInput::make('password')
                 ->password()
                 ->maxLength(255)
-                ->hidden(fn(string $operation): bool => $operation === 'edit'),
+                ->hidden(fn (string $operation): bool => $operation === 'edit'),
         ];
     }
 
