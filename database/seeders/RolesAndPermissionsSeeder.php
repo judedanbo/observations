@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Document;
+use App\Models\Surcharge;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -108,7 +109,14 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore finding']);
         Permission::create(['name' => 'destroy finding']);
 
+        // Surcharge permissions
+        Permission::create(['name' => 'view all surcharges']);
+        Permission::create(['name' => 'view surcharge']);
+        Permission::create(['name' => 'create surcharge']);
+
         // Department permissions
+        Permission::create(['name' => 'view all departments']);
+        Permission::create(['name' => 'view department']);
         Permission::create(['name' => 'create department']);
         Permission::create(['name' => 'update department']);
         Permission::create(['name' => 'delete department']);
@@ -127,6 +135,8 @@ class RolesAndPermissionsSeeder extends Seeder
         //
 
         // action permissions
+        Permission::create(['name' => 'view all actions']);
+        Permission::create(['name' => 'view action']);
         Permission::create(['name' => 'create action']);
         Permission::create(['name' => 'update action']);
         Permission::create(['name' => 'delete action']);
@@ -134,6 +144,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'destroy action']);
 
         // follow-up permissions
+        Permission::create(['name' => 'view all follow-ups']);
+        Permission::create(['name' => 'view follow-up']);
         Permission::create(['name' => 'create follow-up']);
         Permission::create(['name' => 'update follow-up']);
         Permission::create(['name' => 'delete follow-up']);
@@ -180,6 +192,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete report']);
         Permission::create(['name' => 'restore report']);
         Permission::create(['name' => 'destroy report']);
+        Permission::create(['name' => 'upload report']);
 
         //  recovery permissions
         Permission::create(['name' => 'view all recoveries']);
@@ -200,37 +213,178 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore parliament recommendation']);
         Permission::create(['name' => 'destroy parliament recommendation']);
 
+        // user permissions
+        Permission::create(['name' => 'view all users']);
+        Permission::create(['name' => 'view user']);
+        Permission::create(['name' => 'create user']);
+        Permission::create(['name' => 'update user']);
+        Permission::create(['name' => 'delete user']);
+        Permission::create(['name' => 'restore user']);
+        Permission::create(['name' => 'destroy user']);
+
         // create roles and assign created permissions
 
         // this can be done as separate statements
 
-        Role::create(['name' => 'super-administrator'])
+        Role::create(['name' => 'Super Administrator'])
             ->givePermissionTo(Permission::all());
-        Role::create(['name' => 'system-administrator'])
+        Role::create(['name' => 'System Administrator'])
             ->givePermissionTo([
-                'restore staff',
-                'destroy staff',
+                'view all users',
+                'view user',
+                'create user',
+                'update user',
+                'delete user',
+                'view all staff',
+                'view staff',
+                'create staff',
+                'update staff',
+                'delete staff',
+                'view all institutions',
+                'view institution',
+                'create institution',
+                'update institution',
+                'delete institution',
+                'restore institution',
                 'restore audit',
                 'restore audit',
                 'restore observation',
-                'destroy observation',
+                'restore finding',
+                'restore recovery',
+                'restore report',
+                'restore parliament recommendation',
+                'restore user',
+                'restore staff',
+                'restore document',
+                'restore status',
+                'restore action',
+                'view all regions',
+                'view region',
+                'create region',
+                'update region',
+                'delete region',
+                'restore region',
+                'view all districts',
+                'view district',
+                'create district',
+                'update district',
+                'delete district',
+                'restore district',
+                'view all departments',
+                'view department',
+                'create department',
+                'update department',
+                'delete department',
+                'restore department',
+                'view all units',
+                'view unit',
+                'create unit',
+                'update unit',
+                'delete unit',
+                'restore unit',
+                'restore action',
             ]);
         Role::create(['name' => 'user']);
         Role::create(['name' => 'Staff'])
-            ->givePermissionTo([]);
-        Role::create(['name' => 'Audit Manager'])
-            ->givePermissionTo([]);
-        Role::create(['name' => 'Audit Reviewer'])
-            ->givePermissionTo([]);
+            ->givePermissionTo([
+                'view all audits',
+                'view audit',
+                'view all observations',
+                'view observation',
+                'view all findings',
+                'view finding',
+                'view all actions',
+                'view action',
+                'view all recoveries',
+                'view recovery',
+                'view all reports',
+                'view report',
+                'view all parliament recommendations',
+                'view parliament recommendation',
+                'view all documents',
+                'view document',
+            ]);
+        Role::create(['name' => 'Regional Auditor'])
+            ->givePermissionTo([
+                'view all staff',
+                'view staff',
+                'create report',
+                'update report',
+                'update report',
+                'upload report',
+                'create document',
+                'update document',
+                'delete document',
+                'create action',
+                'update action',
+                'delete action',
+                'create surcharge',
+            ]);
+        Role::create(['name' => 'Unit Head'])
+            ->givePermissionTo([
+                'view all staff',
+                'view staff',
+                'create report',
+                'update report',
+                'delete report',
+                'restore report',
+                'upload report',
+                'create document',
+                'update document',
+                'delete document',
+                'create action',
+                'update action',
+                'delete action',
+                'create surcharge',
+            ]);
+        Role::create(['name' => 'District Auditor'])
+            ->givePermissionTo([
+                'view all staff',
+                'view staff',
+                'create report',
+                'update report',
+                'delete report',
+                'restore report',
+                'upload report',
+                'create document',
+                'update document',
+                'delete document',
+                'create action',
+                'update action',
+                'delete action',
+                'create surcharge',
+            ]);
         Role::create(['name' => 'Team Leader'])
-            ->givePermissionTo([]);
-        Role::create(['name' => 'Team Member'])
-            ->givePermissionTo([]);
-        Role::create(['name' => 'Auditee'])
-            ->givePermissionTo([]);
+            ->givePermissionTo([
+                'view staff',
+                'create report',
+                'update report',
+                'upload report',
+                'create document',
+                'update document',
+                'delete document',
+                'create action',
+                'update action',
+                'delete action',
+                'create surcharge',
+            ]);
+        // Role::create(['name' => 'Team Member'])
+        //     ->givePermissionTo([]);
+        // Role::create(['name' => 'Auditee'])
+        //     ->givePermissionTo([]);
         Role::create(['name' => 'Quality Manager'])
             ->givePermissionTo([]);
-        Role::create(['name' => 'Parliamentarian'])
+        // Role::create(['name' => 'Parliamentarian'])
+        //     ->givePermissionTo([]);
+        Role::create(['name' => 'Surcharge Manager'])
+            ->givePermissionTo([
+                'create surcharge',
+            ]);
+        Role::create(['name' => 'Surcharge Reviewer'])
+            ->givePermissionTo([]);
+        Role::create(['name' => 'Surcharge Approver'])
+            ->givePermissionTo([]);
+        Role::create(['name' => 'Surcharge Auditor'])
             ->givePermissionTo([]);
 
         // $role->givePermissionTo('update articles');

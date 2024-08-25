@@ -13,7 +13,20 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
+                    if (isset($data['password']) && $data['password'] !== '') {
+                        $data['password'] = bcrypt($data['password']);
+                    } else {
+                        $data['password'] = bcrypt('password');
+                    }
+                    return $data;
+                })
+                ->after(function ($record) {
+                    $record->assignRole('user');
+                    // $record->notify(new UserCreatedNotification($record));
+                })
+                ->slideOver(),
         ];
     }
 }

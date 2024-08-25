@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[ScopedBy([Scopes\SurchargeScope::class])]
 class Surcharge extends Model
 {
+    // TODO create a table for surcharges
     protected $table = 'findings';
 
     protected $casts = [

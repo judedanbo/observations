@@ -13,7 +13,8 @@ class ListUnits extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->slideOver(),
+            Actions\CreateAction::make()
+                ->slideOver(),
         ];
     }
 }

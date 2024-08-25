@@ -56,7 +56,8 @@ class UserResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
                 ActionGroup::make([
                     Tables\Actions\Action::make('add_role')
                         ->slideOver()
@@ -73,9 +74,6 @@ class UserResource extends Resource
                                 })
                                 ->required(),
                         ])
-                        // ->using(function (User $record, array $data) {
-                        //     $record->assignRole($data['role']);
-                        // })
                         ->action(function (User $record, array $data) {
                             $record->syncRoles($data['role']);
                         }),
@@ -102,8 +100,8 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            // 'create' => Pages\CreateUser::route('/create'),
+            // 'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 

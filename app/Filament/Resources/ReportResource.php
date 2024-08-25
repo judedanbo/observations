@@ -18,7 +18,7 @@ class ReportResource extends Resource
 {
     // protected static ?string $navigationGroup = 'GAS';
 
-    protected static ?string $label = 'Excel Imports';
+    protected static ?string $label = 'Upload Issues';
 
     protected static ?string $model = Report::class;
 

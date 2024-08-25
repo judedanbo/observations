@@ -29,6 +29,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile(isSimple: false)
             ->colors([
                 'primary' => Color::Green,
                 'gray' => Color::Slate,
@@ -63,6 +66,6 @@ class AdminPanelProvider extends PanelProvider
     public function register(): void
     {
         parent::register();
-        FilamentView::registerRenderHook('panels::body.end', fn (): string => Blade::render("@vite('resources/js/app.js')"));
+        FilamentView::registerRenderHook('panels::body.end', fn(): string => Blade::render("@vite('resources/js/app.js')"));
     }
 }

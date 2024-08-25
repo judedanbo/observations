@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\TextInput;
@@ -15,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens,
         HasFactory,
@@ -50,11 +50,11 @@ class User extends Authenticatable implements FilamentUser
                 ->email()
                 ->required()
                 ->maxLength(255),
-            // Forms\Components\DateTimePicker::make('email_verified_at'),
-            TextInput::make('password')
-                ->password()
-                ->maxLength(255)
-                ->hidden(fn (string $operation): bool => $operation === 'edit'),
+            // // Forms\Components\DateTimePicker::make('email_verified_at'),
+            // TextInput::make('password')
+            //     ->password()
+            //     ->maxLength(255)
+            //     ->hidden(fn (string $operation): bool => $operation === 'edit'),
         ];
     }
 

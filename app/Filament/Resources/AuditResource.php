@@ -59,7 +59,7 @@ class AuditResource extends Resource
                     ->label('Audit Title')
                     ->searchable()
                     ->wrap()
-                    ->description(fn (Audit $record) => Str::of($record->description)->limit(90)),
+                    ->description(fn(Audit $record) => Str::of($record->description)->limit(90)),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Audit Status')
@@ -112,11 +112,11 @@ class AuditResource extends Resource
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['actual_start_date_from'] ?? null) {
-                            $indicators[] = Indicator::make('Audit start from '.Carbon::parse($data['actual_start_date_from'])->format('j M Y'))
+                            $indicators[] = Indicator::make('Audit start from ' . Carbon::parse($data['actual_start_date_from'])->format('j M Y'))
                                 ->removeField('actual_start_date_from');
                         }
                         if ($data['actual_start_date_to'] ?? null) {
-                            $indicators[] = Indicator::make('Audit start until '.Carbon::parse($data['actual_start_date_to'])->format('j M Y'))
+                            $indicators[] = Indicator::make('Audit start until ' . Carbon::parse($data['actual_start_date_to'])->format('j M Y'))
                                 ->removeField('actual_start_date_to');
                         }
 
@@ -142,12 +142,12 @@ class AuditResource extends Resource
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['planned_start_date_from'] ?? null) {
-                            $indicators[] = Indicator::make('Planned date start from '.Carbon::parse($data['planned_start_date_from'])->format('j M Y'))
+                            $indicators[] = Indicator::make('Planned date start from ' . Carbon::parse($data['planned_start_date_from'])->format('j M Y'))
                                 ->removeField('planned_start_date_from');
                         }
                         if ($data['planned_start_date_to'] ?? null) {
                             $indicators = [];
-                            $indicators[] = Indicator::make('Planned date until '.Carbon::parse($data['planned_start_date_to'])->format('j M Y'))
+                            $indicators[] = Indicator::make('Planned date until ' . Carbon::parse($data['planned_start_date_to'])->format('j M Y'))
                                 ->removeField('planned_start_date_to');
                         }
 
@@ -176,13 +176,13 @@ class AuditResource extends Resource
                     ->slideOver(),
                 ActionGroup::make([
                     Tables\Actions\Action::make('start')
-                        ->label(fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED ? 'Start audit' : 'Resume audit')
+                        ->label(fn(Audit $record) => $record->status === AuditStatusEnum::PLANNED ? 'Start audit' : 'Resume audit')
                         ->icon('heroicon-o-play-circle')
                         ->visible(
-                            fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED
+                            fn(Audit $record) => $record->status === AuditStatusEnum::PLANNED
                                 || $record->status === AuditStatusEnum::TERMINATED
                         )
-                        ->action(fn (Audit $record) => $record->start())
+                        ->action(fn(Audit $record) => $record->start())
                         ->after(function () {
                             Notification::make()
                                 ->success()
@@ -195,7 +195,7 @@ class AuditResource extends Resource
                         ->slideOver()
                         ->label('Manage Audit Team')
                         ->icon('heroicon-o-user-plus')
-                        ->visible(fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED
+                        ->visible(fn(Audit $record) => $record->status === AuditStatusEnum::PLANNED
                             || $record->status === AuditStatusEnum::IN_PROGRESS)
                         ->form(
                             [
@@ -210,7 +210,7 @@ class AuditResource extends Resource
                                             ->editOptionForm(Team::getForm())
                                             ->createOptionForm(Team::getForm())
                                             ->preload()
-                                            ->default(fn (?Audit $record) => $record?->teams()->first()?->id ?? null)
+                                            ->default(fn(?Audit $record) => $record?->teams()->first()?->id ?? null)
                                             ->searchable()
                                             ->label('Team')
                                             ->required(),
@@ -240,7 +240,7 @@ class AuditResource extends Resource
                                 $record->addTeamMember(team: $team['team_id'], member: $team['staff']);
                             });
                         })
-                        ->after(function () {
+                        ->successNotification(function () {
                             Notification::make()
                                 ->success()
                                 ->title('Audit team member added')
@@ -263,13 +263,13 @@ class AuditResource extends Resource
                                     ])
                                     ->collapsible()
                                     ->reorderableWithButtons()
-                                    ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
+                                    ->itemLabel(fn(array $state): ?string => $state['title'] ?? null),
                             ]
                         )
                         ->label('Create Observations')
                         ->icon('heroicon-o-document-text')
                         ->visible(
-                            fn (Audit $record) => $record->status === AuditStatusEnum::IN_PROGRESS
+                            fn(Audit $record) => $record->status === AuditStatusEnum::IN_PROGRESS
                         )
                         ->action(function (array $data, $record) {
                             collect($data['observations'])->each(function ($observation) {
@@ -289,9 +289,9 @@ class AuditResource extends Resource
                         ->label('Issue audit report')
                         ->icon('heroicon-o-document-duplicate')
                         ->visible(
-                            fn (Audit $record) => $record->status === AuditStatusEnum::IN_PROGRESS
+                            fn(Audit $record) => $record->status === AuditStatusEnum::IN_PROGRESS
                         )
-                        ->action(fn (Audit $record) => $record->issue())
+                        ->action(fn(Audit $record) => $record->issue())
                         ->requiresConfirmation()
                         ->after(function () {
                             Notification::make()
@@ -304,9 +304,9 @@ class AuditResource extends Resource
                         ->label('Initiate transmission')
                         ->icon('heroicon-o-paper-airplane')
                         ->visible(
-                            fn (Audit $record) => $record->status === AuditStatusEnum::ISSUED
+                            fn(Audit $record) => $record->status === AuditStatusEnum::ISSUED
                         )
-                        ->action(fn (Audit $record) => $record->transmit())
+                        ->action(fn(Audit $record) => $record->transmit())
                         ->after(function () {
                             Notification::make()
                                 ->success()
@@ -318,8 +318,8 @@ class AuditResource extends Resource
                         ->label('Archive audit')
                         ->icon('heroicon-o-archive-box')
                         ->color(Color::Gray)
-                        ->visible(fn (Audit $record) => $record->status === AuditStatusEnum::ISSUED || $record->status === AuditStatusEnum::TRANSMITTED)
-                        ->action(fn (Audit $record) => $record->archive())
+                        ->visible(fn(Audit $record) => $record->status === AuditStatusEnum::ISSUED || $record->status === AuditStatusEnum::TRANSMITTED)
+                        ->action(fn(Audit $record) => $record->archive())
                         ->requiresConfirmation()
                         ->after(function () {
                             Notification::make()
@@ -333,8 +333,8 @@ class AuditResource extends Resource
                         ->label('Terminate audit')
                         ->icon('heroicon-o-x-circle')
                         ->color(Color::Red)
-                        ->visible(fn (Audit $record) => $record->status === AuditStatusEnum::PLANNED || $record->status === AuditStatusEnum::IN_PROGRESS)
-                        ->action(fn (Audit $record) => $record->terminate())
+                        ->visible(fn(Audit $record) => $record->status === AuditStatusEnum::PLANNED || $record->status === AuditStatusEnum::IN_PROGRESS)
+                        ->action(fn(Audit $record) => $record->terminate())
                         ->requiresConfirmation()
                         ->after(function () {
                             Notification::make()
