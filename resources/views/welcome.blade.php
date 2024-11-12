@@ -4,9 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- @vite('resources/css/app.css') -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <title>Observations</title>
+    @vite('resources/css/app.css')
+    <title>Monitor</title>
 
 
     <!-- Styles -->
@@ -54,9 +53,9 @@
                     </h1>
                     <h1
                         class="text-white lg:text-green-900 dark:text-gray-50 text-4xl hidden md:block">
-                        Audit Observations Monitoring
+                        Audit Finding Monitor
                     </h1>
-                    <h1 class="text-white text-4xl md:hidden">HRMIS</h1>
+                    <h1 class="text-white text-4xl md:hidden">Monitoring</h1>
                     <div class="mt-5 flex gap-4">
 
                         <a

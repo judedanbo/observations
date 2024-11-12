@@ -94,7 +94,7 @@ class SurchargeResource extends Resource
         return [
             'index' => Pages\ListSurcharges::route('/'),
             // 'create' => Pages\CreateSurcharge::route('/create'),
-            'edit' => Pages\EditSurcharge::route('/{record}/edit'),
+            // 'edit' => Pages\EditSurcharge::route('/{record}/edit'),
         ];
     }
 }

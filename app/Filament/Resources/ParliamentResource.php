@@ -16,7 +16,7 @@ class ParliamentResource extends Resource
 {
     protected static ?string $model = Parliament::class;
 
-    protected static ?string $label = 'PAC Recommendations';
+    protected static ?string $label = 'PAC Directives';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -80,7 +80,8 @@ class ParliamentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -102,9 +103,9 @@ class ParliamentResource extends Resource
     {
         return [
             'index' => Pages\ListParliaments::route('/'),
-            'create' => Pages\CreateParliament::route('/create'),
+            // 'create' => Pages\CreateParliament::route('/create'),
             'view' => Pages\ViewParliament::route('/{record}'),
-            'edit' => Pages\EditParliament::route('/{record}/edit'),
+            // 'edit' => Pages\EditParliament::route('/{record}/edit'),
         ];
     }
 

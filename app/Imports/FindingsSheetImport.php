@@ -13,34 +13,21 @@ use App\Models\Region;
 use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ObservationImport implements ToCollection, WithHeadingRow, WithValidation, WithMultipleSheets
+class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidation, WithCalculatedFormulas
 {
-    use Importable;
-
     private $audit_section;
-
     public function __construct($audit_section = '')
     {
         $this->audit_section = $audit_section;
     }
 
-    public function sheets(): array
-    {
-        return [
-            'Title' => new TitleSheetImport(),
-            'Details' => new FindingsSheetImport($this->audit_section),
-        ];
-    }
-
     public function collection(Collection $collection)
     {
-        $loaded = 0;
         // dd($collection);
         foreach ($collection as $row) {
             if ($row['covered_entity'] == null) {
@@ -64,14 +51,15 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                 'status' => 'issued',
             ]);
 
-            $audit->institutions()->attach($institution->id);
+            // $audit->institutions()->attach($institution->id);
 
             $observation = Observation::create([
                 'audit_id' => $audit->id,
                 'title' => $row['title_of_finding'],
                 'status' => ObservationStatusEnum::ISSUED,
             ]);
-            $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
+            $type = $row['control_type'] === 'Financial' ? 'financial' : ($row['control_type'] === 'Internal Control' ? 'internal_control' : ($row['control_type'] === 'Compliance' ? 'compliance' : ''));
+            // dd($type);
             $finding = Finding::create([
                 'observation_id' => $observation->id,
                 'title' => $row['title_of_finding'],
@@ -84,8 +72,6 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                 'finding_id' => $finding->id,
                 'title' => $row['recommendation'],
             ]);
-
-            // $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
             $report = Report::firstOrCreate(
                 [
                     'institution_id' => $institution->id,
@@ -99,30 +85,26 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                     'recommendation' => $row['recommendation'],
                     'amount_recovered' => $row['amount_recovered'],
                     'surcharge_amount' => null,
-                    'implementation_date' => Carbon::createFromTimestamp(($row['implementation_dateyear'] - 25569) * 86400)->toDateString(),
+                    'implementation_date' => $row['implementation_dateyear'] ? Carbon::createFromTimestamp(($row['implementation_dateyear'] - 25569) * 86400)->toDateString() : null,
                     'implementation_status' => $row['implementation_status'],
                     'comments' => $row['comments_if_any'],
                 ]
             );
         }
+        $audit->institutions()->attach($institution->id);
     }
-
     public function headingRow(): int
     {
         return 4;
     }
-
     public function rules(): array
     {
         return [
-            // '*.region' => 'required|max:50',
-            // '*.district' => 'required|max:100',
-            // '*.covered_entity' => 'required|max:250',
-            // '*.report_financial_year' => 'required|integer|min:2000|max:2100',
             '*.title_of_finding' => 'required|max:250',
-            '*.financial' => 'nullable|max:20',
-            '*.internal_control' => 'nullable|max:20',
-            '*.compliance' => 'nullable|max:20',
+            '*.control_type' => 'required|max:20',
+            // '*.financial' => 'nullable|max:20',
+            // '*.internal_control' => 'nullable|max:20',
+            // '*.compliance' => 'nullable|max:20',
             '*.amount' => 'nullable|decimal:0,4|min:1',
             '*.recommendation' => 'required|max:250',
             '*.report_paragraphs' => 'required|max:15',
@@ -132,16 +114,26 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             '*.amount_recovered' => 'nullable|decimal:0,4',
         ];
     }
-
     public function customValidationMessages(): array
     {
         return [
+            'report_paragraphs.required' => 'The report paragraphs column of row :index is required.',
+            'title_of_finding.required' => 'The title of finding column of row :index is required.',
+            'title_of_finding.max' => 'The title of finding column of row :index must not exceed 250 characters.',
+            'control_type.max' => 'The control type column of row :index must not exceed 20 characters.',
+            'amount.decimal' => 'The amount column of row :index must be a decimal with up to 4 decimal places.',
+            'amount.min' => 'The amount column of row :index must be at least 1.',
+            'recommendation.required' => 'The recommendation column of row :index is required.',
             'implementation_dateyear.date' => 'The implementation date column of row :index must be a valid date.',
             'implementation_dateyear.min' => 'The implementation date column of row :index must be between 2000 and 2100.',
             'implementation_dateyear.max' => 'The implementation date column of row :index must be between 2000 and 2100.',
+            'implementation_dateyear.integer' => 'The :attribute column of row :index must be an integer',
+            'implementation_status.max' => 'The implementation status column of row :index must not exceed 50 characters.',
+            'comments_if_any.max' => 'The comments column of row :index must not exceed 250 characters.',
+            'amount_recovered.decimal' => 'The amount recovered column of row :index must be a decimal with up to 4 decimal places.',
+
         ];
     }
-
     public function customValidationAttributes(): array
     {
         return [

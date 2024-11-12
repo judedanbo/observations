@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ReportResource\Pages;
 
 use App\Enums\AuditDepartmentEnum;
+use App\Enums\AuditTypeEnum;
 use App\Filament\Resources\ReportResource;
 use App\Imports\ObservationImport;
 use App\Models\Audit;
@@ -22,15 +23,29 @@ class ListReports extends ListRecords
     {
         return [
             'all' => Tab::make('All reports'),
-            'cgad' => Tab::make('CGAD reports')
-                ->modifyQueryUsing(fn (Builder $query) => $query->cgad()),
-            'cad_soe' => Tab::make('CAD/SOE reports')
-                ->modifyQueryUsing(fn (Builder $query) => $query->cad()),
-            'psad' => Tab::make('Performance reports'),
-            'is_audit' => Tab::make('IS Audit reports')
-                ->modifyQueryUsing(fn (Builder $query) => $query->performance()),
+            'mda' => Tab::make('MDA')
+                ->modifyQueryUsing(fn(Builder $query) => $query->mda()),
+            'national' => Tab::make('National Accounts')
+                ->modifyQueryUsing(fn(Builder $query) => $query->national()),
+            'dacf' => Tab::make('MMDA DACF')
+                ->modifyQueryUsing(fn(Builder $query) => $query->dacf()),
+            'igf' => Tab::make('MMDA IGF')
+                ->modifyQueryUsing(fn(Builder $query) => $query->igf()),
+            'pre' => Tab::make('Pre Tertiary')
+                ->modifyQueryUsing(fn(Builder $query) => $query->pre()),
+            'seo' => Tab::make('SEO')
+                ->modifyQueryUsing(fn(Builder $query) => $query->state()),
+            'tertiary' => Tab::make('Tertiary')
+                ->modifyQueryUsing(fn(Builder $query) => $query->tertiary()),
+            'bog' => Tab::make('BOG')
+                ->modifyQueryUsing(fn(Builder $query) => $query->bog()),
+
+            'psad' => Tab::make('Performance Audit')
+                ->modifyQueryUsing(fn(Builder $query) => $query->performance()),
+            'is_audit' => Tab::make('IS Audit')
+                ->modifyQueryUsing(fn(Builder $query) => $query->is()),
             'special' => Tab::make('Special reports')
-                ->modifyQueryUsing(fn (Builder $query) => $query->special()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->special()),
 
         ];
     }
@@ -45,8 +60,8 @@ class ListReports extends ListRecords
                 ->icon('heroicon-s-document-arrow-down')
                 ->form([
                     Select::make('audit_section')
-                        ->enum(AuditDepartmentEnum::class)
-                        ->options(AuditDepartmentEnum::class)
+                        ->enum(AuditTypeEnum::class)
+                        ->options(AuditTypeEnum::class)
                         ->native(false)
                         ->label('Select Audit Type')
                         ->required(),
@@ -55,7 +70,7 @@ class ListReports extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    $file = public_path('storage/'.$data['filename']);
+                    $file = public_path('storage/' . $data['filename']);
                     try {
                         $data = (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
                         Notification::make('Observations Loaded')
@@ -73,8 +88,7 @@ class ListReports extends ListRecords
                     }
                     // (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
                 })
-                ->after(function () {
-                }),
+                ->after(function () {}),
 
         ];
     }

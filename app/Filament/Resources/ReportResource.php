@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\ReportExporter;
 use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Report;
@@ -12,7 +13,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
+use PHPUnit\Runner\Baseline\Issue;
 
 class ReportResource extends Resource
 {
@@ -100,29 +103,37 @@ class ReportResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('section'),
+                Tables\Columns\TextColumn::make('section')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('institution.name')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('audit.title')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('paragraphs')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
+                    ->searchable()
+                    ->sortable()
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->searchable()
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount_recovered')
+                    ->searchable()
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('surcharge_amount')
+                    ->searchable()
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('implementation_date')
@@ -130,21 +141,29 @@ class ReportResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('implementation_status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('deleted_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label('Export All reports')
+                    ->exporter(ReportExporter::class)
+                    // ->columnMapping(false)
+                    ->fileName('reports'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -155,6 +174,11 @@ class ReportResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                ExportBulkAction::make()
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->label('Export selected rows')
+                    ->fileName('reports')
+                    ->exporter(ReportExporter::class),
             ]);
     }
 

@@ -15,7 +15,8 @@ class ListSurcharges extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->slideOver(),
         ];
     }
 
@@ -24,11 +25,11 @@ class ListSurcharges extends ListRecords
         return [
             'all' => Tab::make('All Findings'),
             'financial' => Tab::make('Financial')
-                ->modifyQueryUsing(fn (Builder $query) => $query->financial()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->financial()),
             'internal_control' => Tab::make('Internal Control')
-                ->modifyQueryUsing(fn (Builder $query) => $query->control()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->control()),
             'compliance' => Tab::make('Compliance')
-                ->modifyQueryUsing(fn (Builder $query) => $query->compliance()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->compliance()),
         ];
     }
 }
