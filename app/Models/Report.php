@@ -56,6 +56,7 @@ class Report extends Model
     {
         return $this->belongsTo(Finding::class);
     }
+    //  public func
 
     // PAC recommendation not audit recommendation
     public function recommendations(): HasManyThrough
@@ -116,6 +117,13 @@ class Report extends Model
         return $this->where('section', AuditTypeEnum::IS);
     }
 
+    public function addDocuments($data)
+    {
+        dd($data);
+        $document = Document::create($data);
+        $this->finding->documents()->attach($document->id);
+    }
+
     public static function getForm(): array
     {
         return [
@@ -124,7 +132,6 @@ class Report extends Model
                 ->createOptionForm(Institution::getForm())
                 ->native(false)
                 ->searchable()
-                ->sortable()
                 ->preload()
                 ->required(),
             Select::make('audit_id')

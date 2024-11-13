@@ -79,8 +79,10 @@ class ListReports extends ListRecords
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
+                        // dd($e->getMessage());
                         Notification::make('Observations Load Failed')
                             ->title('Observations Load Failed')
+
                             ->body($e->getMessage())
                             ->danger()
                             ->persistent()

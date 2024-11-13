@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\ReportExporter;
 use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
+use App\Models\Document;
 use App\Models\Report;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
@@ -13,6 +14,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 use PHPUnit\Runner\Baseline\Issue;
@@ -31,56 +33,55 @@ class ReportResource extends Resource
     {
         return $infolist
             ->schema([
-                Split::make([
-                    Section::make('Audit')
-                        ->columns(2)
-                        ->schema([
-                            TextEntry::make('section'),
-                            TextEntry::make('institution.name'),
-                            TextEntry::make('audit.title')
-                                ->columnSpanFull()
-                                ->label('Audit Title'),
-                            TextEntry::make('finding.observation.title')
-                                ->label('Observation')
-                                ->columnSpanFull(),
-                            TextEntry::make('finding.title')
-                                ->columnSpanFull(),
-                        ]),
-                ]),
-                Split::make([
-                    Section::make('Implementation')
-                        ->columns(2)
-                        ->schema([
-                            TextEntry::make('implementation_date')
-                                ->date(),
-                            TextEntry::make('implementation_status'),
-                            TextEntry::make('comments')
-                                ->columnSpanFull(),
-                        ]),
-                ]),
+                // Split::make([
+                Section::make('Audit')
+                    ->columns(2)
+                    ->collapsible()
+                    ->schema([
+                        TextEntry::make('section')
+                            ->label('Audit report type'),
+                        TextEntry::make('institution.name'),
+                        TextEntry::make('audit.title')
+                            ->columnSpanFull()
+                            ->label('Audit Title'),
+                        // TextEntry::make('finding.title')
+                        //     // ->size('lg')
+                        //     ->columnSpanFull(),
+                        // TextEntry::make('finding.observation.title')
+                        //     ->label(false)
+                        //     ->columnSpanFull(),
+                    ]),
+                // ]),
                 Split::make([
                     Section::make('Observation')
                         ->columnStart(1)
                         ->columns(4)
                         ->schema([
                             TextEntry::make('paragraphs'),
-                            TextEntry::make('title')
+                            TextEntry::make('finding.title')
                                 ->columnSpan(2),
-                            TextEntry::make('type')
+                            TextEntry::make('finding.type')
                                 ->badge(),
-                            TextEntry::make('recommendation')
+                            TextEntry::make('finding.recommendations.title')
                                 ->columnStart(1)
                                 ->columnSpanFull(),
-                            TextEntry::make('amount')
+                            TextEntry::make('finding.amount')
                                 ->numeric()
                                 ->prefix('GH₵ '),
-                            TextEntry::make('surcharge_amount')
+                            TextEntry::make('finding.surcharge_amount')
                                 ->numeric()
                                 ->prefix('GH₵ '),
-                            TextEntry::make('amount_recovered')
+                            TextEntry::make('findings.amount_recovered')
                                 ->numeric()
                                 ->prefix('GH₵ ')
                                 ->columnStart(4),
+                            TextEntry::make('finding.documents.title')
+                                ->label('Documents')
+                                // ->html()
+                                ->listWithLineBreaks()
+                                ->limitList(2)
+                                ->expandableLimitedList()
+
                             // TextEntry::make('implementation_date')
                             //     ->date(),
                             // TextEntry::make('implementation_status'),
@@ -89,6 +90,18 @@ class ReportResource extends Resource
                 ])
                     ->columnStart(1)
                     ->columnSpanFull(),
+                // Split::make([
+                Section::make('Implementation')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('implementation_date')
+                            ->date(),
+                        TextEntry::make('implementation_status'),
+                        TextEntry::make('comments')
+                            ->columnSpanFull(),
+                    ]),
+                // ]),
+
 
             ]);
     }
@@ -136,10 +149,12 @@ class ReportResource extends Resource
                     ->searchable()
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('implementation_date')
+                Tables\Columns\TextColumn::make('finding.statuses.implementation_date')
                     ->date()
+                    ->listWithLineBreaks()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('implementation_status')
+                Tables\Columns\TextColumn::make('finding.statuses.name')
+                    ->listWithLineBreaks()
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')
                 //     ->dateTime()
@@ -168,6 +183,17 @@ class ReportResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->slideOver(),
+                ActionGroup::make([
+                    Tables\Actions\Action::make('add_document')
+                        ->label('Add supporting Document')
+                        ->icon('heroicon-o-document-plus')
+                        ->form(Document::getForm())
+                        ->mutateFormDataUsing(function (array $data): array {
+                            $data['report_id'] = $this->getOwnerRecord()->id;
+                            return $data;
+                        })
+                        ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                ])
             ])
 
             ->bulkActions([

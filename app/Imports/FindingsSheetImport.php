@@ -11,6 +11,7 @@ use App\Models\Observation;
 use App\Models\Recommendation;
 use App\Models\Region;
 use App\Models\Report;
+use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -67,6 +68,17 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
                 'amount' => $row['amount'],
                 'surcharge_amount' => $row['surcharge_amount'] ?? null,
             ]);
+            if ($row['implementation_status'] !== null) {
+                // dd($row['implementation_status']);
+                // $finding->implementation_date = Carbon::createFromTimestamp(($row['implementation_dateyear'] - 25569) * 86400)->toDateString();
+                $status = Status::create([
+                    // 'finding_id' => $finding->id,
+                    'name' => $row['implementation_status'],
+                    'implementation_date' => $row['implementation_dateyear'] ? Carbon::createFromTimestamp(($row['implementation_dateyear'] - 25569) * 86400)->toDateString() : null,
+                ]);
+                // dd($status);
+                $finding->statuses()->attach($status->id);
+            }
 
             $recommendation = Recommendation::create([
                 'finding_id' => $finding->id,

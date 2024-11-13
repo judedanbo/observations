@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,6 +71,14 @@ class Document extends Model
     {
         return $this->belongsToMany(FollowUp::class);
     }
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class);
+    }
+    public function getFilenameAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
 
     public static function getForm(): array
     {
@@ -79,8 +88,18 @@ class Document extends Model
                 ->maxLength(250),
             Textarea::make('description')
                 ->columnSpanFull(),
-            TextInput::make('file')
-                ->maxLength(255),
+            FileUpload::make('file')
+                // ->multiple()
+                ->acceptedFileTypes([
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-pexcel',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/msword',
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                ])
+                ->required(),
             Actions::make([
                 Action::make('Save')
                     ->label('Generate data')

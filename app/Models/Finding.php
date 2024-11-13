@@ -87,6 +87,10 @@ class Finding extends Model
         return $query->where('type', FindingTypeEnum::FIN);
     }
 
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class);
+    }
     public function scopeControl(Builder $query): Builder
     {
         return $query->where('type', FindingTypeEnum::INT);

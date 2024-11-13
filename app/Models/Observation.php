@@ -73,6 +73,15 @@ class Observation extends Model
         return $this->hasMany(FollowUp::class);
     }
 
+    public function recoveries(): HasMany
+    {
+        return $this->hasMany(Recovery::class);
+    }
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class);
+    }
+
     public function scopeDraft(Builder $query)
     {
         return $query->where('status', ObservationStatusEnum::DRAFT);

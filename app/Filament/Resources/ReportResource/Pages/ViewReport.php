@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ReportResource\Pages;
 
 use App\Filament\Resources\ReportResource;
+use App\Models\Document;
 use App\Models\Parliament;
 use App\Models\Report;
 use Filament\Actions\Action;
@@ -32,7 +33,7 @@ class ViewReport extends ViewRecord
 
                         return $data;
                     })
-                    ->action(fn (Report $record, array $data) => $record->recommend($data)),
+                    ->action(fn(Report $record, array $data) => $record->recommend($data)),
                 // ->after(function () {
                 //     Notification::make()
                 //         ->success()
@@ -58,6 +59,16 @@ class ViewReport extends ViewRecord
                 // //         ->body('The audit has been started')
                 // //         ->send();
                 // // }),
+                Action::make('add_document')
+                    ->label('Add supporting Document')
+                    ->icon('heroicon-o-document-plus')
+                    ->form(Document::getForm())
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data['report_id'] = $this->record->id;
+
+                        return $data;
+                    })
+                    ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
             ]),
         ];
     }

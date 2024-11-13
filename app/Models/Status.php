@@ -17,12 +17,13 @@ class Status extends Model
 
     protected $fillable = [
         'name',
+        'implementation_date',
         'description',
     ];
 
     protected $casts = [
         'id' => 'integer',
-        'date' => 'date',
+        'implementation_date' => 'date',
     ];
 
     public function audits(): BelongsToMany
