@@ -7,16 +7,21 @@ use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Document;
 use App\Models\Report;
+use App\Models\Surcharge;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Runner\Baseline\Issue;
 
 class ReportResource extends Resource
@@ -27,7 +32,8 @@ class ReportResource extends Resource
 
     protected static ?string $model = Report::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-paper-clip';
+    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-up';
+    // protected static ?string $navigationIcon = 'heroicon-o-paper-clip';
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -59,23 +65,29 @@ class ReportResource extends Resource
                         ->schema([
                             TextEntry::make('paragraphs'),
                             TextEntry::make('finding.title')
+                                ->label('Finding title')
                                 ->columnSpan(2),
                             TextEntry::make('finding.type')
+                                ->label('Finding type')
                                 ->badge(),
                             TextEntry::make('finding.recommendations.title')
+                                ->label('Recommendations')
                                 ->columnStart(1)
                                 ->columnSpanFull(),
                             TextEntry::make('finding.amount')
-                                ->numeric()
-                                ->prefix('GH₵ '),
+                                ->label('Finding Amount')
+                                ->numeric(),
                             TextEntry::make('finding.surcharge_amount')
+                                ->label('Surcharge Amount')
+                                ->numeric(),
+                            TextEntry::make('finding.total_recoveries')
+                                ->label('Amount Recovered')
+                                ->prefix('GH¢ ')
+                                // ->money('GHS', locale: 'gh')
                                 ->numeric()
-                                ->prefix('GH₵ '),
-                            TextEntry::make('findings.amount_recovered')
-                                ->numeric()
-                                ->prefix('GH₵ ')
                                 ->columnStart(4),
                             TextEntry::make('finding.documents.title')
+                                ->visible(fn(Report $record) => $record->finding->documents->count() > 0)
                                 ->label('Documents')
                                 // ->html()
                                 ->listWithLineBreaks()
@@ -129,31 +141,45 @@ class ReportResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->icon(function (Report $record) {
+                        if ($record->finding->documents->count() > 0) {
+                            return 'heroicon-o-paper-clip';
+                        }
+                        // return $record->finding->icon();
+                    })
+                    ->iconPosition(IconPosition::After)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
+                Tables\Columns\TextColumn::make('finding.type')
                     ->searchable()
+                    ->label('Finding type')
                     ->sortable()
                     ->badge()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                Tables\Columns\TextColumn::make('finding.amount')
                     ->searchable()
+                    ->label('Amount')
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('amount_recovered')
-                    ->searchable()
+                Tables\Columns\TextColumn::make('finding.total_recoveries')
+                    // ->sum('finding', 'total_recoveries')
+                    // ->searchable()
+                    ->label('Total Recovered')
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('surcharge_amount')
+                Tables\Columns\TextColumn::make('finding.surcharge_amount')
                     ->searchable()
+                    ->label('Surcharge Amount')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('finding.statuses.implementation_date')
-                    ->date()
+                Tables\Columns\TextColumn::make('finding.statuses.name')
+                    ->label('Implementation Status')
                     ->listWithLineBreaks()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('finding.statuses.name')
+                Tables\Columns\TextColumn::make('finding.statuses.implementation_date')
+                    ->date()
+                    ->label('Implementation Date')
                     ->listWithLineBreaks()
                     ->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')
@@ -188,14 +214,49 @@ class ReportResource extends Resource
                         ->label('Add supporting Document')
                         ->icon('heroicon-o-document-plus')
                         ->form(Document::getForm())
-                        ->mutateFormDataUsing(function (array $data): array {
-                            $data['report_id'] = $this->getOwnerRecord()->id;
+                        ->mutateFormDataUsing(function (Model $record, array $data): array {
+                            // dd($record);
+                            $data['report_id'] = $record->id;
                             return $data;
                         })
                         ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                    Tables\Actions\Action::make('Surcharge')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->form([
+                            TextInput::make('surcharge_amount')
+                                ->label('Surcharge Amount')
+                                ->placeholder('Enter Surcharge Amount')
+                                ->required(),
+                        ])
+                        ->action(function ($data, $record) {
+                            $newAmount = $record->finding()->update([
+                                'surcharge_amount' => $data['surcharge_amount']
+                            ]);
+                            // dd($record->finding);
+                            // $record->save();
+                            Notification::make('Surcharge Added')
+                                ->title('Surcharge Added')
+                                ->body('The surcharge has been added successfully.')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('Record recovery')
+                        ->icon('heroicon-o-banknotes')
+                        ->form([
+                            TextInput::make('amount')
+                                ->type('number')
+                                ->label('Amount recovered')
+                                ->minValue(0)
+                                ->step(0.01)
+                                ->required(),
+                            TextInput::make('comments')
+                                ->columnSpanFull(),
+                        ])
+                        ->action(function ($data, $record) {
+                            $finding = $record->finding->recoveries()->create($data);
+                        }),
                 ])
             ])
-
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

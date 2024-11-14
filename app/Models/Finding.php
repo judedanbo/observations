@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
+use App\Casts\RecoveredCast;
+use App\Casts\SurchargeCast;
 use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Fieldset;
@@ -33,8 +36,9 @@ class Finding extends Model
         'id' => 'integer',
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
-        'amount' => 'decimal:2',
-        'surcharge_amount' => 'decimal:2',
+        'amount' => Money::class,
+        'surcharge_amount' => SurchargeCast::class,
+        // 'total_recoveries' => RecoveredCast::class,
     ];
 
     public function statuses(): BelongsToMany
@@ -78,6 +82,11 @@ class Finding extends Model
     }
 
     public function getRecoveriesSumAttribute()
+    {
+        return $this->recoveries()->sum('amount');
+    }
+
+    public function getTotalRecoveriesAttribute()
     {
         return $this->recoveries()->sum('amount');
     }

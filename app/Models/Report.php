@@ -119,7 +119,7 @@ class Report extends Model
 
     public function addDocuments($data)
     {
-        dd($data);
+        // dd($data);
         $document = Document::create($data);
         $this->finding->documents()->attach($document->id);
     }

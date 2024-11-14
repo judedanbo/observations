@@ -10,13 +10,17 @@ use App\Filament\Resources\FindingResource\RelationManagers\FollowUpsRelationMan
 use App\Filament\Resources\FindingResource\RelationManagers\RecommendationsRelationManager;
 use App\Filament\Resources\FindingResource\RelationManagers\RecoveriesRelationManager;
 use App\Models\Finding;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\ActionGroup;
+
 
 class FindingResource extends Resource
 {
@@ -109,6 +113,28 @@ class FindingResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->slideOver(),
+                ActionGroup::make([
+                    Tables\Actions\Action::make('Surcharge')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->form([
+                            TextInput::make('surcharge_amount')
+                                ->label('Surcharge Amount')
+                                ->placeholder('Enter Surcharge Amount')
+                                ->required(),
+                        ])
+                        ->action(function ($data, $record) {
+                            $newAmount = $record->update([
+                                'surcharge_amount' => $data['surcharge_amount']
+                            ]);
+                            // dd($record->finding);
+                            // $record->save();
+                            Notification::make('Surcharge Added')
+                                ->title('Surcharge Added')
+                                ->body('The surcharge has been added successfully.')
+                                ->success()
+                                ->send();
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

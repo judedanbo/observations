@@ -82,7 +82,6 @@ class ListReports extends ListRecords
                         // dd($e->getMessage());
                         Notification::make('Observations Load Failed')
                             ->title('Observations Load Failed')
-
                             ->body($e->getMessage())
                             ->danger()
                             ->persistent()
