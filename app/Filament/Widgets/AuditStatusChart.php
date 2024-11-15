@@ -24,25 +24,25 @@ class AuditStatusChart extends ChartWidget
 
     protected function getData(): array
     {
-        $startDate = $this->filters['start_date'];
-        $endDate = $this->filters['end_date'];
-        $auditStatus = $this->filters['audit_status'];
-        $findingType = $this->filters['finding_type'];
-        $unitDepartment = $this->filters['unit_department'];
-        $observationStatus = $this->filters['observation_status'];
+        // $startDate = $this->filters['start_date'];
+        // $endDate = $this->filters['end_date'];
+        // $auditStatus = $this->filters['audit_status'];
+        // $findingType = $this->filters['finding_type'];
+        // $unitDepartment = $this->filters['unit_department'];
+        // $observationStatus = $this->filters['observation_status'];
 
         $data = Audit::query()
             ->selectRaw('status, count(*) as count')
-            ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
-            ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
-            ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
-            ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
-            ->when($findingType, function ($query, $findingType) {
-                return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
-            })
-            ->when($unitDepartment, function ($query, $unitDepartment) {
-                return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
-            })
+            // ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
+            // ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
+            // ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
+            // ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
+            // ->when($findingType, function ($query, $findingType) {
+            //     return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
+            // })
+            // ->when($unitDepartment, function ($query, $unitDepartment) {
+            //     return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+            // })
             ->groupBy('status')
             ->get();
 
@@ -53,7 +53,7 @@ class AuditStatusChart extends ChartWidget
                 [
                     // 'label' => 'Blog posts created',
                     'data' => $data->pluck('count'),
-                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->status->getColor()['500'].')'),
+                    'backgroundColor' => $data->map(fn($item) => 'rgb(' . $item->status->getColor()['500'] . ')'),
                     // 'borderColor' => '#FF0000',
                     'borderWidth' => 0,
                     'animation' => [
@@ -61,7 +61,7 @@ class AuditStatusChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->map(fn ($item) => $item->status->getLabel()),
+            'labels' => $data->map(fn($item) => $item->status->getLabel()),
         ];
     }
 

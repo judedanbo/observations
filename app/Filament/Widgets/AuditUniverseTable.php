@@ -6,9 +6,9 @@ use App\Models\Institution;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\TableWidget;
 
-class AuditUniverseTable extends BaseWidget
+class AuditUniverseTable extends TableWidget
 {
     use InteractsWithPageFilters;
 
@@ -21,18 +21,18 @@ class AuditUniverseTable extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $unitDepartment = $this->filters['unit_department'];
-        $observationStatus = $this->filters['observation_status'];
+        // $unitDepartment = $this->filters['unit_department'];
+        // $observationStatus = $this->filters['observation_status'];
 
         return $table
             ->query(
                 Institution::query()
-                    ->when($unitDepartment, function ($query, $unitDepartment) {
-                        return $query->whereHas('audits', fn ($query) => $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment)));
-                    })
-                    ->when($observationStatus, function ($query, $observationStatus) {
-                        return $query->whereHas('audits', fn ($query) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)));
-                    })
+                // ->when($unitDepartment, function ($query, $unitDepartment) {
+                //     return $query->whereHas('audits', fn($query) => $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment)));
+                // })
+                // ->when($observationStatus, function ($query, $observationStatus) {
+                //     return $query->whereHas('audits', fn($query) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)));
+                // })
             )
             ->defaultSort('created_at', 'desc')
             ->columns([
@@ -49,7 +49,7 @@ class AuditUniverseTable extends BaseWidget
                     ->numeric()
                     ->alignRight(),
             ])
-            ->recordUrl(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record));
+            ->recordUrl(fn(Institution $record): string => route('filament.admin.resources.institutions.view', $record));
         // ->actions([
         //     Tables\Actions\ViewAction::make()
         //         ->url(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record)),

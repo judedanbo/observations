@@ -8,7 +8,7 @@ use Filament\Support\Contracts\HasLabel;
 enum AuditDepartmentEnum: string implements HasDescription, HasLabel
 {
     case CGAD = 'central_government';
-    case CAD_SOE = 'commercial__soe_audit';
+    case CAD_SOE = 'commercial_soe_audit';
     case PSAD = 'performance_audit';
     case IS_AUDIT = 'information_system';
     case SPECIAL = 'special_audit';

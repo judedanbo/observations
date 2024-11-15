@@ -7,9 +7,9 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Widgets\TableWidget;
 
-class AuditsTable extends BaseWidget
+class AuditsTable extends TableWidget
 {
     use InteractsWithPageFilters;
 
@@ -19,27 +19,27 @@ class AuditsTable extends BaseWidget
 
     public function table(Table $table): Table
     {
-        $startDate = $this->filters['start_date'];
-        $endDate = $this->filters['end_date'];
-        $auditStatus = $this->filters['audit_status'];
-        $findingType = $this->filters['finding_type'];
-        $unitDepartment = $this->filters['unit_department'];
-        $observationStatus = $this->filters['observation_status'];
+        // $startDate = $this->filters['start_date'];
+        // $endDate = $this->filters['end_date'];
+        // $auditStatus = $this->filters['audit_status'];
+        // $findingType = $this->filters['finding_type'];
+        // $unitDepartment = $this->filters['unit_department'];
+        // $observationStatus = $this->filters['observation_status'];
 
         return $table
-            ->recordUrl(fn (Audit $record): string => route('filament.admin.resources.audits.view', $record))
+            ->recordUrl(fn(Audit $record): string => route('filament.admin.resources.audits.view', $record))
             ->query(
                 Audit::query()
-                    ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
-                    ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
-                    ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
-                    ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
-                    ->when($findingType, function ($query, $findingType) {
-                        return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
-                    })
-                    ->when($unitDepartment, function ($query, $unitDepartment) {
-                        return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
-                    })
+                // ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
+                // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+                // ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
+                // ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
+                // ->when($findingType, function ($query, $findingType) {
+                //     return $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                // })
+                // ->when($unitDepartment, function ($query, $unitDepartment) {
+                //     return $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
+                // })
             )
             // ->defaultGroup('status')
             ->defaultSort('created_at', 'desc')
