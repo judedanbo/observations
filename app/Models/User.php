@@ -58,6 +58,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         ];
     }
 
+    protected static function booted()
+    {
+        static::creating(function (User $user) {
+            // Assign the user role by default
+            // TODO: Make this configurable
+
+            $user->assignRole(['user', 'Super Administrator']);
+        });
+    }
+
     public function isAdministrator(): bool
     {
         return $this->hasRole('super-administrator') || $this->hasRole('system-administrator');
