@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->registration()
             ->passwordReset()
-            // ->emailVerification()
+            ->emailVerification()
             ->profile(isSimple: false)
             ->databaseNotifications()
             ->colors([
