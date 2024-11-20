@@ -29,6 +29,13 @@ class RegionResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('districts_count')
+                    ->counts('districts')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('offices_count')
+                    ->counts('offices')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

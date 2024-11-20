@@ -32,6 +32,8 @@ class DistrictResource extends Resource
                 Tables\Columns\TextColumn::make('region.name')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('offices_count')
+                    ->counts('offices'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
