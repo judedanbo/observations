@@ -52,7 +52,7 @@ class AuditResource extends Resource
         return $table
             ->persistFiltersInSession()
             ->filtersTriggerAction(function ($action) {
-                return $action->button()->label('Filters');
+                return $action->button()->label('Filters audits');
             })
             ->columns([
                 Tables\Columns\TextColumn::make('title')

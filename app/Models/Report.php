@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AuditDepartmentEnum;
 use App\Enums\AuditTypeEnum;
 use App\Enums\FindingTypeEnum;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -145,20 +146,21 @@ class Report extends Model
                 ->required()
                 ->maxLength(20),
             TextInput::make('title')
+                // ->relationship('finding', 'title')
                 ->required()
                 ->maxLength(255),
-            TextInput::make('type')
-                ->maxLength(255),
-            TextInput::make('amount')
+            Select::make('finding.type')
+                ->enum(FindingTypeEnum::class)
+                ->options(FindingTypeEnum::class),
+            TextInput::make('finding.amount')
                 ->numeric(),
-            Textarea::make('recommendation')
+            Textarea::make('finding.recommendation')
                 ->columnSpanFull(),
             TextInput::make('amount_recovered')
                 ->numeric(),
             TextInput::make('surcharge_amount')
                 ->numeric(),
-            TextInput::make('implementation_date')
-                ->maxLength(10),
+            DatePicker::make('implementation_date'),
             TextInput::make('implementation_status')
                 ->maxLength(255),
             Textarea::make('comments')

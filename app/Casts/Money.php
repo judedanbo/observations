@@ -10,8 +10,7 @@ class Money implements CastsAttributes
 
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        // dd($value);
-        if ($attributes['amount'] === null || $attributes['amount'] === '') {
+        if ($value === null || $value === '') {
 
             return null;
         }
@@ -20,7 +19,7 @@ class Money implements CastsAttributes
         $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, 'GH¢ ');
         $formatter->setSymbol(\NumberFormatter::MONETARY_GROUPING_SEPARATOR_SYMBOL, ',');
         $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
-        return \Brick\Money\Money::ofMinor($attributes['amount'], 'USD')->formatWith($formatter);
+        return \Brick\Money\Money::ofMinor($value, 'USD')->formatWith($formatter);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed

@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\AuditTypeEnum;
+use App\Enums\FindingClassificationEnum;
+use App\Enums\FindingTypeEnum;
 use App\Filament\Exports\ReportExporter;
 use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Document;
 use App\Models\Report;
 use App\Models\Surcharge;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Section;
@@ -20,7 +24,10 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Runner\Baseline\Issue;
 
@@ -127,8 +134,13 @@ class ReportResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->filtersTriggerAction(function ($action) {
+                return $action->button()->label('Filters issues');
+            })
+            // ->filtersFormColumns(2)
             ->columns([
                 Tables\Columns\TextColumn::make('section')
+                    ->label('Audit report type')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('institution.name')
@@ -140,7 +152,8 @@ class ReportResource extends Resource
                 Tables\Columns\TextColumn::make('paragraphs')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('finding.title')
+                    ->label('Finding title')
                     ->icon(function (Report $record) {
                         if ($record->finding->documents->count() > 0) {
                             return 'heroicon-o-paper-clip';
@@ -152,6 +165,12 @@ class ReportResource extends Resource
                 Tables\Columns\TextColumn::make('finding.type')
                     ->searchable()
                     ->label('Finding type')
+                    ->sortable()
+                    ->badge()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('finding.classification')
+                    ->searchable()
+                    ->label('Classification')
                     ->sortable()
                     ->badge()
                     ->searchable(),
@@ -168,10 +187,16 @@ class ReportResource extends Resource
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('finding.amount_resolved')
+                    ->label('Amount Resolved')
+                    ->numeric()
+                    ->alignRight()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('finding.surcharge_amount')
                     ->searchable()
                     ->label('Surcharge Amount')
                     ->numeric()
+                    ->alignRight()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('finding.statuses.name')
                     ->label('Implementation Status')
@@ -195,17 +220,49 @@ class ReportResource extends Resource
                 //     ->sortable()
                 //     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                Tables\Actions\ExportAction::make()
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->label('Export All reports')
-                    ->exporter(ReportExporter::class)
-                    // ->columnMapping(false)
-                    ->fileName('reports'),
-            ])
+            ->filters(
+                [
+                    SelectFilter::make('section')
+                        ->options(AuditTypeEnum::class),
+                    SelectFilter::make('tile')
+                        ->relationship('audit', 'title')
+                        ->label('Audit report title'),
+                    SelectFilter::make('institution_id')
+                        ->relationship('institution', 'name')
+                        ->label('Institution'),
+                    SelectFilter::make('type')
+                        ->label('Finding type')
+                        ->options(FindingTypeEnum::class),
+                    // SelectFilter::make('region')
+                    //     ->relationship('finding', 'region')
+                    //     ->label('Region')
+                    //     ->options(FindingTypeEnum::class),
+                    SelectFilter::make('classification')
+                        ->label('Issue classification')
+                        // ->relationship('finding', 'classification')
+                        ->options(FindingClassificationEnum::class)
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['value'], function ($query, $data) {
+                                // dd($data);
+                                $query->whereHas('finding', function ($query) use ($data) {
+                                    $query->where('classification', $data);
+                                });
+                            });
+                        }),
+                ],
+                // layout: FiltersLayout::AboveContentCollapsible
+            )
+            ->headerActions(
+                [
+                    Tables\Actions\ExportAction::make()
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->label('Export All reports')
+                        ->exporter(ReportExporter::class)
+                        // ->columnMapping(false)
+                        ->fileName('reports'),
+                ],
+
+            )
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->slideOver(),
@@ -220,6 +277,46 @@ class ReportResource extends Resource
                             return $data;
                         })
                         ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                    Tables\Actions\Action::make('classification')
+                        ->label('Add Classification')
+                        ->icon('heroicon-o-rectangle-group')
+                        ->form([
+                            Select::make('classification')
+                                ->enum(FindingClassificationEnum::class)
+                                ->options(FindingClassificationEnum::class)
+                                ->label('Surcharge Amount')
+                                ->placeholder('Please select classification')
+                                ->required(),
+                        ])
+                        ->action(function ($data, $record) {
+                            $newAmount = $record->finding()->update([
+                                'classification' => $data['classification']
+                            ]);
+                            Notification::make('Classification Added')
+                                ->title('Classification Added')
+                                ->body('The classification has been added successfully.')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('amount_resolved')
+                        ->label('Add amount resolved')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->form([
+                            TextInput::make('amount_resolved')
+                                ->label('Amount resolved')
+                                ->placeholder('Enter amount resolved')
+                                ->required(),
+                        ])
+                        ->action(function ($data, $record) {
+                            $newAmount = $record->finding()->update([
+                                'amount_resolved' => $data['amount_resolved']
+                            ]);
+                            Notification::make('Amount resolved added')
+                                ->title('Amount Resolved added')
+                                ->body('The amount resolved has been added successfully.')
+                                ->success()
+                                ->send();
+                        }),
                     Tables\Actions\Action::make('Surcharge')
                         ->icon('heroicon-o-currency-dollar')
                         ->form([
@@ -250,6 +347,7 @@ class ReportResource extends Resource
                                 ->step(0.01)
                                 ->required(),
                             TextInput::make('comments')
+                                ->required()
                                 ->columnSpanFull(),
                         ])
                         ->action(function ($data, $record) {

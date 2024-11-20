@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +21,7 @@ class Recovery extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => Money::class,
     ];
 
     public function finding(): BelongsTo
