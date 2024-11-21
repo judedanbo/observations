@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\Money;
 use App\Casts\RecoveredCast;
+use App\Casts\ResolvedCast;
 use App\Casts\SurchargeCast;
 use App\Enums\FindingClassificationEnum;
 use App\Enums\FindingTypeEnum;
@@ -31,7 +32,7 @@ class Finding extends Model
         'type',
         'amount',
         'surcharge_amount',
-        'total_recoveries',
+        // 'total_recoveries',
         'classification',
         'amount_resolved',
 
@@ -42,9 +43,9 @@ class Finding extends Model
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
         'amount' => Money::class,
-        'surcharge_amount' => Money::class,
-        'total_recoveries' => Money::class,
-        'amount_resolved' => Money::class,
+        'surcharge_amount' => SurchargeCast::class,
+        // 'total_recoveries' => RecoveredCast::class,
+        'amount_resolved' => ResolvedCast::class,
         'classification' => FindingClassificationEnum::class,
     ];
 

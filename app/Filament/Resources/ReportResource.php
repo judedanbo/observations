@@ -137,7 +137,7 @@ class ReportResource extends Resource
             ->filtersTriggerAction(function ($action) {
                 return $action->button()->label('Filters issues');
             })
-            // ->filtersFormColumns(2)
+            ->filtersFormColumns(3)
             ->columns([
                 Tables\Columns\TextColumn::make('section')
                     ->label('Audit report type')
@@ -222,9 +222,55 @@ class ReportResource extends Resource
             ])
             ->filters(
                 [
+                    SelectFilter::make('Region')
+                        ->native()
+                        ->searchable()
+                        ->preload()
+                        ->relationship('region', 'name')
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['value'], function ($query, $data) {
+                                $query->whereHas('audit', function ($query) use ($data) {
+                                    $query->whereHas('district', function ($query) use ($data) {
+                                        $query->whereHas('region', function ($query) use ($data) {
+                                            $query->where('regions.id', $data);
+                                        });
+                                        // $query->where('name', $data);
+                                    });
+                                });
+                            });
+                        }),
+                    SelectFilter::make('District')
+                        ->native()
+                        ->searchable()
+                        ->preload()
+                        ->relationship('district', 'name')
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['value'], function ($query, $data) {
+                                $query->whereHas('audit', function ($query) use ($data) {
+                                    $query->whereHas('districts', function ($query) use ($data) {
+                                        $query->where('districts.id', $data);
+                                    });
+                                });
+                            });
+                        }),
+                    SelectFilter::make('Office')
+                        ->relationship('audit.offices', 'name')
+                        ->multiple()
+                        ->native()
+                        ->searchable()
+                        ->preload()
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['values'], function ($query, $data) {
+                                $query->whereHas('audit', function ($query) use ($data) {
+                                    $query->whereHas('offices', function ($query) use ($data) {
+                                        $query->where('offices.id', $data);
+                                    });
+                                });
+                            });
+                        }),
                     SelectFilter::make('section')
                         ->options(AuditTypeEnum::class),
-                    SelectFilter::make('tile')
+                    SelectFilter::make('Audit report title')
                         ->relationship('audit', 'title')
                         ->label('Audit report title'),
                     SelectFilter::make('institution_id')

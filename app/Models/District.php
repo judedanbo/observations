@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,6 +35,11 @@ class District extends Model
         return $this->hasMany(Office::class);
     }
 
+    public function audits(): BelongsToMany
+    {
+        return $this->belongsToMany(Audit::class);
+    }
+
     public static function getForm(): array
     {
         return [
@@ -42,6 +48,7 @@ class District extends Model
                 ->maxLength(255),
             Select::make('region_id')
                 ->relationship('region', 'name')
+                ->createOptionForm(Region::getForm())
                 ->required(),
         ];
     }

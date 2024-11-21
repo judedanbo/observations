@@ -3,11 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\DistrictResource\Pages;
+use App\Filament\Resources\DistrictResource\RelationManagers\AuditsRelationManager;
+use App\Filament\Resources\DistrictResource\RelationManagers\OfficesRelationManager;
+use App\Models\Audit;
 use App\Models\District;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DistrictResource extends Resource
 {
@@ -28,12 +32,21 @@ class DistrictResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('District Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('region.name')
                     ->numeric()
                     ->sortable(),
+                // Tables\Columns\TextColumn::make('offices.name')
+                //     ->searchable(),
+                //     // ->counts('offices'),
                 Tables\Columns\TextColumn::make('offices_count')
+                    ->label('No. District Offices')
                     ->counts('offices'),
+                // Tables\Columns\TextColumn::make('audits')
+                //     // ->
+                //     ->label('No. of Audits'),
+                // ->counts(['audits']),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -62,8 +75,10 @@ class DistrictResource extends Resource
 
     public static function getRelations(): array
     {
+
         return [
-            //
+            AuditsRelationManager::class,
+            OfficesRelationManager::class
         ];
     }
 
@@ -73,6 +88,7 @@ class DistrictResource extends Resource
             'index' => Pages\ListDistricts::route('/'),
             // 'create' => Pages\CreateDistrict::route('/create'),
             // 'edit' => Pages\EditDistrict::route('/{record}/edit'),
+            'view' => Pages\ViewDistrict::route('/{record}'),
         ];
     }
 }

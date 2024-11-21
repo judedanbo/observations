@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Office extends Model
@@ -26,6 +27,16 @@ class Office extends Model
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class);
+    }
+
+    function region(): BelongsTo
+    {
+        return $this->belongsToThrough(Region::class, District::class);
+    }
+
+    public function audits(): BelongsToMany
+    {
+        return $this->belongsToMany(Audit::class);
     }
 
     public static function getForm(): array

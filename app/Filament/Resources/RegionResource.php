@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\DistrictResource\RelationManagers\OfficesRelationManager;
 use App\Filament\Resources\RegionResource\Pages;
+use App\Filament\Resources\RegionResource\RelationManagers\DistrictsRelationManager;
 use App\Models\Region;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -65,7 +67,8 @@ class RegionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            DistrictsRelationManager::class,
+            OfficesRelationManager::class,
         ];
     }
 
@@ -75,6 +78,7 @@ class RegionResource extends Resource
             'index' => Pages\ListRegions::route('/'),
             // 'create' => Pages\CreateRegion::route('/create'),
             // 'edit' => Pages\EditRegion::route('/{record}/edit'),
+            'view' => Pages\ViewRegion::route('/{record}'),
         ];
     }
 }

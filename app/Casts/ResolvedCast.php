@@ -5,13 +5,13 @@ namespace App\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 
-class RecoveredCast implements CastsAttributes
+class ResolvedCast implements CastsAttributes
 {
 
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
         // dd($value);
-        if ($attributes['amount'] === null || $attributes['amount'] === '') {
+        if ($attributes['amount_resolved'] === null || $attributes['amount_resolved'] === '') {
 
             return null;
         }
@@ -20,7 +20,7 @@ class RecoveredCast implements CastsAttributes
         $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, 'GH¢');
         $formatter->setSymbol(\NumberFormatter::MONETARY_GROUPING_SEPARATOR_SYMBOL, ',');
         $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
-        return \Brick\Money\Money::of($attributes['amount'], 'USD')->formatWith($formatter);
+        return \Brick\Money\Money::of($attributes['amount_resolved'], 'USD')->formatWith($formatter);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed

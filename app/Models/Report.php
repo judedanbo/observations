@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Report extends Model
@@ -48,6 +49,12 @@ class Report extends Model
         return $this->belongsTo(Audit::class);
     }
 
+    // public function office(): HasOneThrough
+    // {
+    //     return $this->hasOneThrough(Office::class, Audit::class, 'id', 'id', 'audit_id', 'office_id');
+    // }
+
+
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
@@ -63,6 +70,22 @@ class Report extends Model
     public function recommendations(): HasManyThrough
     {
         return $this->hasManyThrough(Parliament::class, Finding::class, 'id', 'finding_id', 'finding_id', 'id');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function region(): HasOneThrough
+    {
+        return $this->hasOneThrough(Region::class, District::class, 'id', 'id', 'district_id', 'region_id');
+    }
+
+
+    function followUps(): HasManyThrough
+    {
+        return $this->hasManyThrough(Action::class, Finding::class, 'id', 'finding_id', 'finding_id', 'id');
     }
 
     public function recommend($data)

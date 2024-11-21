@@ -78,6 +78,16 @@ class Audit extends Model
         return $this->hasMany(Report::class);
     }
 
+    public function offices(): BelongsToMany
+    {
+        return $this->belongsToMany(Office::class);
+    }
+
+    public function districts(): BelongsToMany
+    {
+        return $this->belongsToMany(District::class);
+    }
+
     public function scopeScheduled(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::PLANNED);
@@ -107,11 +117,11 @@ class Audit extends Model
     {
         return $query->when(
             $data['planned_start_date_from'],
-            fn (Builder $query, $value) => $query->whereDate('planned_start_date', '>=', $value)
+            fn(Builder $query, $value) => $query->whereDate('planned_start_date', '>=', $value)
         )
             ->when(
                 $data['planned_start_date_to'],
-                fn (Builder $query, $value) => $query->whereDate('planned_start_date', '<=', $value)
+                fn(Builder $query, $value) => $query->whereDate('planned_start_date', '<=', $value)
             );
     }
 
@@ -119,11 +129,11 @@ class Audit extends Model
     {
         return $query->when(
             $data['actual_start_date_from'],
-            fn (Builder $query, $value) => $query->whereDate('actual_start_date', '>=', $value)
+            fn(Builder $query, $value) => $query->whereDate('actual_start_date', '>=', $value)
         )
             ->when(
                 $data['actual_start_date_to'],
-                fn (Builder $query, $value) => $query->whereDate('actual_start_date', '<=', $value)
+                fn(Builder $query, $value) => $query->whereDate('actual_start_date', '<=', $value)
             );
     }
 
@@ -171,7 +181,7 @@ class Audit extends Model
             return $this->teams()->create(['name' => $team['name']]);
         }
 
-        return $this->teams()->create(['name' => $this->title.' Team']);
+        return $this->teams()->create(['name' => $this->title . ' Team']);
     }
 
     public function addTeam($team)
@@ -214,23 +224,23 @@ class Audit extends Model
     {
         if ($this->planned_start_date === null) {
             if ($this->planned_end_date !== null) {
-                return 'To end '.$this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+                return 'To end ' . $this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
             }
 
             return 'Not scheduled';
         }
         if ($this->planned_start_date->gt(now())) {
-            return 'To start '.$this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+            return 'To start ' . $this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
         }
         if ($this->planned_start_date->lt(now())) {
             if ($this->status === AuditStatusEnum::PLANNED) {
-                return 'planned start passed '.$this->planned_start_date->diffForHumans([
+                return 'planned start passed ' . $this->planned_start_date->diffForHumans([
                     'options' => Carbon::ONE_DAY_WORDS,
                 ]);
             }
             if ($this->planned_end_date?->lt(now())) {
                 if ($this->status === AuditStatusEnum::IN_PROGRESS) {
-                    return 'passed due'.$this->planned_end_date->diffForHumans([
+                    return 'passed due' . $this->planned_end_date->diffForHumans([
                         'options' => Carbon::ONE_DAY_WORDS,
                     ]);
                 }

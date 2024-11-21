@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OfficeResource\Pages;
 use App\Filament\Resources\OfficeResource\RelationManagers;
+use App\Filament\Resources\OfficeResource\RelationManagers\AuditsRelationManager;
+use App\Models\Audit;
 use App\Models\Office;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class OfficeResource extends Resource
 {
@@ -32,6 +35,7 @@ class OfficeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Office Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('district.name')
@@ -42,6 +46,8 @@ class OfficeResource extends Resource
                     ->label('Region')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('audits_count')
+                    ->counts('audits')
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -62,7 +68,7 @@ class OfficeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuditsRelationManager::class
         ];
     }
 
