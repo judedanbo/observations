@@ -43,13 +43,13 @@ class District extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255),
             Select::make('region_id')
                 ->relationship('region', 'name')
                 ->createOptionForm(Region::getForm())
                 ->required(),
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
         ];
     }
 }
