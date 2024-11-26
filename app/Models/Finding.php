@@ -79,6 +79,11 @@ class Finding extends Model
         return $this->hasMany(FollowUp::class);
     }
 
+    public function actions(): HasMany
+    {
+        return $this->hasMany(Action::class);
+    }
+
     public function recoveries(): HasMany
     {
         return $this->hasMany(Recovery::class);

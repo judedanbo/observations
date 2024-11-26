@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Livewire\Component as Livewire;
 
 class FollowUp extends Model
 {
@@ -56,18 +57,26 @@ class FollowUp extends Model
 
     public static function getForm(?int $findingId = null): array
     {
+        // dd($record);
         return [
             Select::make('observation_id')
                 ->live()
+                ->default(function (Livewire $livewire) {
+                    return $livewire->getOwnerRecord()->finding->observation_id;
+                })
                 ->relationship(
                     name: 'observation',
                     titleAttribute: 'title',
-                    modifyQueryUsing: function (Builder $query, Get $get) {
+                    modifyQueryUsing: function (Builder $query, Get $get) use ($findingId) {
+                        $query->when(
+                            $findingId,
+                            fn(Builder $query, $findingId) => $query->whereHas('findings', fn(Builder $query) => $query->where('id', $findingId))
+                        );
                         $query->when(
                             $get('finding_id'),
-                            fn (Builder $query, $auditId) => $query->whereHas(
+                            fn(Builder $query, $auditId) => $query->whereHas(
                                 'findings',
-                                fn (Builder $query) => $query->where('id', $auditId)
+                                fn(Builder $query) => $query->where('id', $auditId)
                             )
                         );
                     }
@@ -85,17 +94,22 @@ class FollowUp extends Model
                 ->relationship(
                     name: 'finding',
                     titleAttribute: 'title',
-                    modifyQueryUsing: function (Builder $query, Get $get) {
+                    modifyQueryUsing: function (Builder $query, Get $get) use ($findingId) {
+                        $query->when(
+                            $findingId,
+                            fn(Builder $query, $findingId) => $query->where('id', $findingId)
+                        );
                         $query->when(
                             $get('observation_id'),
-                            fn (Builder $query, $observationId) => $query->where('observation_id', $observationId)
+                            fn(Builder $query, $observationId) => $query->where('observation_id', $observationId)
                         );
                         $query->when(
                             $get('recommendation_id'),
-                            fn (Builder $query, $recommendationId) => $query->whereHas('recommendations', fn (Builder $query) => $query->where('id', $recommendationId))
+                            fn(Builder $query, $recommendationId) => $query->whereHas('recommendations', fn(Builder $query) => $query->where('id', $recommendationId))
                         );
                     }
                 )
+                ->default($findingId)
                 ->editOptionForm(Finding::getForm())
                 ->searchable()
                 ->searchPrompt('Search audit findings...')
@@ -110,9 +124,13 @@ class FollowUp extends Model
                     name: 'recommendation',
                     titleAttribute: 'title',
                     modifyQueryUsing: function (Builder $query, Get $get) {
-                        $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->where('finding_id', $findingId));
+                        $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->where('finding_id', $findingId));
                     }
                 )
+                ->default(function (Livewire $livewire) use ($findingId) {
+                    return $livewire->getOwnerRecord()->finding->recommendations->where('id', $findingId)->first()->id;
+                    // return $livewire->getOwnerRecord()->finding;
+                })
                 ->required()
                 ->editOptionForm(Recommendation::getForm())
                 ->searchable()
@@ -123,6 +141,7 @@ class FollowUp extends Model
                 ->preload()
                 ->columnSpanFull(),
             TextInput::make('title')
+                ->columnSpanFull()
                 ->required()
                 ->maxLength(250),
             RichEditor::make('description')

@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Livewire\Component as Livewire;
+
 
 class Action extends Model
 {
@@ -75,8 +77,9 @@ class Action extends Model
                 ->relationship(
                     name: 'observation',
                     titleAttribute: 'title',
-                    modifyQueryUsing: function (Builder $query, Get $get) {
-                        $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->whereHas('findings', fn (Builder $query) => $query->where('id', $findingId)));
+                    modifyQueryUsing: function (Builder $query, Get $get) use ($observationId) {
+                        $query->when($observationId, fn(Builder $query, $observationId) => $query->where('id', $observationId));
+                        $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->whereHas('findings', fn(Builder $query) => $query->where('id', $findingId)));
                     }
                 )
                 ->default($observationId)
@@ -100,16 +103,21 @@ class Action extends Model
                     modifyQueryUsing: function (Builder $query, Get $get) {
                         $query->when(
                             $get('observation_id'),
-                            fn (Builder $query, $observationId) => $query->where('observation_id', $observationId)
+                            fn(Builder $query, $observationId) => $query->where('observation_id', $observationId)
                         );
                         $query->when(
                             $get('recommendation_id'),
-                            fn (Builder $query, $recommendationId) => $query->whereHas('recommendations', fn (Builder $query) => $query->where('id', $recommendationId))
+                            fn(Builder $query, $recommendationId) => $query->whereHas('recommendations', fn(Builder $query) => $query->where('id', $recommendationId))
                         );
                     }
                 )
                 ->editOptionForm(Finding::getForm())
                 ->searchable()
+                ->default(function (Livewire $livewire) use ($observationId) {
+                    return $livewire->getOwnerRecord()->finding_id;
+                    // return $livewire->getOwnerRecord()->finding->recommendations->where('id', $findingId)->first()->id;
+                    // return $livewire->getOwnerRecord()->finding;
+                })
                 ->searchPrompt('Search findings...')
                 ->noSearchResultsMessage('No findings found.')
                 ->loadingMessage('Loading findings...')
@@ -119,7 +127,7 @@ class Action extends Model
                 ->columnSpanFull(),
             Select::make('recommendation_id')
                 ->relationship(name: 'recommendation', titleAttribute: 'title', modifyQueryUsing: function (Builder $query, Get $get) {
-                    $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->where('finding_id', $findingId));
+                    $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->where('finding_id', $findingId));
                 })
                 ->editOptionForm(Recommendation::getForm())
                 ->searchable()
@@ -149,7 +157,6 @@ class Action extends Model
                         if (! app()->environment('local')) {
                             return false;
                         }
-
                         return true;
                     })
                     ->action(function ($livewire) {

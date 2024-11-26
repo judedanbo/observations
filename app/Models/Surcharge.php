@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
+use App\Casts\SurchargeCast;
 use App\Enums\FindingTypeEnum;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[ScopedBy([Scopes\SurchargeScope::class])]
+// #[ScopedBy([Scopes\SurchargeScope::class])] // scope surcharges to be displayed when surcharge_amount > 0
 class Surcharge extends Model
 {
     // TODO create a table for surcharges
@@ -18,8 +20,8 @@ class Surcharge extends Model
         'id' => 'integer',
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
-        'amount' => 'decimal:2',
-        'surcharge_amount' => 'decimal:2',
+        'amount' => Money::class,
+        'surcharge_amount' => SurchargeCast::class,
     ];
 
     public function observation(): BelongsTo
@@ -42,7 +44,7 @@ class Surcharge extends Model
         return $query->where('type', FindingTypeEnum::COM);
     }
 
-    public function surcharge($amount)
+    public function surcharge($amount): void
     {
         $this->surcharge_amount = $amount[0];
         $this->save();

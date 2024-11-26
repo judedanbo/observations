@@ -85,6 +85,11 @@ class Report extends Model
 
     function followUps(): HasManyThrough
     {
+        return $this->hasManyThrough(FollowUp::class, Finding::class, 'id', 'finding_id', 'finding_id', 'id');
+    }
+
+    public function actions(): HasManyThrough
+    {
         return $this->hasManyThrough(Action::class, Finding::class, 'id', 'finding_id', 'finding_id', 'id');
     }
 

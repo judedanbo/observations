@@ -37,9 +37,9 @@ class DistrictResource extends Resource
                 Tables\Columns\TextColumn::make('region.name')
                     ->numeric()
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('offices.name')
-                //     ->searchable(),
-                //     // ->counts('offices'),
+                Tables\Columns\TextColumn::make('capital')
+                    ->searchable(),
+                // ->counts('offices'),
                 Tables\Columns\TextColumn::make('offices_count')
                     ->label('No. District Offices')
                     ->counts('offices'),

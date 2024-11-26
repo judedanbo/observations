@@ -259,6 +259,7 @@ class Audit extends Model
     {
         return [
             TextInput::make('title')
+                ->label('Audit Title')
                 ->required()
                 ->maxLength(250)
                 ->columnSpanFull(),

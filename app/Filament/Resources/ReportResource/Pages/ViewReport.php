@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReportResource\Pages;
 
+use App\Enums\FindingClassificationEnum;
 use App\Filament\Resources\ReportResource;
 use App\Models\Document;
 use App\Models\Parliament;
@@ -9,6 +10,7 @@ use App\Models\Report;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -70,7 +72,46 @@ class ViewReport extends ViewRecord
                         return $data;
                     })
                     ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
-
+                Action::make('classification')
+                    ->label('Add Classification')
+                    ->icon('heroicon-o-rectangle-group')
+                    ->form([
+                        Select::make('classification')
+                            ->enum(FindingClassificationEnum::class)
+                            ->options(FindingClassificationEnum::class)
+                            ->label('Surcharge Amount')
+                            ->placeholder('Please select classification')
+                            ->required(),
+                    ])
+                    ->action(function ($data, $record) {
+                        $newAmount = $record->finding()->update([
+                            'classification' => $data['classification']
+                        ]);
+                        Notification::make('Classification Added')
+                            ->title('Classification Added')
+                            ->body('The classification has been added successfully.')
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('amount_resolved')
+                    ->label('Add amount resolved')
+                    ->icon('heroicon-o-currency-dollar')
+                    ->form([
+                        TextInput::make('amount_resolved')
+                            ->label('Amount resolved')
+                            ->placeholder('Enter amount resolved')
+                            ->required(),
+                    ])
+                    ->action(function ($data, $record) {
+                        $newAmount = $record->finding()->update([
+                            'amount_resolved' => $data['amount_resolved']
+                        ]);
+                        Notification::make('Amount resolved added')
+                            ->title('Amount Resolved added')
+                            ->body('The amount resolved has been added successfully.')
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('Surcharge')
                     ->icon('heroicon-o-currency-dollar')
                     ->form([

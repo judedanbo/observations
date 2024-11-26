@@ -7,8 +7,11 @@ use App\Enums\FindingClassificationEnum;
 use App\Enums\FindingTypeEnum;
 use App\Filament\Exports\ReportExporter;
 use App\Filament\Resources\ReportResource\Pages;
+use App\Filament\Resources\ReportResource\RelationManagers\ActionsRelationManager;
+use App\Filament\Resources\ReportResource\RelationManagers\FollowUpsRelationManager;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Document;
+use App\Models\FollowUp;
 use App\Models\Report;
 use App\Models\Surcharge;
 use Filament\Forms\Components\Select;
@@ -19,6 +22,7 @@ use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -67,6 +71,7 @@ class ReportResource extends Resource
                 // ]),
                 Split::make([
                     Section::make('Observation')
+                        ->collapsible()
                         ->columnStart(1)
                         ->columns(4)
                         ->schema([
@@ -110,6 +115,18 @@ class ReportResource extends Resource
                     ->columnStart(1)
                     ->columnSpanFull(),
                 // Split::make([
+                Section::make('Classification')
+                    ->label('Issue classification/Resolution')
+                    ->collapsible()
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('finding.classification')
+                            ->label('Classification')
+                            ->badge(),
+                        TextEntry::make('finding.amount_resolved')
+                            ->label('Amount Resolved')
+                            ->numeric(),
+                    ]),
                 Section::make('Implementation')
                     ->columns(2)
                     ->schema([
@@ -416,7 +433,16 @@ class ReportResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RecommendationsRelationManager::class,
+            RelationGroup::make('Client Action', [
+                ActionsRelationManager::class,
+            ]),
+            RelationGroup::make('Finding follow up', [
+                FollowUpsRelationManager::class,
+            ]),
+            RelationGroup::make('PAC Recommendations', [
+                RecommendationsRelationManager::class,
+            ]),
+
         ];
     }
 
