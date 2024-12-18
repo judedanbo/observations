@@ -32,6 +32,8 @@ class ActionsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('description')
+                    ->html(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make()

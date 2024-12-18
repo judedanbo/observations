@@ -53,11 +53,17 @@ class ListReports extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Download blank template')
+                ->icon('heroicon-c-document-arrow-down')
+                ->outlined()
+                ->url('/storage/Tracking Template - V3.xlsx'),
             Actions\CreateAction::make()
                 ->icon('heroicon-c-document-plus')
+                ->outlined()
                 ->slideOver(),
-            Actions\Action::make('Load Observations')
-                ->icon('heroicon-s-document-arrow-down')
+            Actions\Action::make('Upload from excel')
+                ->outlined()
+                ->icon('heroicon-s-document-arrow-up')
                 ->form([
                     Select::make('audit_section')
                         ->enum(AuditTypeEnum::class)

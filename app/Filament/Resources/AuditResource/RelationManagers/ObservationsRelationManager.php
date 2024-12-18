@@ -31,7 +31,6 @@ class ObservationsRelationManager extends RelationManager
     public function isReadOnly(): bool
     {
         return $this->getOwnerRecord()->status !== AuditStatusEnum::IN_PROGRESS;
-
     }
 
     public function form(Form $form): Form
@@ -75,7 +74,7 @@ class ObservationsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->icon('heroicon-o-plus')
                     ->outlined()
-                    ->successRedirectUrl(fn (Observation $record) => route('filament.admin.resources.observations.view', $record))
+                    ->successRedirectUrl(fn(Observation $record) => route('filament.admin.resources.observations.view', $record))
                     ->successNotification(
                         Notification::make('Observation Created')
                             ->title('Observation Created')
@@ -85,7 +84,7 @@ class ObservationsRelationManager extends RelationManager
                 Action::make('Load Observations')
                     ->outlined()
                     ->icon('heroicon-o-document-text')
-                    ->visible(fn () => $this->getOwnerRecord()->status === AuditStatusEnum::IN_PROGRESS)
+                    ->visible(fn() => $this->getOwnerRecord()->status === AuditStatusEnum::IN_PROGRESS)
                     ->form([
                         Select::make('audit_type')
                             ->enum(AuditDepartmentEnum::class)
@@ -96,7 +95,7 @@ class ObservationsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(function (array $data) {
-                        $file = public_path('storage/'.$data['filename']);
+                        $file = public_path('storage/' . $data['filename']);
                         $audit = Audit::find($this->getOwnerRecord()->id);
                         $audit->importObservations($file);
                     })
@@ -110,7 +109,7 @@ class ObservationsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (Observation $record): string => route('filament.admin.resources.observations.view', $record)),
+                    ->url(fn(Observation $record): string => route('filament.admin.resources.observations.view', $record)),
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
@@ -126,7 +125,7 @@ class ObservationsRelationManager extends RelationManager
                     Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
     }
