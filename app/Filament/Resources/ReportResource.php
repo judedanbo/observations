@@ -166,6 +166,10 @@ class ReportResource extends Resource
                 Tables\Columns\TextColumn::make('audit.title')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('finding.observation.status')
+                    ->label('Status')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('paragraphs')
                     ->sortable()
                     ->searchable(),
@@ -215,6 +219,14 @@ class ReportResource extends Resource
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('finding.surcharge_amount')
+                    ->searchable()
+                    ->label('Amount Outstanding')
+                    ->numeric()
+                    ->alignRight()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('finding.statuses.name')
                     ->label('Implementation Status')
                     ->listWithLineBreaks()
