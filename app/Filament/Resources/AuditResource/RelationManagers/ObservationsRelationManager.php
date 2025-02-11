@@ -76,10 +76,12 @@ class ObservationsRelationManager extends RelationManager
                     ->outlined()
                     ->successRedirectUrl(fn(Observation $record) => route('filament.admin.resources.observations.view', $record))
                     ->successNotification(
-                        Notification::make('Observation Created')
-                            ->title('Observation Created')
-                            ->body('The observation has been created successfully.')
-                            ->success()
+                        function () {
+                            Notification::make('Observation Created')
+                                ->title('Observation Created')
+                                ->body('The observation has been created successfully.')
+                                ->success();
+                        }
                     ),
                 Action::make('Load Observations')
                     ->outlined()

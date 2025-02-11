@@ -4,21 +4,24 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Actions\DeleteAction;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Mockery\Matcher\Not;
 use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
@@ -77,7 +80,20 @@ class UserResource extends Resource
                         ->action(function (User $record, array $data) {
                             $record->syncRoles($data['role']);
                         }),
-
+                    Tables\Actions\Action::make('send verification email')
+                        ->label('Send Verification Email')
+                        ->icon('heroicon-o-envelope')
+                        ->action(function (User $record) {
+                            $record->sendEmailVerificationNotification();
+                        })
+                        ->successNotification(
+                            Notification::make()
+                                ->success()
+                                ->title('Verification Email Sent')
+                                ->body('The verification email has been sent to the user.')
+                                ->send()
+                        ),
+                    DeleteAction::make(),
                 ]),
             ])
             ->bulkActions([

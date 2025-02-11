@@ -8,6 +8,7 @@ use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\TextInput;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -49,6 +50,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             TextInput::make('email')
                 ->email()
                 ->required()
+                ->unique('users', 'email')
                 ->maxLength(255),
             // // Forms\Components\DateTimePicker::make('email_verified_at'),
             // TextInput::make('password')
@@ -60,11 +62,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     protected static function booted()
     {
-        static::creating(function (User $user) {
+        static::created(function (User $user) {
             // Assign the user role by default
             // TODO: Make this configurable
 
             $user->assignRole(['user', 'Super Administrator']);
+            event(new Registered($user));
         });
     }
 
