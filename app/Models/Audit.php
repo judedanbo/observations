@@ -88,6 +88,11 @@ class Audit extends Model
         return $this->belongsToMany(District::class);
     }
 
+    public function regions(): HasManyThrough
+    {
+        return $this->hasManyThrough(Region::class, District::class);
+    }
+
     public function scopeScheduled(Builder $query): Builder
     {
         return $query->where('status', AuditStatusEnum::PLANNED);

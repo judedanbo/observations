@@ -243,15 +243,18 @@ class ReportResource extends Resource
                         ->native()
                         ->searchable()
                         ->preload()
-                        ->relationship('region', 'name')
+                        ->multiple()
+                        ->relationship('district.region', 'name')
                         ->query(function (Builder $query, array $data) {
-                            $query->when($data['value'], function ($query, $data) {
+                            // dd($data['values']);
+                            $query->when($data['values'], function ($query, $data) {
                                 $query->whereHas('audit', function ($query) use ($data) {
-                                    $query->whereHas('district', function ($query) use ($data) {
+                                    $query->whereHas('districts', function ($query) use ($data) {
                                         $query->whereHas('region', function ($query) use ($data) {
-                                            $query->where('regions.id', $data);
+                                            $query->whereIn('regions.id', $data);
+                                            // dd($data);
                                         });
-                                        // $query->where('name', $data);
+                                        //             //     // //                 // $query->where('name', $data);
                                     });
                                 });
                             });
@@ -259,13 +262,14 @@ class ReportResource extends Resource
                     SelectFilter::make('District')
                         ->native()
                         ->searchable()
+                        ->multiple()
                         ->preload()
                         ->relationship('district', 'name')
                         ->query(function (Builder $query, array $data) {
-                            $query->when($data['value'], function ($query, $data) {
+                            $query->when($data['values'], function ($query, $data) {
                                 $query->whereHas('audit', function ($query) use ($data) {
                                     $query->whereHas('districts', function ($query) use ($data) {
-                                        $query->where('districts.id', $data);
+                                        $query->whereIn('districts.id', $data);
                                     });
                                 });
                             });

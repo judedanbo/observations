@@ -56,7 +56,7 @@ class ListReports extends ListRecords
             Actions\Action::make('Download blank template')
                 ->icon('heroicon-c-document-arrow-down')
                 ->outlined()
-                ->url('/storage/Tracking Template - V3.xlsx'),
+                ->url('/Tracking Template - V3.xlsx'),
             Actions\CreateAction::make()
                 ->icon('heroicon-c-document-plus')
                 ->outlined()
