@@ -31,9 +31,9 @@ enum ObservationStatusEnum: string implements HasColor, HasDescription, HasLabel
             self::RESPONDED => 'Responded',
             self::TEAM_RESOLVED => 'Team Resolved',
             self::REPORTED => 'Reported',
-            self::DA_RESOLVED => 'DA Resolved',
-            self::RA_RESOLVED => 'RA Resolved',
-            self::AG_RESOLVED => 'AG Resolved',
+            self::DA_RESOLVED => 'DA/ Resolved',
+            self::RA_RESOLVED => 'RA/Sector Resolved',
+            self::AG_RESOLVED => 'DAG Resolved',
             self::PAC_RESOLVED => 'PAC Resolved',
         };
     }

@@ -18,12 +18,10 @@ class Dashboard extends PagesDashboard
 {
   use HasFiltersForm;
 
+
   public function getColumns(): int|string|array
   {
-    return [
-      'lg' => 3,
-      'xl' => 6,
-    ];
+    return 6;
   }
 
   public function filtersForm(Form $form): Form
@@ -67,14 +65,14 @@ class Dashboard extends PagesDashboard
                 ->native(false)
                 ->label('Filter by finding Type'),
 
-              Select::make('unit_department')
-                ->label('Audit Status')
-                ->enum(AuditDepartmentEnum::class)
-                ->options(AuditDepartmentEnum::class)
-                ->native(false)
-                // ->multiple()
-                ->label('Filter by department/unit'),
-              // ->date(),
+              // Select::make('unit_department')
+              //   ->label('Audit Status')
+              //   ->enum(AuditDepartmentEnum::class)
+              //   ->options(AuditDepartmentEnum::class)
+              //   ->native(false)
+              //   // ->multiple()
+              //   ->label('Filter by department/unit'),
+              // // ->date(),
             ])
               ->columnSpanFull(),
           ]),

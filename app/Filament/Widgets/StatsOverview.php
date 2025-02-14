@@ -16,18 +16,29 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
-    protected int|string|array $columnSpan = [
-        'md' => 6,
-    ];
+    protected function getColumns(): int
+    {
+        $count = count($this->getCachedStats());
+
+        if ($count < 3) {
+            return 3;
+        }
+
+        if (($count % 3) !== 1) {
+            return 3;
+        }
+
+        return 4;
+    }
 
     protected function getStats(): array
     {
         // $startDate = $this->filters['start_date'];
         // $endDate = $this->filters['end_date'];
-        // $auditStatus = $this->filters['audit_status'];
-        // $findingType = $this->filters['finding_type'];
+        $auditStatus = $this->filters['audit_status'];
+        $findingType = $this->filters['finding_type'];
         // $unitDepartment = $this->filters['unit_department'];
-        // $observationStatus = $this->filters['observation_status'];
+        $observationStatus = $this->filters['observation_status'];
 
         $auditStats = Trend::model(Audit::class)
             ->between(
@@ -69,27 +80,27 @@ class StatsOverview extends BaseWidget
             ->toArray();
 
         return [
-            Stat::make('Audits Universe', Number::format(
+            Stat::make('Clients', Number::format(
                 Institution::query()
                     // ->when($unitDepartment, function ($query, $unitDepartment) {
-                    //     return $query->whereHas('audits', fn ($query) => $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment)));
+                    //     return $query->whereHas('audits', fn($query) => $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment)));
                     // })
                     ->count()
             ))
-                ->description('Audit universe')
+                ->description('Clients')
                 ->color('success')
                 ->chart($institutionStats),
             Stat::make('Total Audits', Number::format(
                 Audit::query()
-                    // ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
-                    // ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
-                    // ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
-                    // ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
-                    // ->when($findingType, function ($query, $findingType) {
-                    //     return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
-                    // })
+                    // ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
+                    // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+                    ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
+                    ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
+                    ->when($findingType, function ($query, $findingType) {
+                        return $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                    })
                     // ->when($unitDepartment, function ($query, $unitDepartment) {
-                    //     return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                    //     return $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                     // })
                     ->count()
             ))
@@ -108,23 +119,23 @@ class StatsOverview extends BaseWidget
                     //         $query->where('created_at', '<=', $endDate);
                     //     });
                     // })
-                    // ->when(
-                    //     $auditStatus,
-                    //     function ($query, $auditStatus) {
-                    //         $query->whereHas('audit', fn ($query) => $query->where('status', $auditStatus));
-                    //     }
-                    // )
-                    // ->when(
-                    //     $findingType,
-                    //     function ($query, $findingType) {
-                    //         $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
-                    //     }
-                    // )
+                    ->when(
+                        $auditStatus,
+                        function ($query, $auditStatus) {
+                            $query->whereHas('audit', fn($query) => $query->where('status', $auditStatus));
+                        }
+                    )
+                    ->when(
+                        $findingType,
+                        function ($query, $findingType) {
+                            $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                        }
+                    )
                     // ->when(
                     //     $unitDepartment,
                     //     function ($query, $unitDepartment) {
                     //         $query->whereHas('audit', function ($query) use ($unitDepartment) {
-                    //             $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+                    //             $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
                     //         });
                     //     }
                     // )
@@ -165,9 +176,12 @@ class StatsOverview extends BaseWidget
                     //         });
                     //     }
                     // )
+
                     ->sum('amount'),
                 2
-            )),
+            ))
+                ->description('Total amount')
+                ->color('success'),
             Stat::make('Surcharge', Number::format(
                 Finding::query()
                     // ->when($startDate, function ($query, $startDate) {
@@ -202,7 +216,7 @@ class StatsOverview extends BaseWidget
                     // )
                     ->sum('surcharge_amount'),
             ))
-                ->description('Total number of observations')
+                ->description('Total surcharges in Ghana Cedis')
                 ->color('success')
                 ->chart($recoveryStats),
             Stat::make('Recoveries', Number::format(
@@ -241,13 +255,27 @@ class StatsOverview extends BaseWidget
                     ->sum('recoveries.amount'),
                 2
             ))
-                ->description('Total number of observations')
+                ->description('Total recoveries in Ghana Cedis')
                 ->color('success')
                 ->chart($recoveryStats),
-            // Stat::make('Surcharge', Number::format(Finding::query()->sum('surcharge_amount'), 2))
-            //     ->description('Total ')
-            //     ->color('success')
-            //     ->chart($observationStats),
+
+            Stat::make(
+                'Resolved',
+                Number::format(
+                    Finding::query()->sum('amount_resolved'),
+                    2
+                )
+            ),
+            Stat::make(
+                'Outstanding',
+                Number::format(
+                    Finding::query()->sum('outstanding'),
+                    2
+                )
+            )
+                ->description('Total ')
+                ->color('success'),
+            // ->chart($observationStats),
         ];
     }
 }

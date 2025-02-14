@@ -14,6 +14,8 @@ class AuditUniverseTable extends TableWidget
 
     protected static ?int $sort = 8;
 
+    protected static ?string $heading = 'Client list';
+
     protected int|string|array $columnSpan = [
         'md' => 3,
         // 'xl' => 3,
@@ -22,23 +24,23 @@ class AuditUniverseTable extends TableWidget
     public function table(Table $table): Table
     {
         // $unitDepartment = $this->filters['unit_department'];
-        // $observationStatus = $this->filters['observation_status'];
+        $observationStatus = $this->filters['observation_status'];
 
         return $table
             ->query(
                 Institution::query()
-                // ->when($unitDepartment, function ($query, $unitDepartment) {
-                //     return $query->whereHas('audits', fn($query) => $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment)));
-                // })
-                // ->when($observationStatus, function ($query, $observationStatus) {
-                //     return $query->whereHas('audits', fn($query) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)));
-                // })
+                    // ->when($unitDepartment, function ($query, $unitDepartment) {
+                    //     return $query->whereHas('audits', fn($query) => $query->whereHas('reports', fn($query) => $query->where('section', $unitDepartment)));
+                    // })
+                    ->when($observationStatus, function ($query, $observationStatus) {
+                        return $query->whereHas('audits', fn($query) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)));
+                    })
             )
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('leaders.name')
-                    ->label('Leadership')
+                    ->label('Key Staff')
                     ->listWithLineBreaks()
                     ->limitList(1)
                     ->searchable(),

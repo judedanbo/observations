@@ -12,36 +12,39 @@ class AuditStatusChart extends ChartWidget
 
     protected static ?string $heading = 'Audit Status';
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     // protected static ?string $maxHeight = '180px';
     protected static ?array $options = [];
 
     protected int|string|array $columnSpan = [
-        'md' => 2,
-        // 'xl' => 3,
+        // 'md' => 1,
+        // 'sm' => 3,
+        'lg' => 3,
+        'xl' => 2,
     ];
 
     protected function getData(): array
     {
         // $startDate = $this->filters['start_date'];
         // $endDate = $this->filters['end_date'];
-        // $auditStatus = $this->filters['audit_status'];
-        // $findingType = $this->filters['finding_type'];
+        $auditStatus = $this->filters['audit_status'];
+        $findingType = $this->filters['finding_type'];
         // $unitDepartment = $this->filters['unit_department'];
-        // $observationStatus = $this->filters['observation_status'];
+        $observationStatus = $this->filters['observation_status'];
 
         $data = Audit::query()
             ->selectRaw('status, count(*) as count')
-            // ->when($startDate, fn ($query, $startDate) => $query->where('created_at', '>=', $startDate))
-            // ->when($endDate, fn ($query, $endDate) => $query->where('created_at', '<=', $endDate))
-            // ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
-            // ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
-            // ->when($findingType, function ($query, $findingType) {
-            //     return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
-            // })
+            // ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
+            // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+            ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
+            ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
+            ->when($findingType, function ($query, $findingType) {
+                return $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+            })
             // ->when($unitDepartment, function ($query, $unitDepartment) {
-            //     return $query->whereHas('reports', fn ($query) => $query->whereIn('section', $unitDepartment));
+            //     // dd($unitDepartment);
+            //     return $query->whereHas('reports', fn($query) => $query->where('section', $unitDepartment));
             // })
             ->groupBy('status')
             ->get();
