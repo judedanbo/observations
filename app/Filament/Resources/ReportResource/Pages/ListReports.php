@@ -7,6 +7,7 @@ use App\Enums\AuditTypeEnum;
 use App\Filament\Resources\ReportResource;
 use App\Imports\ObservationImport;
 use App\Models\Audit;
+use App\Models\Report;
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -18,6 +19,11 @@ use Illuminate\Database\Eloquent\Builder;
 class ListReports extends ListRecords
 {
     protected static string $resource = ReportResource::class;
+
+    public function getTitle(): string
+    {
+        return 'ML Observations';
+    }
 
     public function getTabs(): array
     {
@@ -61,7 +67,7 @@ class ListReports extends ListRecords
                 ->icon('heroicon-c-document-plus')
                 ->outlined()
                 ->slideOver(),
-            Actions\Action::make('Upload from excel')
+            Actions\Action::make('Upload ML from Observations')
                 ->outlined()
                 ->icon('heroicon-s-document-arrow-up')
                 ->form([
@@ -72,20 +78,31 @@ class ListReports extends ListRecords
                         ->label('Select Audit Type')
                         ->required(),
                     FileUpload::make('filename')
+                        ->label('Observations in MS Excel')
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                         ->required(),
+                    FileUpload::make('management_letter')
+                        ->label('Audit Management Letter')
+                        ->hint('Upload the management letter for the audit in PDF or MS word format')
+                        ->acceptedFileTypes([
+                            'application/pdf',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        ])
                 ])
                 ->action(function (array $data) {
                     $file = public_path('storage/' . $data['filename']);
+                    $managementLetter = public_path('storage/' . $data['management_letter']);
                     try {
-                        $data = (new ObservationImport($data['audit_section']))->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+                        $data = (new ObservationImport($data['audit_section'], $managementLetter))
+                            ->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
+                        // $record->audit()->addManagementLetter($data['management_letter']);
                         Notification::make('Observations Loaded')
                             ->title('Observations Loaded')
                             ->body('Observations have been loaded successfully.')
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
-                        // dd($e->getMessage());
+                        // dd($e);
                         Notification::make('Observations Load Failed')
                             ->title('Observations Load Failed')
                             ->body($e->getMessage())

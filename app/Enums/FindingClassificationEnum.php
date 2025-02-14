@@ -10,15 +10,15 @@ use Filament\Support\Contracts\HasLabel;
 enum FindingClassificationEnum: string implements HasColor, HasDescription, HasLabel
 {
     case TAX = 'tax';
-    // case COM = 'compliance';
-    // case INT = 'internal_control';
+    case CASH = 'cash';
+    case PAYROLL = 'payroll';
 
     public function getLabel(): ?string
     {
         return match ($this) {
             self::TAX => 'Tax Irregularities',
-            // self::COM => 'Compliance',
-            // self::INT => 'Internal Control',
+            self::CASH => 'Cash Irregularities',
+            self::PAYROLL => 'Payroll Irregularities',
         };
     }
 
@@ -26,17 +26,26 @@ enum FindingClassificationEnum: string implements HasColor, HasDescription, HasL
     {
         return match ($this) {
             self::TAX => 'Findings on tax irregularities',
-            // self::COM => 'Audit of compliance with laws and regulations',
-            // self::INT => 'Audit of internal control systems',
+            self::CASH => 'Findings on cash irregularities',
+            self::PAYROLL => 'Findings on payroll irregularities',
         };
     }
 
     public function getColor(): string|array|null
     {
         return match ($this) {
-            self::TAX => Color::Red,
-            // self::COM => Color::Purple,
-            // self::INT => Color::Blue,
+            self::TAX => Color::Orange,
+            self::CASH => Color::Emerald,
+            self::PAYROLL => Color::Rose,
+        };
+    }
+
+    public function getIcon(): string
+    {
+        return match ($this) {
+            self::TAX => 'heroicon-o-document-currency-dollar',
+            self::CASH => 'heroicon-o-currency-dollar',
+            self::PAYROLL => 'heroicon-o-banknotes',
         };
     }
 }

@@ -21,10 +21,12 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 
 class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidation, WithCalculatedFormulas
 {
-    private $audit_section;
-    public function __construct($audit_section = '')
+    private $auditSection;
+    private $managementLetter;
+    public function __construct($auditSection = '', $managementLetter)
     {
-        $this->audit_section = $audit_section;
+        $this->auditSection = $auditSection;
+        $this->managementLetter = $managementLetter;
     }
 
     public function collection(Collection $collection)
@@ -50,7 +52,10 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
                 'title' => $row['audit_title'], //'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
                 'year' => $row['report_financial_year'],
                 'status' => 'issued',
+                'type' => $this->auditSection,
             ]);
+
+            $audit->addManagementLetter($this->managementLetter);
 
             // $audit->institutions()->attach($institution->id);
 
@@ -91,7 +96,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
                     'finding_id' => $finding->id,
                     'paragraphs' => $row['report_paragraphs'],
                     'title' => $row['title_of_finding'],
-                    'section' => $this->audit_section,
+                    'section' => $this->auditSection,
                     'type' => $type,
                     'amount' => $row['amount'],
                     'recommendation' => $row['recommendation'],

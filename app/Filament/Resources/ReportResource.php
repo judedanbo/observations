@@ -39,7 +39,7 @@ class ReportResource extends Resource
 {
     // protected static ?string $navigationGroup = 'GAS';
 
-    protected static ?string $label = 'Upload Issues';
+    protected static ?string $label = 'Upload ML Issues';
 
     protected static ?string $model = Report::class;
 
@@ -156,14 +156,22 @@ class ReportResource extends Resource
             })
             ->filtersFormColumns(3)
             ->columns([
-                Tables\Columns\TextColumn::make('section')
-                    ->label('Audit report type')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('institution.name')
-                    ->searchable()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('institution.name')
+                //     ->searchable()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('audit.title')
+                    ->description(fn(Report $record) => $record->institution->name)
+                    ->searchable()
+                    ->sortable()
+                    ->icon(function (Report $record) {
+                        if ($record->audit->documents->count() > 0) {
+                            return 'heroicon-o-paper-clip';
+                        }
+                        // return $record->finding->icon();
+                    })
+                    ->iconPosition(IconPosition::After),
+                Tables\Columns\TextColumn::make('audit.type')
+                    ->label('Audit report type')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('finding.observation.status')
@@ -174,7 +182,7 @@ class ReportResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('finding.title')
-                    ->label('Finding title')
+                    ->label('Observation')
                     ->icon(function (Report $record) {
                         if ($record->finding->documents->count() > 0) {
                             return 'heroicon-o-paper-clip';
@@ -201,13 +209,6 @@ class ReportResource extends Resource
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('finding.total_recoveries')
-                    // ->sum('finding', 'total_recoveries')
-                    // ->searchable()
-                    ->label('Total Recovered')
-                    ->numeric()
-                    ->alignRight()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('finding.amount_resolved')
                     ->label('Amount Resolved')
                     ->numeric()
@@ -219,8 +220,15 @@ class ReportResource extends Resource
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('finding.total_recoveries')
+                    // ->sum('finding', 'total_recoveries')
+                    // ->searchable()
+                    ->label('Total Recovered')
+                    ->numeric()
+                    ->alignRight()
+                    ->sortable(),
 
-                Tables\Columns\TextColumn::make('finding.surcharge_amount')
+                Tables\Columns\TextColumn::make('finding.outstanding')
                     ->searchable()
                     ->label('Amount Outstanding')
                     ->numeric()
@@ -346,12 +354,23 @@ class ReportResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->slideOver(),
                 ActionGroup::make([
+                    Tables\Actions\Action::make('download_ml')
+                        ->label('Download Management Letter')
+                        // ->hidden(function (Report $record) {
+                        //     if ($record->finding->documents->count() > 0) {
+                        //         // dd($record->finding->documents);
+                        //         return false;
+                        //     }
+                        //     return true;
+                        // })
+                        ->icon('heroicon-o-document-arrow-down')
+
+                        ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
                     Tables\Actions\Action::make('add_document')
                         ->label('Add supporting Document')
                         ->icon('heroicon-o-document-plus')
                         ->form(Document::getForm())
                         ->mutateFormDataUsing(function (Model $record, array $data): array {
-                            // dd($record);
                             $data['report_id'] = $record->id;
                             return $data;
                         })
@@ -363,9 +382,11 @@ class ReportResource extends Resource
                             Select::make('classification')
                                 ->enum(FindingClassificationEnum::class)
                                 ->options(FindingClassificationEnum::class)
-                                ->label('Surcharge Amount')
+                                ->label('Select classification')
                                 ->placeholder('Please select classification')
-                                ->required(),
+                                ->required()
+                                ->searchable()
+                                ->native(false),
                         ])
                         ->action(function ($data, $record) {
                             $newAmount = $record->finding()->update([

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('outstanding')
-                ->virtualAs('amount + surcharge_amount - amount_resolved');
+        Schema::table('documents', function (Blueprint $table) {
+            $table->string('documentable_type')->after('file');
+            $table->integer('documentable_id')->after('file');
         });
     }
 
@@ -22,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->dropColumn('outstanding');
+        Schema::table('documents', function (Blueprint $table) {
+            $table->dropColumn('documentable_type');
+            $table->dropColumn('documentable_id');
         });
     }
 };

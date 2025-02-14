@@ -150,7 +150,7 @@ class Report extends Model
     {
         // dd($data);
         $document = Document::create($data);
-        $this->finding->documents()->attach($document->id);
+        $this->finding->documents()->save($document->id);
     }
 
     public static function getForm(): array

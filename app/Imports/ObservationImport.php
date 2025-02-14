@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Enums\AuditStatusEnum;
 use App\Enums\ObservationStatusEnum;
 use App\Models\Audit;
 use App\Models\District;
@@ -24,18 +25,20 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
 {
     use Importable;
 
-    private $audit_section;
+    private $auditSection;
+    private $managementLetter;
 
-    public function __construct($audit_section = '')
+    public function __construct($auditSection = '', $managementLetter = null)
     {
-        $this->audit_section = $audit_section;
+        $this->auditSection = $auditSection;
+        $this->managementLetter = $managementLetter;
     }
 
     public function sheets(): array
     {
         return [
             'Title' => new TitleSheetImport(),
-            'Details' => new FindingsSheetImport($this->audit_section),
+            'Details' => new FindingsSheetImport($this->auditSection, $this->managementLetter),
         ];
     }
 
@@ -62,7 +65,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             $audit = Audit::firstOrCreate([
                 'title' => 'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
                 'year' => $row['report_financial_year'],
-                'status' => 'issued',
+                'status' => AuditStatusEnum::ISSUED,
             ]);
 
             $audit->institutions()->attach($institution->id);
@@ -70,7 +73,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             $observation = Observation::create([
                 'audit_id' => $audit->id,
                 'title' => $row['title_of_finding'],
-                'status' => ObservationStatusEnum::ISSUED,
+                'status' => ObservationStatusEnum::REPORTED,
             ]);
             $type = $row['financial'] !== null ? 'financial' : ($row['internal_control'] !== null ? 'internal_control' : ($row['compliance'] !== null ? 'compliance' : ''));
             $finding = Finding::create([
@@ -105,7 +108,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                     'finding_id' => $finding->id,
                     'paragraphs' => $row['report_paragraphs'],
                     'title' => $row['title_of_finding'],
-                    'section' => $this->audit_section,
+                    'section' => $this->auditSection,
                     'type' => $type,
                     'amount' => $row['amount'],
                     'recommendation' => $row['recommendation'],

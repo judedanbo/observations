@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Finding extends Model
@@ -43,9 +44,10 @@ class Finding extends Model
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
         'amount' => Money::class,
-        'surcharge_amount' => SurchargeCast::class,
-        // 'total_recoveries' => RecoveredCast::class,
-        'amount_resolved' => ResolvedCast::class,
+        'surcharge_amount' => Money::class,
+        'total_recoveries' => Money::class,
+        'amount_resolved' => Money::class,
+        'outstanding' => Money::class,
         'classification' => FindingClassificationEnum::class,
     ];
 
@@ -109,9 +111,9 @@ class Finding extends Model
         return $query->where('type', FindingTypeEnum::FIN);
     }
 
-    public function documents(): BelongsToMany
+    public function documents(): MorphMany
     {
-        return $this->belongsToMany(Document::class);
+        return $this->morphMany(Document::class, 'documentable');
     }
     public function scopeControl(Builder $query): Builder
     {

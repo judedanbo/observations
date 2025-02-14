@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Livewire\Component;
 
@@ -210,9 +211,9 @@ class Audit extends Model
     //         ->withTimestamps();
     // }
 
-    public function documents(): BelongsToMany
+    public function documents(): MorphMany
     {
-        return $this->belongsToMany(Document::class);
+        return $this->morphMany(Document::class, 'documentable');
     }
 
     public function observations(): HasMany
@@ -258,6 +259,28 @@ class Audit extends Model
 
         return 'On time';
         // return $this->planned_start_date->format('d M Y') . ' - ' . $this->planned_end_date->format('d M Y');
+    }
+
+    public function addManagementLetter($managementLetter)
+    {
+        $document =  new Document();
+        $document->title = 'Management Letter';
+        $document->file = $managementLetter;
+
+        // dd($document);
+        // // [
+        // //     'title' => 'Management Letter',
+        // //     'file' => $managementLetter
+        // // ];
+        // $document = Document::create($data);
+        $this->documents()->save($document);
+        // $this->observations()->create([
+        //     'title' => 'Management Letter',
+        //     'status' => ObservationStatusEnum::ISSUED,
+        // ]);
+
+        // $document = Document::create($data);
+        // $this->finding->documents()->attach($document->id);
     }
 
     public static function getForm(): array
