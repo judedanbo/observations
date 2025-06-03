@@ -31,7 +31,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
 
     public function collection(Collection $collection)
     {
-        // dd($collection);
+        // dd($this->managementLetter);
         foreach ($collection as $row) {
             if ($row['covered_entity'] == null) {
                 continue;
@@ -55,7 +55,9 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
                 'type' => $this->auditSection,
             ]);
 
-            $audit->addManagementLetter($this->managementLetter);
+            if ($this->managementLetter) {
+                $audit->addManagementLetter($this->managementLetter);
+            }
 
             // $audit->institutions()->attach($institution->id);
 

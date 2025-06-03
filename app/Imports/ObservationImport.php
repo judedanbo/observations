@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Enums\AuditStatusEnum;
 use App\Enums\ObservationStatusEnum;
 use App\Models\Audit;
+use App\Models\Department;
 use App\Models\District;
 use App\Models\Finding;
 use App\Models\Institution;
@@ -13,7 +14,9 @@ use App\Models\Recommendation;
 use App\Models\Region;
 use App\Models\Report;
 use App\Models\Status;
+use App\Models\Unit;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -50,11 +53,24 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             if ($row['covered_entity'] == null) {
                 continue;
             }
+            $department = $row['department'] ?? 'Unknown Department';
+            $auditRegion = $row['audit_region'] ?? 'Unknown Region';
+            $auditUnit = $row['audit_unit'] ?? 'Unknown Unit';
+            $region =  $row['region'];
+            $district =  $row['district'];
+
+            $departmentModel = Department::firstOrCreate([
+                'name' => Str::of($department)->replace('_', ' '),
+            ]);
+            $unitModel = Unit::firstOrCreate([
+                'name' => Str::of($auditUnit)->replace('_', ' '),
+                'department_id' => $departmentModel->id,
+            ]);
             $region = Region::firstOrCreate([
-                'name' => $row['region'],
+                'name' => Str::of($region)->replace('_', " "),
             ]);
             $district = District::firstOrCreate([
-                'name' => $row['district'],
+                'name' => Str::of($district)->replace('_', ' '),
                 'region_id' => $region->id,
             ]);
             $institution = Institution::firstOrCreate([
@@ -69,6 +85,8 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             ]);
 
             $audit->institutions()->attach($institution->id);
+
+            $audit->district()->attach($district->id);
 
             $observation = Observation::create([
                 'audit_id' => $audit->id,

@@ -39,7 +39,7 @@
         @endif
 
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
-            <div class="flex justify-center">
+            <div class="flex flex-col lg:flex-row justify-center">
                 <img
                     class="mx-auto lg:w-1/3"
                     src="images/inner-logo.png"
@@ -57,18 +57,21 @@
                     </h1>
                     <h1 class="text-white text-4xl md:hidden">Monitoring</h1>
                     <div class="mt-5 flex gap-4">
-
+                        @auth
                         <a
                             href="/admin"
                             as="button"
                             class="mt-12 text-gray-700 lg:text-white text-2xl lg:text-3xl bg-white lg:bg-green-800 hover:bg-green-900 hover:text-white focus:outline-none hover:ring-green-600 rounded-lg px-8 py-3.5 text-center tracking-widest">
                             Home</a>
+                        @else
                         <a
                             href="/admin/login"
                             as="button"
-                            class="mt-12 text-green-800 text-2xl lg:text-3xl bg-white dark:bg-transparent focus:outline-none hover:ring-1 ring-green-700 hover:ring-green-600 rounded-lg px-8 py-3.5 text-center tracking-widest">
+                            class="mt-12 text-green-800 dark:text-gray-50 text-2xl lg:text-3xl bg-white dark:bg-transparent focus:outline-none hover:ring-1 ring-green-700 hover:ring-green-600 dark:hover:ring-gray-50 rounded-lg px-8 py-3.5 text-center tracking-widest">
                             Login
                         </a>
+                        @endauth
+
                     </div>
                     <div class="mt-2">
                         <!-- <SunIcon

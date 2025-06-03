@@ -91,7 +91,8 @@ class ListReports extends ListRecords
                 ])
                 ->action(function (array $data) {
                     $file = public_path('storage/' . $data['filename']);
-                    $managementLetter = public_path('storage/' . $data['management_letter']);
+                    // dd($data['management_letter']);
+                    $managementLetter = $data['management_letter'] ? public_path('storage/' . $data['management_letter']) : null;
                     try {
                         $data = (new ObservationImport($data['audit_section'], $managementLetter))
                             ->import($file, null, \Maatwebsite\Excel\Excel::XLSX);
