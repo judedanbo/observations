@@ -28,11 +28,15 @@ class UnitResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->description(fn(Unit $record): string => $record->department?->name ?? 'No Department')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('department.name')
+
+                Tables\Columns\TextColumn::make('office.name')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('audits_count')
+                    ->counts('audits')
+                    ->label('Audits')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

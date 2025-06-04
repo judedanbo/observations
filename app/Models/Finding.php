@@ -9,6 +9,7 @@ use App\Casts\SurchargeCast;
 use App\Enums\FindingClassificationEnum;
 use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
+use Brick\Money\Money as MoneyMoney;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -26,6 +27,17 @@ class Finding extends Model
 {
     use HasFactory, LogAllTraits, SoftDeletes;
 
+    public $formatter;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->formatter = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
+        $this->formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, 'GH¢ ');
+        $this->formatter->setSymbol(\NumberFormatter::MONETARY_GROUPING_SEPARATOR_SYMBOL, ',');
+        $this->formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+    }
+
     protected $fillable = [
         'title',
         'description',
@@ -36,6 +48,7 @@ class Finding extends Model
         // 'total_recoveries',
         'classification',
         'amount_resolved',
+        'amount_resolved',
 
     ];
 
@@ -43,11 +56,11 @@ class Finding extends Model
         'id' => 'integer',
         'observation_id' => 'integer',
         'type' => FindingTypeEnum::class,
-        'amount' => Money::class,
-        'surcharge_amount' => Money::class,
-        'total_recoveries' => Money::class,
-        'amount_resolved' => Money::class,
-        'outstanding' => Money::class,
+        'amount' => 'decimal:2',
+        'surcharge_amount' => 'decimal:2',
+        'total_recoveries' => 'decimal:2',
+        'amount_resolved' => 'decimal:2',
+        'outstanding' => 'decimal:2',
         'classification' => FindingClassificationEnum::class,
     ];
 
@@ -96,14 +109,41 @@ class Finding extends Model
         return $this->hasMany(Parliament::class);
     }
 
-    public function getRecoveriesSumAttribute()
+    public function getAmountDisplayAttribute()
     {
-        return $this->recoveries()->sum('amount');
+        return MoneyMoney::of($this->amount ?? 0, "USD")
+            ->formatWith($this->formatter);
+    }
+
+    // public function getAmountResolvedDisplayAttribute()
+    // {
+    //     return $this->amount_display;
+    // }
+
+    public function getTotalRecoveriesDisplayAttribute()
+    {
+        return MoneyMoney::of($this->total_recoveries ?? 0, "USD")
+            ->formatWith($this->formatter);
     }
 
     public function getTotalRecoveriesAttribute()
     {
         return $this->recoveries()->sum('amount');
+    }
+
+    public function getOutstandingAttribute()
+    {
+        $outstanding = ($this->amount) + ($this->surcharge_amount ?? 0)
+            - ($this->amount_resolved ?? 0) - ($this->total_recoveries ?? 0);
+
+        return MoneyMoney::of($outstanding ?? 0, 'USD')
+            ->formatWith($this->formatter);
+    }
+
+    public function getAmountResolvedDisplayAttribute()
+    {
+        return MoneyMoney::of($this->amount_resolved ?? 0, "USD")
+            ->formatWith($this->formatter);
     }
 
     public function scopeFinancial(Builder $query): Builder
@@ -125,13 +165,12 @@ class Finding extends Model
         return $query->where('type', FindingTypeEnum::COM);
     }
 
-    // public function surcharge(?float $amount = null)
-    // {
-    //     if ($amount) {
-    //         $this->surcharge_amount = $amount;
-    //         $this->save();
-    //     }
-    // }
+    public function getSurchargeAmountDisplayAttribute(?float $amount = null)
+    {
+
+        return MoneyMoney::of($this->surcharge_amount ?? 0, "USD")
+            ->formatWith($this->formatter);
+    }
 
     // public function recover($data)
     // {

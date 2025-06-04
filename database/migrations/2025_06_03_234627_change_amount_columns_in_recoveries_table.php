@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('outstanding',)
-                ->virtualAs('amount + surcharge_amount - amount_resolved');
+        Schema::table('recoveries', function (Blueprint $table) {
+            $table->unsignedDecimal('amount', 14, 2)->change()->nullable();
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->dropColumn('outstanding');
+        Schema::table('recoveries', function (Blueprint $table) {
+            $table->unsignedDouble('amount')->change();
         });
     }
 };

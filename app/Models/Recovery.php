@@ -22,7 +22,7 @@ class Recovery extends Model
     ];
 
     protected $casts = [
-        'amount' => RecoveredCast::class,
+        'amount' => Money::class,
     ];
 
     public function finding(): BelongsTo

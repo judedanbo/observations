@@ -40,10 +40,12 @@ class OfficeResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('district.name')
                     ->label('District')
+                    ->description(fn(Office $record): string => $record->district?->region?->name ?? 'No Region')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('district.region.name')
-                    ->label('Region')
+                Tables\Columns\TextColumn::make('units_count')
+                    ->counts('units')
+                    ->label('Units')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('audits_count')

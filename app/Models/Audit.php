@@ -84,6 +84,11 @@ class Audit extends Model
         return $this->belongsToMany(Office::class);
     }
 
+    public function units(): BelongsToMany
+    {
+        return $this->belongsToMany(Unit::class);
+    }
+
     public function districts(): BelongsToMany
     {
         return $this->belongsToMany(District::class);

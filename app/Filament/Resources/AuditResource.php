@@ -65,8 +65,15 @@ class AuditResource extends Resource
                     ->label('Audit Status')
                     ->sortable()
                     ->badge(),
+                Tables\Columns\TextColumn::make('units.name')
+                    ->label('Unit')
+                    ->description(fn(Audit $record): string =>
+                    $record->units?->first()->department?->name . " /" .  $record->units?->first()->office?->name ?? 'No Department')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('schedule')
-                    ->size('sm'),
+                    ->size('sm')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('planned_start_date')
                     ->date()
                     ->sortable()

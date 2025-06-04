@@ -4,14 +4,17 @@ namespace App\Imports;
 
 use App\Enums\ObservationStatusEnum;
 use App\Models\Audit;
+use App\Models\Department;
 use App\Models\District;
 use App\Models\Finding;
 use App\Models\Institution;
 use App\Models\Observation;
 use App\Models\Recommendation;
 use App\Models\Region;
+use Illuminate\Support\Str;
 use App\Models\Report;
 use App\Models\Status;
+use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -36,8 +39,29 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             if ($row['covered_entity'] == null) {
                 continue;
             }
+            $department = Str::of($row['department']);
+            $auditRegion = Str::of($row['audit_region'])->replace('-', ' ');
+            $auditUnit = Str::of($row['audit_unit'])->replace('-', ' ');
+            $region = Str::of($row['region'])->replace('-', ' ');
+            $district = Str::of($row['district'])->replace('-', ' ');
+
+            // if (Department::where('short_name', $department)->exists()) {
+            $departmentModel = Department::where('short_name', $department)->first();
+            // } else {
+            //     $departmentModel = Department::create([
+            //         'name' => Str::of($department)->replace('_', ' '),
+            //         'short_name' => Str::of($department)->replace('_', ' '),
+            //     ]);
+            // }
+            // if (is_null($departmentModel)) {
+            //     dd('error in departtment');
+            // }
+            $unitModel = Unit::firstOrCreate([
+                'name' => Str::of($auditUnit)->replace('_', ' '),
+                'department_id' => $departmentModel->id,
+            ]);
             $region = Region::firstOrCreate([
-                'name' => $row['region'],
+                'name' => $region,
             ]);
             $district = District::firstOrCreate([
                 'name' => $row['district'],
@@ -58,8 +82,6 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             if ($this->managementLetter) {
                 $audit->addManagementLetter($this->managementLetter);
             }
-
-            // $audit->institutions()->attach($institution->id);
 
             $observation = Observation::create([
                 'audit_id' => $audit->id,
@@ -111,6 +133,9 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             );
         }
         $audit->institutions()->attach($institution->id);
+        $audit->districts()->attach($district->id);
+
+        $audit->units()->attach($unitModel->id);
     }
     public function headingRow(): int
     {
@@ -119,6 +144,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
     public function rules(): array
     {
         return [
+            '*.department' => 'required|exists:departments,short_name',
             '*.title_of_finding' => 'required|max:250',
             '*.control_type' => 'required|max:20',
             '*.region' => 'required|max:50',

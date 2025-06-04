@@ -203,24 +203,24 @@ class ReportResource extends Resource
                     ->sortable()
                     ->badge()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('finding.amount')
+                Tables\Columns\TextColumn::make('finding.amount_display')
                     ->searchable()
-                    ->label('Amount')
-                    ->numeric()
+                    ->label('Finding Amount')
                     ->alignRight()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('finding.amount_resolved')
-                    ->label('Amount Resolved')
-                    ->numeric()
-                    ->alignRight()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('finding.surcharge_amount')
+                Tables\Columns\TextColumn::make('finding.surcharge_amount_display')
                     ->searchable()
                     ->label('Surcharge Amount')
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('finding.total_recoveries')
+                Tables\Columns\TextColumn::make('finding.amount_resolved_display')
+                    ->label('Amount Resolved')
+                    ->numeric()
+                    ->alignRight()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('finding.total_recoveries_display')
                     // ->sum('finding', 'total_recoveries')
                     // ->searchable()
                     ->label('Total Recovered')
@@ -295,7 +295,7 @@ class ReportResource extends Resource
                             });
                         }),
                     SelectFilter::make('Office')
-                        ->relationship('audit.offices', 'name')
+                        ->relationship('audit.units.office', 'name')
                         ->multiple()
                         ->native()
                         ->searchable()

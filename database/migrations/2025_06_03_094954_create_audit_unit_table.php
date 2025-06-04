@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('outstanding',)
-                ->virtualAs('amount + surcharge_amount - amount_resolved');
+        Schema::create('audit_unit', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('audit_id')->constrained('audits')->cascadeOnDelete();
+            $table->foreignId('unit_id')->constrained('units')->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 
@@ -22,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('findings', function (Blueprint $table) {
-            $table->dropColumn('outstanding');
-        });
+        Schema::dropIfExists('audit_unit');
     }
 };

@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('outstanding',)
-                ->virtualAs('amount + surcharge_amount - amount_resolved');
+            $table->unsignedDecimal('amount', 14, 2)->change()->nullable();
+            $table->unsignedDecimal('surcharge_amount', 14, 2)->change()->nullable();
+            $table->unsignedDecimal('amount_resolved', 14, 2)->change()->nullable();
         });
     }
 
@@ -23,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('findings', function (Blueprint $table) {
-            $table->dropColumn('outstanding');
+            $table->unsignedBigInteger('amount')->change()->nullable();
+            $table->unsignedBigInteger('surcharge_amount')->change()->nullable();
+            $table->unsignedBigInteger('amount_resolved')->change()->nullable();
         });
     }
 };

@@ -222,36 +222,6 @@ class StatsOverview extends BaseWidget
             Stat::make('Recoveries', Number::format(
                 Finding::query()
                     ->join('recoveries', 'findings.id', '=', 'recoveries.finding_id')
-                    // ->when($startDate, function ($query, $startDate) {
-                    //     $query->whereHas('observation.audit', function ($query) use ($startDate) {
-                    //         $query->where('created_at', '>=', $startDate);
-                    //     });
-                    // })
-                    // ->when($endDate, function ($query, $endDate) {
-                    //     $query->whereHas('observation.audit', function ($query) use ($endDate) {
-                    //         $query->where('created_at', '<=', $endDate);
-                    //     });
-                    // })
-                    // ->when(
-                    //     $auditStatus,
-                    //     function ($query, $auditStatus) {
-                    //         $query->whereHas('observation.audit', fn($query) => $query->where('status', $auditStatus));
-                    //     }
-                    // )
-                    // ->when(
-                    //     $findingType,
-                    //     function ($query, $findingType) {
-                    //         $query->where('type', $findingType);
-                    //     }
-                    // )
-                    // ->when(
-                    //     $unitDepartment,
-                    //     function ($query, $unitDepartment) {
-                    //         $query->whereHas('observation.audit', function ($query) use ($unitDepartment) {
-                    //             $query->whereHas('reports', fn($query) => $query->whereIn('section', $unitDepartment));
-                    //         });
-                    //     }
-                    // )
                     ->sum('recoveries.amount'),
                 2
             ))
@@ -269,7 +239,12 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Outstanding',
                 Number::format(
-                    Finding::query()->sum('outstanding'),
+                    Finding::query()->sum('amount') +
+                        Finding::query()->sum('surcharge_amount') -
+                        Finding::query()->sum('amount_resolved') -
+                        Finding::query()
+                        ->join('recoveries', 'findings.id', '=', 'recoveries.finding_id')
+                        ->sum('recoveries.amount'),
                     2
                 )
             )
