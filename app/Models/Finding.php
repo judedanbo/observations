@@ -172,6 +172,13 @@ class Finding extends Model
             ->formatWith($this->formatter);
     }
 
+    function getAmountDueAttribute()
+    {
+        $amount = ($this->amount ?? 0) + ($this->surcharge_amount ?? 0) - ($this->amount_resolved ?? 0);
+        return MoneyMoney::of($amount, 'USD')
+            ->formatWith($this->formatter);
+    }
+
     // public function recover($data)
     // {
     //     $this->recoveries()->create($data);

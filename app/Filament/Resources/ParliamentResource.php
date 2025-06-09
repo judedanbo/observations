@@ -46,6 +46,7 @@ class ParliamentResource extends Resource
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('finding.title')
+                    ->description(fn(Parliament $record): ?string => $record->finding?->observation?->audit?->title)
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pac_directive')

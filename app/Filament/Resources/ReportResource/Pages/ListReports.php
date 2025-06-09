@@ -62,12 +62,12 @@ class ListReports extends ListRecords
             Actions\Action::make('Download blank template')
                 ->icon('heroicon-c-document-arrow-down')
                 ->outlined()
-                ->url('/Tracking Template - V3.xlsx'),
-            Actions\CreateAction::make()
-                ->icon('heroicon-c-document-plus')
-                ->outlined()
-                ->slideOver(),
-            Actions\Action::make('Upload ML from Observations')
+                ->url('/Tracking Template - V4.xlsx'),
+            // Actions\CreateAction::make()
+            //     ->icon('heroicon-c-document-plus')
+            //     ->outlined()
+            //     ->slideOver(),
+            Actions\Action::make('Upload Management letter Observations')
                 ->outlined()
                 ->icon('heroicon-s-document-arrow-up')
                 ->form([

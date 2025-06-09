@@ -68,7 +68,7 @@ class AuditResource extends Resource
                 Tables\Columns\TextColumn::make('units.name')
                     ->label('Unit')
                     ->description(fn(Audit $record): string =>
-                    $record->units?->first()->department?->name . " /" .  $record->units?->first()->office?->name ?? 'No Department')
+                    $record->units?->first()?->department?->name . " /" .  $record->units?->first()?->office?->name ?? 'No Department')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('schedule')

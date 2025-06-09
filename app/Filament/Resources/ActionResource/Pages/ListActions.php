@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\ActionResource\Pages;
 
 use App\Filament\Resources\ActionResource;
+use App\Models\Action;
 use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListActions extends ListRecords
@@ -13,8 +15,11 @@ class ListActions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->slideOver(),
+            CreateAction::make()
+                ->slideOver()
+            // ->after(function (CreateAction $action, Action $record, array $data) {
+            //     $record->addDocuments($data);
+            // }),
         ];
     }
 }

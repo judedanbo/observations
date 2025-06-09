@@ -219,6 +219,11 @@ class ReportResource extends Resource
                     ->numeric()
                     ->alignRight()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('finding.amount_due')
+                    ->label('Amount Due')
+                    ->numeric()
+                    ->alignRight()
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('finding.total_recoveries_display')
                     // ->sum('finding', 'total_recoveries')
@@ -294,31 +299,63 @@ class ReportResource extends Resource
                                 });
                             });
                         }),
-                    SelectFilter::make('Office')
-                        ->relationship('audit.units.office', 'name')
+                    SelectFilter::make('Audit unit/branch/sector')
+                        ->relationship('audit.units', 'name')
                         ->multiple()
                         ->native()
                         ->searchable()
                         ->preload()
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['values'], function ($query, $data) {
+                                // dd($data);
                                 $query->whereHas('audit', function ($query) use ($data) {
-                                    $query->whereHas('offices', function ($query) use ($data) {
-                                        $query->where('offices.id', $data);
+                                    $query->whereHas('units', function ($query) use ($data) {
+                                        // $query->whereHas('units', function ($query) use ($data) {
+                                        // dd($data);
+                                        $query->whereIn('units.id', $data);
+                                        // });
+                                        // $query->whereIn('offices.id', $data);
                                     });
                                 });
                             });
                         }),
+                    // SelectFilter::make('Audit office')
+                    //     ->relationship('audit.offices', 'name')
+                    //     ->multiple()
+                    //     ->native()
+                    //     ->searchable()
+                    //     ->preload()
+                    //     ->query(function (Builder $query, array $data) {
+                    //         $query->when($data['values'], function ($query, $data) {
+                    //             // dd($data);
+                    //             $query->whereHas('audit', function ($query) use ($data) {
+                    //                 $query->whereHas('offices', function ($query) use ($data) {
+                    //                     // $query->whereHas('offices', function ($query) use ($data) {
+                    //                     //     // dd($data);
+                    //                     $query->whereIn('offices.id', $data);
+                    //                     // });
+                    //                     // $query->whereIn('offices.id', $data);
+                    //                 });
+                    //             });
+                    //         });
+                    //     }),
                     SelectFilter::make('section')
                         ->options(AuditTypeEnum::class),
                     SelectFilter::make('Audit report title')
                         ->relationship('audit', 'title')
+                        ->searchable()
+                        ->preload()
                         ->label('Audit report title'),
                     SelectFilter::make('institution_id')
                         ->relationship('institution', 'name')
+                        ->searchable()
+                        ->preload()
                         ->label('Institution'),
                     SelectFilter::make('type')
                         ->label('Finding type')
+                        ->native(false)
+                        ->searchable()
+                        ->preload()
                         ->options(FindingTypeEnum::class),
                     // SelectFilter::make('region')
                     //     ->relationship('finding', 'region')
@@ -328,6 +365,8 @@ class ReportResource extends Resource
                         ->label('Issue classification')
                         // ->relationship('finding', 'classification')
                         ->options(FindingClassificationEnum::class)
+                        ->searchable()
+                        ->preload()
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['value'], function ($query, $data) {
                                 // dd($data);

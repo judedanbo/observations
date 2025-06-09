@@ -39,7 +39,12 @@ class ActionsRelationManager extends RelationManager
                 Tables\Filters\TrashedFilter::make()
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->slideOver()
+
+                    ->after(function (Tables\Actions\CreateAction $action, Action $record, array $data) {
+                        $record->addDocuments($data);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

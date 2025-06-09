@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Traits\LogAllTraits;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as ActionsAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Livewire\Component as Livewire;
 
@@ -68,6 +70,28 @@ class Action extends Model
     {
         return $this->hasMany(FollowUp::class);
     }
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
+    public function addDocuments($data)
+    {
+        // dd($data);
+        // foreach ($data['filename'] as $file) {
+        //     $data['filename'] = $file;
+        //     // $this->addDocument($data);
+
+        //     // dd($file);
+        //     $document = Document::create([
+        //         'documentable_type' =>  '',
+        //         'documentable_id' => $this->id,
+        //         'title' => $data['title'] ?? 'Action Document',
+        //         'description' => $data['description'] ?? 'Action Document Description',
+        //         'file' => $file
+        //     ]);
+        //     $this->documents()->save($document->id);
+        // }
+    }
 
     public static function getForm($observationId = null): array
     {
@@ -113,11 +137,11 @@ class Action extends Model
                 )
                 ->editOptionForm(Finding::getForm())
                 ->searchable()
-                ->default(function (Livewire $livewire) use ($observationId) {
-                    return $livewire->getOwnerRecord()->finding_id;
-                    // return $livewire->getOwnerRecord()->finding->recommendations->where('id', $findingId)->first()->id;
-                    // return $livewire->getOwnerRecord()->finding;
-                })
+                // ->default(function (Livewire $livewire) use ($observationId) {
+                //     // return $livewire->getOwnerRecord()->finding_id;
+                //     // return $livewire->getOwnerRecord()->finding->recommendations->where('id', $findingId)->first()->id;
+                //     // return $livewire->getOwnerRecord()->finding;
+                // })
                 ->searchPrompt('Search findings...')
                 ->noSearchResultsMessage('No findings found.')
                 ->loadingMessage('Loading findings...')
@@ -144,28 +168,33 @@ class Action extends Model
                 ->columnSpanFull(),
             RichEditor::make('description')
                 ->columnSpanFull(),
-            Actions::make([
-                ActionsAction::make('Save')
-                    ->label('Generate data')
-                    ->icon('heroicon-m-arrow-path')
-                    ->outlined()
-                    ->color('gray')
-                    ->visible(function (string $operation) {
-                        if ($operation !== 'create') {
-                            return false;
-                        }
-                        if (! app()->environment('local')) {
-                            return false;
-                        }
-                        return true;
-                    })
-                    ->action(function ($livewire) {
-                        $data = Action::factory()->make()->toArray();
-                        $livewire->form->fill($data);
-                    }),
-            ])
-                ->label('Actions')
-                ->columnSpanFull(),
+            FileUpload::make('filename')
+                ->label('Upload evidence')
+                ->columnSpanFull()
+                ->multiple()
+                ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+            // Actions::make([
+            //     ActionsAction::make('Save')
+            //         ->label('Generate data')
+            //         ->icon('heroicon-m-arrow-path')
+            //         ->outlined()
+            //         ->color('gray')
+            //         ->visible(function (string $operation) {
+            //             if ($operation !== 'create') {
+            //                 return false;
+            //             }
+            //             if (! app()->environment('local')) {
+            //                 return false;
+            //             }
+            //             return true;
+            //         })
+            //         ->action(function ($livewire) {
+            //             $data = Action::factory()->make()->toArray();
+            //             $livewire->form->fill($data);
+            //         }),
+            // ])
+            // ->label('Actions')
+            // ->columnSpanFull(),
         ];
     }
 }
