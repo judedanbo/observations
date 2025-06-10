@@ -28,6 +28,8 @@ class AuditStatusChart extends ChartWidget
     {
         // $startDate = $this->filters['start_date'];
         // $endDate = $this->filters['end_date'];
+        $institutions = $this->filters['institutions'];
+        $districts = $this->filters['districts'];
         $auditStatus = $this->filters['audit_status'];
         $findingType = $this->filters['finding_type'];
         // $unitDepartment = $this->filters['unit_department'];
@@ -37,6 +39,19 @@ class AuditStatusChart extends ChartWidget
             ->selectRaw('status, count(*) as count')
             // ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
             // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+            ->when(
+                $institutions,
+                function ($query, $institutions) {
+                    return $query->whereHas('institutions', function ($query) use ($institutions) {
+                        $query->whereIn('id', $institutions);
+                    });
+                }
+                // fn($query, $institutions) => $query->whereHas('regions', fn($query) => $query->where('id', 'in', $institutions))
+            )
+            ->when($districts, fn($query, $districts) => $query->whereHas(
+                'districts',
+                fn($query) => $query->whereIn('districts.id', $districts)
+            ))
             ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
             ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
             ->when($findingType, function ($query, $findingType) {

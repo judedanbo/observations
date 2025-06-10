@@ -6,9 +6,11 @@ use App\Enums\AuditDepartmentEnum;
 use App\Enums\AuditStatusEnum;
 use App\Enums\FindingTypeEnum;
 use App\Enums\ObservationStatusEnum;
+use App\Models\Department;
 use App\Models\District;
 use App\Models\Institution;
 use App\Models\Region;
+use App\Models\Unit;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -34,7 +36,15 @@ class Dashboard extends PagesDashboard
         Section::make('Filters')
           ->collapsible(true)
           ->collapsed()
-          ->columns(['xl' => 5])
+          // ->columns(['xl' => 6, 'lg' => 6, 'md' => 6, 'sm' => 1])
+          // ->columnSpanFull()
+          // ->columnSpan([
+          //   'default' => 1,
+          //   'sm' => 2,
+          //   'md' => 3,
+          //   'lg' => 4,
+          //   'xl' => 6,
+          // ])
           ->schema([
             // Split::make([
             //   DatePicker::make('start_date')
@@ -53,6 +63,7 @@ class Dashboard extends PagesDashboard
                 ->searchable()
                 ->preload()
                 ->multiple()
+                // ->columnSpan(2)
                 ->options(Institution::all()->pluck('name', 'id')),
               Select::make('districts')
                 ->label('Filter district')
@@ -82,16 +93,20 @@ class Dashboard extends PagesDashboard
                 ->native(false)
                 ->label('Filter by finding Type'),
 
-              Select::make('unit_department')
-                ->label('Audit Status')
-                ->enum(AuditDepartmentEnum::class)
-                ->options(AuditDepartmentEnum::class)
+              Select::make('department')
+                ->label('Audit Department')
+                ->options(Department::all()->pluck('short_name', 'id'))
                 ->native(false)
                 // ->multiple()
-                ->label('Filter by department/unit'),
-              // ->date(),
+                ->label('Filter by department'),
+              Select::make('unit')
+                ->label('Audit Unit')
+                ->searchable()
+                ->options(Unit::all()->pluck('name', 'id'))
+                ->native(false)
+                ->label('Filter by unit'),
             ])
-              ->columnSpanFull(),
+            // ->columnSpanFull(),
           ]),
       ]);
   }

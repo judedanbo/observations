@@ -26,10 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('units', function (Blueprint $table) {
-            $table->dropColumn('type');
-            $table->dropColumn('unit_code');
-            $table->dropColumn('unit_short_name');
-            $table->dropColumn('unit_description');
+            $table->dropColumn('short_name');
             $table->dropColumn('is_active');
             $table->dropColumn('is_default');
             $table->dropForeign(['office_id']);

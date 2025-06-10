@@ -142,6 +142,7 @@ class ViewReport extends ViewRecord
                             ->step(0.01)
                             ->required(),
                         TextInput::make('comments')
+                            ->required()
                             ->columnSpanFull(),
                     ])
                     ->action(function ($data, $record) {

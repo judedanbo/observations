@@ -24,6 +24,8 @@ class ObservationTypesChart extends ChartWidget
     {
         // $startDate = $this->filters['start_date'];
         // $endDate = $this->filters['end_date'];
+        $districts = $this->filters['districts'];
+        $institutions = $this->filters['institutions'];
         $auditStatus = $this->filters['audit_status'];
         $findingType = $this->filters['finding_type'];
         // $unitDepartment = $this->filters['unit_department'];
@@ -37,8 +39,24 @@ class ObservationTypesChart extends ChartWidget
             ->when(
                 $auditStatus,
                 function ($query, $auditStatus) {
-                    $query->whereHas('observation.audit', fn($query) => $query->where('status', $auditStatus));
+                    $query->whereHas(
+                        'observation.audit',
+                        fn($query) => $query->where(
+                            'status',
+                            $auditStatus
+                        )
+                    );
                 }
+            )
+            ->when(
+                $districts,
+                fn($query, $districts) => $query->whereHas(
+                    'observation.audit',
+                    fn($query) => $query->whereHas(
+                        'districts',
+                        fn($query) => $query->whereIn('districts.id', $districts)
+                    )
+                )
             )
             ->when(
                 $observationStatus,

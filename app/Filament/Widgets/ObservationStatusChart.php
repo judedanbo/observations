@@ -23,6 +23,8 @@ class ObservationStatusChart extends ChartWidget
     {
         // $startDate = $this->filters['start_date'];
         // $endDate = $this->filters['end_date'];
+        $districts = $this->filters['districts'];
+        $institutions = $this->filters['institutions'];
         $auditStatus = $this->filters['audit_status'];
         $findingType = $this->filters['finding_type'];
         // $unitDepartment = $this->filters['unit_department'];
@@ -33,6 +35,29 @@ class ObservationStatusChart extends ChartWidget
             ->join('audits', 'observations.audit_id', '=', 'audits.id')
             // ->when($startDate, fn($query, $startDate) => $query->where('created_at', '>=', $startDate))
             // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
+            ->when(
+                $institutions,
+                fn($query, $institutions) => $query->whereHas(
+                    'audit',
+                    fn($query) => $query->whereHas(
+                        'institutions',
+                        fn($query) => $query->whereIn(
+                            'institutions.id',
+                            $institutions
+                        )
+                    )
+                )
+            )
+            ->when(
+                $districts,
+                fn($query, $districts) => $query->whereHas(
+                    'audit',
+                    fn($query) => $query->whereHas(
+                        'districts',
+                        fn($query) => $query->whereIn('districts.id', $districts)
+                    )
+                )
+            )
             ->when(
                 $auditStatus,
                 function ($query, $auditStatus) {

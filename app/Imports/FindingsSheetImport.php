@@ -94,8 +94,8 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
                 'observation_id' => $observation->id,
                 'title' => $row['title_of_finding'],
                 'type' => $type,
-                'amount' => $row['amount'],
-                'surcharge_amount' => $row['surcharge_amount'] ?? null,
+                'amount' => $row['amount'] ?? 0,
+                'surcharge_amount' => $row['surcharge_amount'] ?? 0,
             ]);
             if ($row['implementation_status'] !== null) {
                 // dd($row['implementation_status']);

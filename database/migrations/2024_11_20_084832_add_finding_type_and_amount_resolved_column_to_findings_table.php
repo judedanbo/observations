@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::table('findings', function (Blueprint $table) {
             $table->string('classification', 20)->nullable();
-            $table->unsignedBigInteger('amount_resolved')->nullable();
+            $table->unsignedBigInteger('amount_resolved')
+                ->default(0);
         });
     }
 
