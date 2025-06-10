@@ -268,24 +268,33 @@ class Audit extends Model
 
     public function addManagementLetter($managementLetter)
     {
+        // dd($managementLetter);
         $document =  new Document();
         $document->title = 'Management Letter';
         $document->file = $managementLetter;
 
-        // dd($managementLetter);
-        // // [
-        // //     'title' => 'Management Letter',
-        // //     'file' => $managementLetter
-        // // ];
-        // $document = Document::create($data);
+        if (! $document->file) {
+            return;
+        }
         $this->documents()->save($document);
-        // $this->observations()->create([
-        //     'title' => 'Management Letter',
-        //     'status' => ObservationStatusEnum::ISSUED,
-        // ]);
+    }
 
-        // $document = Document::create($data);
-        // $this->finding->documents()->attach($document->id);
+    public function downloadManagementLetter()
+    {
+        $document = $this->documents
+            ->where('title', 'Management Letter')
+            ->whereNotNull('file')
+            ->sortByDesc('created_at')
+            ->first();
+        if ($document->file) {
+            //  get file's extension
+            $extension = pathinfo($document->file, PATHINFO_EXTENSION);
+            $fullname = public_path('storage/' . $document->file);
+            // dd($fullname);
+            return response()->download($fullname, $this->title . ' ' . $document->title . '.' . $extension);
+        }
+
+        return null;
     }
 
     public static function getForm(): array

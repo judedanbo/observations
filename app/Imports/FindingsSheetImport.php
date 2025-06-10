@@ -86,7 +86,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             $observation = Observation::create([
                 'audit_id' => $audit->id,
                 'title' => $row['title_of_finding'],
-                'status' => ObservationStatusEnum::ISSUED,
+                'status' => ObservationStatusEnum::REPORTED,
             ]);
             $type = $row['control_type'] === 'Financial' ? 'financial' : ($row['control_type'] === 'Internal Control' ? 'internal_control' : ($row['control_type'] === 'Compliance' ? 'compliance' : ''));
             // dd($type);

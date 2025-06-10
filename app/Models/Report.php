@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Report extends Model
@@ -145,12 +146,21 @@ class Report extends Model
     {
         return $this->where('section', AuditTypeEnum::IS);
     }
+    public function documents(): MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
+    }
 
     public function addDocuments($data)
     {
-        // dd($data);
-        $document = Document::create($data);
-        $this->finding->documents()->save($document->id);
+        // dd($this->finding);
+        // $document =  new Document();
+        // $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
+        // $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
+        // $document->file = $data['file'];
+        $this->finding->addDocuments($data);
+
+        // $this->documents()->save($document);
     }
 
     public static function getForm(): array

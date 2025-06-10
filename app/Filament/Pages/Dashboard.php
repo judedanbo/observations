@@ -6,6 +6,9 @@ use App\Enums\AuditDepartmentEnum;
 use App\Enums\AuditStatusEnum;
 use App\Enums\FindingTypeEnum;
 use App\Enums\ObservationStatusEnum;
+use App\Models\District;
+use App\Models\Institution;
+use App\Models\Region;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -44,6 +47,20 @@ class Dashboard extends PagesDashboard
             // ])
             //   ->columnSpanFull(),
             Split::make([
+              Select::make('institutions')
+                ->label('Filter Institution')
+                ->native(false)
+                ->searchable()
+                ->preload()
+                ->multiple()
+                ->options(Institution::all()->pluck('name', 'id')),
+              Select::make('districts')
+                ->label('Filter district')
+                ->native(false)
+                ->searchable()
+                ->preload()
+                ->multiple()
+                ->options(District::all()->pluck('name', 'id')),
               Select::make('audit_status')
                 ->label('Audit Status')
                 ->enum(AuditStatusEnum::class)
@@ -65,14 +82,14 @@ class Dashboard extends PagesDashboard
                 ->native(false)
                 ->label('Filter by finding Type'),
 
-              // Select::make('unit_department')
-              //   ->label('Audit Status')
-              //   ->enum(AuditDepartmentEnum::class)
-              //   ->options(AuditDepartmentEnum::class)
-              //   ->native(false)
-              //   // ->multiple()
-              //   ->label('Filter by department/unit'),
-              // // ->date(),
+              Select::make('unit_department')
+                ->label('Audit Status')
+                ->enum(AuditDepartmentEnum::class)
+                ->options(AuditDepartmentEnum::class)
+                ->native(false)
+                // ->multiple()
+                ->label('Filter by department/unit'),
+              // ->date(),
             ])
               ->columnSpanFull(),
           ]),

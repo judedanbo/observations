@@ -76,21 +76,12 @@ class Action extends Model
     }
     public function addDocuments($data)
     {
-        // dd($data);
-        // foreach ($data['filename'] as $file) {
-        //     $data['filename'] = $file;
-        //     // $this->addDocument($data);
+        $document =  new Document();
+        $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
+        $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
+        $document->file = $data['filename'];
 
-        //     // dd($file);
-        //     $document = Document::create([
-        //         'documentable_type' =>  '',
-        //         'documentable_id' => $this->id,
-        //         'title' => $data['title'] ?? 'Action Document',
-        //         'description' => $data['description'] ?? 'Action Document Description',
-        //         'file' => $file
-        //     ]);
-        //     $this->documents()->save($document->id);
-        // }
+        $this->documents()->save($document);
     }
 
     public static function getForm($observationId = null): array
@@ -171,7 +162,7 @@ class Action extends Model
             FileUpload::make('filename')
                 ->label('Upload evidence')
                 ->columnSpanFull()
-                ->multiple()
+                // ->multiple()
                 ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
             // Actions::make([
             //     ActionsAction::make('Save')

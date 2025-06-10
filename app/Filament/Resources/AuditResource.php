@@ -12,6 +12,7 @@ use App\Models\Staff;
 use App\Models\Team;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -24,6 +25,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\Filter;
@@ -59,6 +61,12 @@ class AuditResource extends Resource
                     ->label('Audit Title')
                     ->searchable()
                     ->wrap()
+                    ->icon(function (Audit $record) {
+                        if ($record->documents->count() > 0) {
+                            return 'heroicon-o-paper-clip';
+                        }
+                    })
+                    ->iconPosition(IconPosition::After)
                     ->description(fn(Audit $record) => Str::of($record->description)->limit(90)),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('status')
@@ -305,6 +313,43 @@ class AuditResource extends Resource
                                 ->success()
                                 ->title('Audit report issued')
                                 ->body('The audit report has been started')
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('add_management_letter')
+                        ->label('Add management letter')
+                        ->icon('heroicon-o-document-check')
+                        // ->visible(
+                        //     fn(Audit $record) => $record->status === AuditStatusEnum::ISSUED && $record->documents()->count() > 0
+                        // )
+                        ->form([
+                            FileUpload::make('management_letter')
+                                ->label('Management Letter')
+                                ->required()
+                                ->acceptedFileTypes([
+                                    'pdf',
+                                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+
+                                ])
+                                ->columnSpanFull()
+                                ->helperText('Add a management letter for the audit'),
+                        ])->slideOver()
+                        // ->mutateFormDataUsing(
+                        //     function (array $data, Audit $record) {
+                        //         return [
+                        //             'management_letter' => $data['management_letter'] ?? null,
+                        //             'audit_id' => $record->id,
+                        //         ];
+                        //     }
+                        // )
+                        ->action(fn($data, Audit $record) => $record->addManagementLetter(
+                            $data['management_letter'] ?? null
+                        ))
+                        ->requiresConfirmation()
+                        ->after(function () {
+                            Notification::make()
+                                ->success()
+                                ->title('Audit report is under review')
+                                ->body('The audit report is now under review')
                                 ->send();
                         }),
                     Tables\Actions\Action::make('transmit')

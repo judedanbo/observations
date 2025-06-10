@@ -10,12 +10,16 @@ use Filament\Tables\Table;
 
 class LeadersRelationManager extends RelationManager
 {
+    protected static ?string $title = 'Management Staff';
+
     public function isReadOnly(): bool
     {
         return false;
     }
 
     protected static string $relationship = 'leaders';
+
+
 
     public function form(Form $form): Form
     {

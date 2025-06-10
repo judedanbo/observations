@@ -37,6 +37,11 @@ class Document extends Model
         return $value ? asset('storage/' . $value) : null;
     }
 
+    public function getFileUrlAttribute(): ?string
+    {
+        return $this->file ? asset('storage/' . $this->file) : null;
+    }
+
     public static function getForm(): array
     {
         return [

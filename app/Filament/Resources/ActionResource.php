@@ -6,6 +6,7 @@ use App\Filament\Resources\ActionResource\Pages;
 use App\Models\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -28,7 +29,13 @@ class ActionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable()
+                    ->icon(function (Action $record) {
+                        if ($record->documents->count() > 0) {
+                            return 'heroicon-o-paper-clip';
+                        }
+                    })
+                    ->iconPosition(IconPosition::After),
                 Tables\Columns\TextColumn::make('observation.title')
                     ->numeric()
                     ->sortable(),

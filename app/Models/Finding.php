@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -67,6 +68,11 @@ class Finding extends Model
     public function statuses(): BelongsToMany
     {
         return $this->belongsToMany(Status::class);
+    }
+
+    public function status(): HasOne
+    {
+        return $this->hasMany(Status::class)->latestOfMany();
     }
 
     public function observation(): BelongsTo
@@ -154,6 +160,16 @@ class Finding extends Model
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
+    }
+    public function addDocuments($data)
+    {
+        // dd('findings');
+        $document =  new Document();
+        $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
+        $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
+        $document->file = $data['file'];
+
+        $this->documents()->save($document);
     }
     public function scopeControl(Builder $query): Builder
     {

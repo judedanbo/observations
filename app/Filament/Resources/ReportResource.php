@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\AuditStatusEnum;
 use App\Enums\AuditTypeEnum;
 use App\Enums\FindingClassificationEnum;
 use App\Enums\FindingTypeEnum;
+use App\Enums\ObservationStatusEnum;
 use App\Filament\Exports\ReportExporter;
 use App\Filament\Resources\ReportResource\Pages;
 use App\Filament\Resources\ReportResource\RelationManagers\ActionsRelationManager;
@@ -39,7 +41,7 @@ class ReportResource extends Resource
 {
     // protected static ?string $navigationGroup = 'GAS';
 
-    protected static ?string $label = 'Upload ML Issues';
+    protected static ?string $label = 'Upload Management Letter Issues';
 
     protected static ?string $model = Report::class;
 
@@ -52,12 +54,16 @@ class ReportResource extends Resource
             ->schema([
                 // Split::make([
                 Section::make('Audit')
-                    ->columns(2)
+                    ->columns(3)
                     ->collapsible()
                     ->schema([
                         TextEntry::make('section')
                             ->label('Audit report type'),
                         TextEntry::make('institution.name'),
+                        TextEntry::make('audit.status')
+                            ->badge()
+                            ->label('Institution status'),
+
                         TextEntry::make('audit.title')
                             ->columnSpanFull()
                             ->label('Audit Title'),
@@ -75,6 +81,9 @@ class ReportResource extends Resource
                         ->columnStart(1)
                         ->columns(4)
                         ->schema([
+                            TextEntry::make('finding.observation.status')
+                                ->label('Observation Status')
+                                ->badge(),
                             TextEntry::make('paragraphs'),
                             TextEntry::make('finding.title')
                                 ->label('Finding title')
@@ -84,8 +93,7 @@ class ReportResource extends Resource
                                 ->badge(),
                             TextEntry::make('finding.recommendations.title')
                                 ->label('Recommendations')
-                                ->columnStart(1)
-                                ->columnSpanFull(),
+                                ->columnSpan(3),
                             TextEntry::make('finding.amount')
                                 ->label('Finding Amount')
                                 ->numeric(),
@@ -101,10 +109,11 @@ class ReportResource extends Resource
                             TextEntry::make('finding.documents.title')
                                 ->visible(fn(Report $record) => $record->finding->documents->count() > 0)
                                 ->label('Documents')
-                                // ->html()
                                 ->listWithLineBreaks()
                                 ->limitList(2)
                                 ->expandableLimitedList()
+                                ->url(fn(Report $record) => $record->finding->documents->first()?->file_url)
+                                ->openUrlInNewTab()
 
                             // TextEntry::make('implementation_date')
                             //     ->date(),
@@ -167,15 +176,21 @@ class ReportResource extends Resource
                         if ($record->audit->documents->count() > 0) {
                             return 'heroicon-o-paper-clip';
                         }
-                        // return $record->finding->icon();
                     })
                     ->iconPosition(IconPosition::After),
+                Tables\Columns\TextColumn::make('audit.status')
+                    ->label('Audit status')
+                    ->badge()
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('audit.type')
                     ->label('Audit report type')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('finding.observation.status')
-                    ->label('Status')
+                    ->label('Observation Status')
+                    ->badge()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('paragraphs')
@@ -341,6 +356,21 @@ class ReportResource extends Resource
                     //     }),
                     SelectFilter::make('section')
                         ->options(AuditTypeEnum::class),
+                    SelectFilter::make('Audit status')
+                        ->native(false)
+                        ->searchable()
+                        ->multiple()
+                        ->preload()
+                        ->options(AuditStatusEnum::class)
+                        // ->relationship('audit', 'status')
+                        ->label('Audit status')
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['values'], function ($query, $data) {
+                                $query->whereHas('audit', function ($query) use ($data) {
+                                    $query->where('status', $data);
+                                });
+                            });
+                        }),
                     SelectFilter::make('Audit report title')
                         ->relationship('audit', 'title')
                         ->searchable()
@@ -357,10 +387,21 @@ class ReportResource extends Resource
                         ->searchable()
                         ->preload()
                         ->options(FindingTypeEnum::class),
-                    // SelectFilter::make('region')
-                    //     ->relationship('finding', 'region')
-                    //     ->label('Region')
-                    //     ->options(FindingTypeEnum::class),
+                    SelectFilter::make('finding.observation.status')
+                        ->label('Observation status')
+                        ->native(false)
+                        ->multiple()
+                        ->searchable()
+                        ->preload()
+                        // ->relationship('finding.observation', 'type')
+                        ->options(ObservationStatusEnum::class)
+                        ->query(function (Builder $query, array $data) {
+                            $query->when($data['values'], function ($query, $data) {
+                                $query->whereHas('finding.observation', function ($query) use ($data) {
+                                    $query->whereIn('status', $data);
+                                });
+                            });
+                        }),
                     SelectFilter::make('classification')
                         ->label('Issue classification')
                         // ->relationship('finding', 'classification')
@@ -395,16 +436,16 @@ class ReportResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\Action::make('download_ml')
                         ->label('Download Management Letter')
-                        // ->hidden(function (Report $record) {
-                        //     if ($record->finding->documents->count() > 0) {
-                        //         // dd($record->finding->documents);
-                        //         return false;
-                        //     }
-                        //     return true;
-                        // })
+                        ->visible(function (Report $record) {
+                            if ($record->audit->documents->count() > 0) {
+                                return true;
+                            }
+                        })
                         ->icon('heroicon-o-document-arrow-down')
 
-                        ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                        ->action(function (Report $record, array $data) {
+                            return $record->audit->downloadManagementLetter();
+                        }),
                     Tables\Actions\Action::make('add_document')
                         ->label('Add supporting Document')
                         ->icon('heroicon-o-document-plus')

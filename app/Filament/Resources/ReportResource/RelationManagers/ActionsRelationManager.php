@@ -6,6 +6,7 @@ use App\Models\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +32,14 @@ class ActionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('title')
+                    ->icon(function (Action $record) {
+                        if ($record->documents->count() > 0) {
+                            return 'heroicon-o-paper-clip';
+                        }
+                        // return $record->finding->icon();
+                    })
+                    ->iconPosition(IconPosition::After),
                 Tables\Columns\TextColumn::make('description')
                     ->html(),
             ])
