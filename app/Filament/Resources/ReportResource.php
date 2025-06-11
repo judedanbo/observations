@@ -307,10 +307,10 @@ class ReportResource extends Resource
                         ->relationship('district', 'name')
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['values'], function ($query, $data) {
-                                $query->whereHas('audit', function ($query) use ($data) {
-                                    $query->whereHas('districts', function ($query) use ($data) {
-                                        $query->whereIn('districts.id', $data);
-                                    });
+                                $query->whereHas('audit.districts', function ($query) use ($data) {
+                                    // $query->whereHas('districts', function ($query) use ($data) {
+                                    $query->whereIn('districts.id', $data);
+                                    // });
                                 });
                             });
                         }),

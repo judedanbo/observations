@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\RecommendationStatusEnum;
 use App\Filament\Resources\ParliamentResource\Pages;
+use App\Models\District;
+use App\Models\Institution;
 use App\Models\Parliament;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ParliamentResource extends Resource
 {
@@ -41,6 +45,10 @@ class ParliamentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->filtersTriggerAction(function ($action) {
+                return $action->button()->label('PAC Recommendations');
+            })
+            ->filtersFormColumns(2)
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -77,6 +85,85 @@ class ParliamentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(RecommendationStatusEnum::class)
+                    ->native(false)
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Select Status')
+                    ->label('Status'),
+                Tables\Filters\SelectFilter::make('observation_id')
+                    ->relationship('finding.observation', 'title')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Select observation')
+                    ->label('Observation'),
+                Tables\Filters\SelectFilter::make('institution_id')
+                    ->searchable()
+                    ->preload()
+                    ->options(fn() => Institution::all()->pluck('name', 'id'))
+                    ->native(false)
+                    ->placeholder('Select institution')
+                    ->label('Institution')
+                    ->query(fn(Builder $query) => $query->whereHas(
+                        'finding.observation.audit.institutions',
+                        fn(Builder $query) => $query->select('id', 'name')
+                    )),
+                Tables\Filters\SelectFilter::make('audit_id')
+                    ->relationship('finding.observation.audit', 'title')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Select audit')
+                    ->label('Audit')
+                    ->query(fn(Builder $query) => $query->whereHas(
+                        'finding.observation.audit',
+                        fn(Builder $query) => $query->select('id', 'title')
+                    )),
+
+                Tables\Filters\SelectFilter::make('region_id')
+                    ->searchable()
+                    ->preload()
+                    ->options(fn() => District::all()->pluck('region.name', 'id'))
+                    ->native(false)
+                    ->placeholder('Select region')
+                    ->label('Region')
+                    ->query(function (Builder $query, array $data) {
+                        $query->whereHas(
+                            'finding.observation',
+                            function (Builder $query) use ($data) {
+                                $query->whereHas('audit.districts.region', function (Builder $query) use ($data) {
+                                    $query->where('regions.id', $data);
+                                });
+                            }
+                        );
+                    }),
+                Tables\Filters\SelectFilter::make('district_id')
+                    ->searchable()
+                    ->preload()
+                    ->options(fn() => District::all()->pluck('name', 'id'))
+                    ->native(false)
+                    ->placeholder('Select district')
+                    ->label('District')
+                    ->query(function (Builder $query, array $data) {
+                        $query->whereHas(
+                            'finding.observation',
+                            function (Builder $query) use ($data) {
+                                $query->whereHas('audit.districts', function (Builder $query) use ($data) {
+                                    $query->where('districts.id', $data);
+                                });
+                            }
+                        );
+                    }),
+                // Tables\Filters\SelectFilter::make('department_id')
+                //     ->relationship('finding.observation.audit.department', 'short_name')
+                //     ->searchable()
+                //     ->preload()
+                //     ->placeholder('Select department')
+                //     ->label('Department')
+                //     ->query(fn(Builder $query) => $query->whereHas(
+                //         'finding.observation.audit.department',
+                //         fn(Builder $query) => $query->select('id', 'short_name')
+                //     )),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

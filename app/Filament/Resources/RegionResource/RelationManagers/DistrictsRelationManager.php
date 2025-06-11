@@ -36,6 +36,8 @@ class DistrictsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('capital'),
+                Tables\Columns\TextColumn::make('offices_count')
+                    ->counts('offices'),
             ])
             ->filters([
                 //

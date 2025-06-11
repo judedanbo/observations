@@ -34,6 +34,10 @@ class OfficesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('count_units')
+                    ->counts('units'),
+                Tables\Columns\TextColumn::make('count_audits')
+                    ->counts('audits'),
             ])
             ->filters([
                 //

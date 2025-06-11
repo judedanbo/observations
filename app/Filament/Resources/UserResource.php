@@ -85,14 +85,14 @@ class UserResource extends Resource
                         ->icon('heroicon-o-envelope')
                         ->action(function (User $record) {
                             $record->sendEmailVerificationNotification();
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title('Verification Email Sent')
-                                ->body('The verification email has been sent to the user.')
-                                ->send()
-                        ),
+                        }),
+                    // ->successNotification(
+                    //     Notification::make()
+                    //         ->success()
+                    //         ->title('Verification Email Sent')
+                    //         ->body('The verification email has been sent to the user.')
+                    //         ->send()
+                    // ),
                     DeleteAction::make(),
                 ]),
             ])

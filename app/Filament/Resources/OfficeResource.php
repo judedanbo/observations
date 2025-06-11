@@ -45,11 +45,10 @@ class OfficeResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('units_count')
                     ->counts('units')
-                    ->label('Units')
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('audits_count')
                     ->counts('audits')
+                    ->sortable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

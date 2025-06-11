@@ -32,11 +32,13 @@ class UnitResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('office.name')
-                    ->numeric()
+                    ->description(fn(Unit $record): string => $record->office?->district?->name ?? 'No Department')
+
                     ->sortable(),
                 Tables\Columns\TextColumn::make('audits_count')
                     ->counts('audits')
                     ->label('Audits')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

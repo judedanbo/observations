@@ -67,8 +67,8 @@ class RegionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            DistrictsRelationManager::class,
             OfficesRelationManager::class,
+            DistrictsRelationManager::class,
         ];
     }
 
