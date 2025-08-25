@@ -26,6 +26,7 @@
         "barryvdh/laravel-debugbar": "^3.12",
         "jasonmccreary/laravel-test-assertions": "^2.4",
         "laravel-shift/blueprint": "^2.9",
+        "laravel/boost": "^1.0",
         "laravel/pint": "^1.14",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
