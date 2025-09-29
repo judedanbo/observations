@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('amount_due', 14, 2)
+            $table->decimal('amount_due', 14, 2)->unsigned()
                 ->virtualAs('amount + surcharge_amount - amount_resolved');
-            // $table->unsignedDecimal('amount_due', 14, 2)
+            // $table->decimal('amount_due', 14, 2)->unsigned()
             //     ->virtualAs('amount + surcharge_amount - amount_resolved - outstanding');
         });
     }

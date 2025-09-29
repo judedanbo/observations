@@ -73,14 +73,15 @@ class AuditorGeneralReportResource extends Resource
                                     ->options(AuditorGeneralReportStatusEnum::getOptions())
                                     ->default(AuditorGeneralReportStatusEnum::DRAFT)
                                     ->native(false)
-                                    ->disabled(fn ($context) => $context === 'create'),
+                                    ->disabled(fn($context) => $context === 'create'),
                             ]),
 
                         Forms\Components\Textarea::make('description')
                             ->maxLength(1000)
                             ->rows(3)
                             ->columnSpanFull(),
-                    ]),
+                    ])
+                    ->collapsed(),
 
                 Forms\Components\Section::make('Report Content')
                     ->schema([
@@ -99,7 +100,8 @@ class AuditorGeneralReportResource extends Resource
                         Forms\Components\RichEditor::make('recommendations_summary')
                             ->label('Recommendations Summary')
                             ->columnSpanFull(),
-                    ]),
+                    ])
+                    ->collapsed(),
 
                 Forms\Components\Section::make('Statistics')
                     ->schema([
@@ -125,7 +127,7 @@ class AuditorGeneralReportResource extends Resource
                             ]),
                     ])
                     ->collapsed()
-                    ->hidden(fn ($context) => $context === 'create'),
+                    ->hidden(fn($context) => $context === 'create'),
             ]);
     }
 
@@ -141,8 +143,8 @@ class AuditorGeneralReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('report_type')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state->getLabel())
-                    ->color(fn ($state) => match ($state) {
+                    ->formatStateUsing(fn($state) => $state->getLabel())
+                    ->color(fn($state) => match ($state) {
                         AuditorGeneralReportTypeEnum::ANNUAL => 'success',
                         AuditorGeneralReportTypeEnum::QUARTERLY => 'info',
                         AuditorGeneralReportTypeEnum::SPECIAL => 'warning',
@@ -156,8 +158,8 @@ class AuditorGeneralReportResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state->getLabel())
-                    ->color(fn ($state) => $state->getColor()),
+                    ->formatStateUsing(fn($state) => $state->getLabel())
+                    ->color(fn($state) => $state->getColor()),
 
                 Tables\Columns\TextColumn::make('total_findings_count')
                     ->label('Findings')
@@ -195,8 +197,8 @@ class AuditorGeneralReportResource extends Resource
                     ->native(false),
 
                 Tables\Filters\SelectFilter::make('report_year')
-                    ->options(fn () => collect(range(2020, now()->year + 2))
-                        ->mapWithKeys(fn ($year) => [$year => $year])
+                    ->options(fn() => collect(range(2020, now()->year + 2))
+                        ->mapWithKeys(fn($year) => [$year => $year])
                         ->toArray())
                     ->native(false),
 
@@ -205,17 +207,17 @@ class AuditorGeneralReportResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn (AuditorGeneralReport $record) => $record->canBeEdited()),
+                    ->visible(fn(AuditorGeneralReport $record) => $record->canBeEdited()),
                 Tables\Actions\Action::make('manage_findings')
                     ->label('Manage Findings')
                     ->icon('heroicon-o-document-plus')
-                    ->url(fn (AuditorGeneralReport $record) => route('filament.admin.resources.auditor-general-reports.manage-findings', $record))
-                    ->visible(fn (AuditorGeneralReport $record) => $record->canBeEdited()),
+                    ->url(fn(AuditorGeneralReport $record) => route('filament.admin.resources.auditor-general-reports.manage-findings', $record))
+                    ->visible(fn(AuditorGeneralReport $record) => $record->canBeEdited()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()?->can('delete', AuditorGeneralReport::class)),
+                        ->visible(fn() => auth()->user()?->can('delete', AuditorGeneralReport::class)),
                     Tables\Actions\RestoreBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                 ]),

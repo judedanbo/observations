@@ -18,9 +18,8 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
 use Filament\Tables\Actions\ActionGroup;
-
+use Filament\Tables\Table;
 
 class FindingResource extends Resource
 {
@@ -124,7 +123,7 @@ class FindingResource extends Resource
                         ])
                         ->action(function ($data, $record) {
                             $newAmount = $record->update([
-                                'surcharge_amount' => $data['surcharge_amount']
+                                'surcharge_amount' => $data['surcharge_amount'],
                             ]);
                             // dd($record->finding);
                             // $record->save();

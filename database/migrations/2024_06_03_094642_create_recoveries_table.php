@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('recoveries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('finding_id')->constrained();
-            $table->unsignedDouble('amount');
+            $table->decimal('amount', 15, 2)->unsigned();
             $table->string('comments');
             $table->timestamps();
             $table->softDeletes();

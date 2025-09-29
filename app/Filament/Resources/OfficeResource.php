@@ -3,26 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OfficeResource\Pages;
-use App\Filament\Resources\OfficeResource\RelationManagers;
 use App\Filament\Resources\OfficeResource\RelationManagers\AuditsRelationManager;
-use App\Models\Audit;
 use App\Models\Office;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
 
 class OfficeResource extends Resource
 {
     protected static ?string $model = Office::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'GAS';
 
+    protected static ?string $navigationGroup = 'GAS';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +36,7 @@ class OfficeResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('district.name')
                     ->label('District')
-                    ->description(fn(Office $record): string => $record->district?->region?->name ?? 'No Region')
+                    ->description(fn (Office $record): string => $record->district?->region?->name ?? 'No Region')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('units_count')
@@ -48,7 +44,7 @@ class OfficeResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('audits_count')
                     ->counts('audits')
-                    ->sortable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -69,7 +65,7 @@ class OfficeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            AuditsRelationManager::class
+            AuditsRelationManager::class,
         ];
     }
 

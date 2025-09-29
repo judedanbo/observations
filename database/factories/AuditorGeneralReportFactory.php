@@ -42,9 +42,6 @@ class AuditorGeneralReportFactory extends Factory
             'methodology' => $this->faker->optional(0.5)->paragraphs(3, true),
             'conclusion' => $this->faker->optional(0.4)->paragraph(),
             'recommendations_summary' => $this->faker->optional(0.6)->paragraphs(3, true),
-            'total_findings_count' => 0,
-            'total_amount_involved' => 0,
-            'total_recoveries' => 0,
             'created_by' => User::factory(),
             'approved_by' => null,
             'approved_at' => null,
@@ -56,7 +53,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function draft(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => AuditorGeneralReportStatusEnum::DRAFT,
             'approved_by' => null,
             'approved_at' => null,
@@ -68,7 +65,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function underReview(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => AuditorGeneralReportStatusEnum::UNDER_REVIEW,
             'approved_by' => null,
             'approved_at' => null,
@@ -82,7 +79,7 @@ class AuditorGeneralReportFactory extends Factory
     {
         $approvedAt = $this->faker->dateTimeBetween('-2 weeks', 'now');
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => AuditorGeneralReportStatusEnum::APPROVED,
             'approved_by' => User::factory(),
             'approved_at' => $approvedAt,
@@ -97,7 +94,7 @@ class AuditorGeneralReportFactory extends Factory
         $approvedAt = $this->faker->dateTimeBetween('-1 month', '-2 weeks');
         $publishedAt = $this->faker->dateTimeBetween($approvedAt, 'now');
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => AuditorGeneralReportStatusEnum::PUBLISHED,
             'approved_by' => User::factory(),
             'approved_at' => $approvedAt,
@@ -110,7 +107,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function annual(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_type' => AuditorGeneralReportTypeEnum::ANNUAL,
             'title' => 'Annual Report ' . $this->faker->year(),
         ]);
@@ -124,7 +121,7 @@ class AuditorGeneralReportFactory extends Factory
         $quarter = $this->faker->randomElement(['Q1', 'Q2', 'Q3', 'Q4']);
         $year = $this->faker->year();
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_type' => AuditorGeneralReportTypeEnum::QUARTERLY,
             'title' => "{$quarter} {$year} Quarterly Report",
         ]);
@@ -135,7 +132,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function special(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_type' => AuditorGeneralReportTypeEnum::SPECIAL,
             'title' => 'Special Investigation Report on ' . $this->faker->words(3, true),
         ]);
@@ -146,7 +143,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function performance(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_type' => AuditorGeneralReportTypeEnum::PERFORMANCE,
             'title' => 'Performance Audit Report - ' . $this->faker->words(2, true),
         ]);
@@ -157,7 +154,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function thematic(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_type' => AuditorGeneralReportTypeEnum::THEMATIC,
             'title' => 'Thematic Report: ' . $this->faker->words(3, true),
         ]);
@@ -168,7 +165,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function withTotals(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'total_findings_count' => $this->faker->numberBetween(1, 20),
             'total_amount_involved' => $this->faker->numberBetween(10000, 1000000),
             'total_recoveries' => $this->faker->numberBetween(1000, 500000),
@@ -180,7 +177,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function complete(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'description' => $this->faker->paragraphs(2, true),
             'executive_summary' => $this->faker->paragraphs(3, true),
             'methodology' => $this->faker->paragraphs(4, true),
@@ -194,7 +191,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function forYear(int $year): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'report_year' => $year,
         ]);
     }
@@ -204,7 +201,7 @@ class AuditorGeneralReportFactory extends Factory
      */
     public function createdBy(User $user): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'created_by' => $user->id,
         ]);
     }

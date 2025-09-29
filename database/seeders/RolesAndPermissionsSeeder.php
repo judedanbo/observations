@@ -15,7 +15,7 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        //Reset cached roles and permissions
+        // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Document Permissions
@@ -27,7 +27,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'restore document']);
         Permission::create(['name' => 'destroy document']);
 
-        //Audit Status Permissions
+        // Audit Status Permissions
         Permission::create(['name' => 'view all statuses']);
         Permission::create(['name' => 'view status']);
         Permission::create(['name' => 'create status']);

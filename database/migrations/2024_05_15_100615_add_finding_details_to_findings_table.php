@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::table('findings', function (Blueprint $table) {
             $table->string('type', 20)->nullable();
-            $table->unsignedDecimal('amount', 14, 2)
+            $table->decimal('amount', 14, 2)
+                ->unsigned()
                 ->nullable()
                 ->default(0);
-            $table->unsignedDecimal('surcharge_amount', 14, 2)
+            $table->decimal('surcharge_amount', 14, 2)
+                ->unsigned()
                 ->nullable()
                 ->default(0);
         });

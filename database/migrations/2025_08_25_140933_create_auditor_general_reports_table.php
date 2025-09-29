@@ -25,9 +25,9 @@ return new class extends Migration
             $table->text('methodology')->nullable();
             $table->text('conclusion')->nullable();
             $table->text('recommendations_summary')->nullable();
-            $table->decimal('total_amount_involved', 15, 2)->default(0);
-            $table->decimal('total_recoveries', 15, 2)->default(0);
-            $table->integer('total_findings_count')->default(0);
+            // $table->decimal('total_amount_involved', 15, 2)->default(0);
+            // $table->decimal('total_recoveries', 15, 2)->default(0);
+            // $table->integer('total_findings_count')->default(0);
             $table->json('metadata')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('approved_by')->nullable()->constrained('users');

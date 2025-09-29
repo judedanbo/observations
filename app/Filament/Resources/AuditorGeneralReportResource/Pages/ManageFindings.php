@@ -6,6 +6,7 @@ use App\Filament\Resources\AuditorGeneralReportResource;
 use App\Models\Finding;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -14,15 +15,21 @@ use Filament\Tables\Table;
 
 class ManageFindings extends Page implements HasTable
 {
+    use InteractsWithRecord;
     use InteractsWithTable;
 
     protected static string $resource = AuditorGeneralReportResource::class;
 
     protected static string $view = 'filament.resources.auditor-general-report-resource.pages.manage-findings';
 
+    public function mount(int | string $record): void
+    {
+        $this->record = $this->resolveRecord($record);
+    }
+
     public function getTitle(): string
     {
-        return 'Manage Findings - '.$this->record->title;
+        return 'Manage Findings - ' . $this->record->title;
     }
 
     public function table(Table $table): Table
@@ -30,7 +37,7 @@ class ManageFindings extends Page implements HasTable
         return $table
             ->query(
                 Finding::query()
-                    ->with(['observation.audit.institution', 'statuses'])
+                    ->with(['observation.audit.institutions', 'statuses'])
                     ->whereNotIn('id', $this->record->findings->pluck('id'))
             )
             ->columns([
@@ -39,22 +46,30 @@ class ManageFindings extends Page implements HasTable
                     ->sortable()
                     ->wrap(),
 
-                Tables\Columns\TextColumn::make('observation.audit.institution.name')
-                    ->label('Institution')
+                Tables\Columns\TextColumn::make('observation.audit.institutions.name')
+                    ->label('Institution(s)')
+                    ->listWithLineBreaks()
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
+                    ->formatStateUsing(fn($state) => $state?->getLabel()),
+
+                Tables\Columns\TextColumn::make('classification')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => $state?->getLabel()),
 
                 Tables\Columns\TextColumn::make('amount')
                     ->money('GHS', divideBy: 1)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('classification')
-                    ->badge()
-                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
+                Tables\Columns\TextColumn::make('surcharge_amount')
+                    ->money('GHS', divideBy: 1)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('amount_due')
+                    ->money('GHS', divideBy: 1)
+                    ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('selected')
                     ->label('Select')
@@ -71,7 +86,7 @@ class ManageFindings extends Page implements HasTable
                             $this->record->findings()->detach($record->id);
                         }
 
-                        $this->record->calculateTotals();
+                        // $this->record->calculateTotals();
                         $this->record->save();
 
                         return $state;
@@ -79,17 +94,17 @@ class ManageFindings extends Page implements HasTable
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('institution')
-                    ->relationship('observation.audit.institution', 'name')
+                    ->relationship('observation.audit.institutions', 'name')
                     ->searchable()
                     ->preload(),
 
                 Tables\Filters\SelectFilter::make('type')
                     ->options(collect(\App\Enums\FindingTypeEnum::cases())
-                        ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])),
+                        ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])),
 
                 Tables\Filters\SelectFilter::make('classification')
                     ->options(collect(\App\Enums\FindingClassificationEnum::cases())
-                        ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])),
+                        ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])),
             ])
             ->actions([
                 Tables\Actions\Action::make('add_to_report')
@@ -112,7 +127,7 @@ class ManageFindings extends Page implements HasTable
                         Forms\Components\TextInput::make('report_section_order')
                             ->label('Section Order')
                             ->numeric()
-                            ->default(fn () => $this->record->findings()->count() + 1)
+                            ->default(fn() => $this->record->findings()->count() + 1)
                             ->required(),
 
                         Forms\Components\Toggle::make('highlighted_finding')
@@ -125,7 +140,7 @@ class ManageFindings extends Page implements HasTable
                     ])
                     ->action(function (Finding $record, array $data) {
                         $this->record->findings()->attach($record->id, $data);
-                        $this->record->calculateTotals();
+                        // $this->record->calculateTotals();
                         $this->record->save();
                     }),
             ])
@@ -157,7 +172,7 @@ class ManageFindings extends Page implements HasTable
                                 'report_section_order' => $this->record->findings()->count() + $index + 1,
                             ]));
                         }
-                        $this->record->calculateTotals();
+                        // $this->record->calculateTotals();
                         $this->record->save();
                     }),
             ])
@@ -170,7 +185,7 @@ class ManageFindings extends Page implements HasTable
             Actions\Action::make('back')
                 ->label('Back to Report')
                 ->icon('heroicon-o-arrow-left')
-                ->url(fn () => AuditorGeneralReportResource::getUrl('view', ['record' => $this->record])),
+                ->url(fn() => AuditorGeneralReportResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 }

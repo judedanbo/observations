@@ -10,7 +10,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -32,14 +31,15 @@ class Document extends Model
     {
         return $this->morphTo();
     }
+
     public function getFilenameAttribute($value)
     {
-        return $value ? asset('storage/' . $value) : null;
+        return $value ? asset('storage/'.$value) : null;
     }
 
     public function getFileUrlAttribute(): ?string
     {
-        return $this->file ? asset('storage/' . $this->file) : null;
+        return $this->file ? asset('storage/'.$this->file) : null;
     }
 
     public static function getForm(): array

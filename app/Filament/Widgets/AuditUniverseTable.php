@@ -43,12 +43,12 @@ class AuditUniverseTable extends TableWidget
                         }
                         // fn($query, $institutions) => $query->whereHas('regions', fn($query) => $query->where('id', 'in', $institutions))
                     )
-                    ->when($districts, fn($query, $districts) => $query->whereHas(
+                    ->when($districts, fn ($query, $districts) => $query->whereHas(
                         'district',
-                        fn($query) => $query->whereIn('districts.id', $districts)
+                        fn ($query) => $query->whereIn('districts.id', $districts)
                     ))
                     ->when($observationStatus, function ($query, $observationStatus) {
-                        return $query->whereHas('audits', fn($query) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)));
+                        return $query->whereHas('audits', fn ($query) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)));
                     })
             )
             ->defaultSort('created_at', 'desc')
@@ -66,7 +66,7 @@ class AuditUniverseTable extends TableWidget
                     ->numeric()
                     ->alignRight(),
             ])
-            ->recordUrl(fn(Institution $record): string => route('filament.admin.resources.institutions.view', $record));
+            ->recordUrl(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record));
         // ->actions([
         //     Tables\Actions\ViewAction::make()
         //         ->url(fn (Institution $record): string => route('filament.admin.resources.institutions.view', $record)),

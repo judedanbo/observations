@@ -60,10 +60,10 @@ class FindingsRelationManager extends RelationManager
                     ->wrap()
                     ->weight('medium'),
 
-                Tables\Columns\TextColumn::make('pivot.section_category')
+                Tables\Columns\TextColumn::make('section_category')
                     ->label('Category')
                     ->badge()
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         'financial' => 'success',
                         'compliance' => 'warning',
                         'performance' => 'info',
@@ -71,14 +71,14 @@ class FindingsRelationManager extends RelationManager
                         'general' => 'gray',
                         default => 'gray'
                     })
-                    ->formatStateUsing(fn ($state) => ucfirst($state ?? 'general')),
+                    ->formatStateUsing(fn($state) => ucfirst($state ?? 'general')),
 
-                Tables\Columns\TextColumn::make('pivot.report_section_order')
+                Tables\Columns\TextColumn::make('report_section_order')
                     ->label('Order')
                     ->sortable()
                     ->alignCenter(),
 
-                Tables\Columns\IconColumn::make('pivot.highlighted_finding')
+                Tables\Columns\IconColumn::make('highlighted_finding')
                     ->label('Highlighted')
                     ->boolean()
                     ->alignCenter(),
@@ -87,16 +87,17 @@ class FindingsRelationManager extends RelationManager
                     ->money('GHS', divideBy: 1)
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('observation.audit.institution.name')
-                    ->label('Institution')
+                Tables\Columns\TextColumn::make('observation.audit.institutions.name')
+                    ->label('Institution(s)')
                     ->limit(20)
+                    ->listWithLineBreaks()
                     ->tooltip(function ($record) {
-                        return $record->observation?->audit?->institution?->name;
+                        return $record->observation?->audit?->institutions->pluck('name')->join(', ');
                     }),
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
+                    ->formatStateUsing(fn($state) => $state?->getLabel()),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('section_category')
@@ -108,19 +109,21 @@ class FindingsRelationManager extends RelationManager
                         'governance' => 'Governance',
                         'general' => 'General',
                     ])
-                    ->attribute('pivot.section_category'),
+                    ->attribute('section_category'),
 
                 Tables\Filters\TernaryFilter::make('highlighted_finding')
                     ->label('Highlighted')
-                    ->attribute('pivot.highlighted_finding'),
+                    ->attribute('highlighted_finding'),
             ])
             ->headerActions([
                 Tables\Actions\Action::make('manage_findings')
                     ->label('Add More Findings')
                     ->icon('heroicon-o-plus')
-                    ->url(fn () => route('filament.admin.resources.auditor-general-reports.manage-findings',
-                        ['record' => $this->ownerRecord]))
-                    ->visible(fn () => $this->ownerRecord->canBeEdited()),
+                    ->url(fn() => route(
+                        'filament.admin.resources.auditor-general-reports.manage-findings',
+                        ['record' => $this->ownerRecord]
+                    ))
+                    ->visible(fn() => $this->ownerRecord->canBeEdited()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -197,8 +200,7 @@ class FindingsRelationManager extends RelationManager
                         }),
                 ]),
             ])
-            ->defaultSort('pivot.report_section_order')
-            ->reorderable('pivot.report_section_order')
+            // ->defaultSort('pivot.report_section_order')
             ->paginatedWhileReordering();
     }
 }

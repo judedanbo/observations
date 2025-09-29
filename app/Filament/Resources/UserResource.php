@@ -14,7 +14,6 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Mockery\Matcher\Not;
 use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource

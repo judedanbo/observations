@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('recoveries', function (Blueprint $table) {
-            $table->unsignedDecimal('amount', 14, 2)->change()->nullable();
+            $table->decimal('amount', 14, 2)->unsigned()->change()->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('recoveries', function (Blueprint $table) {
-            $table->unsignedDouble('amount')->change();
+            $table->decimal('amount', 15, 2)->unsigned()->change();
         });
     }
 };

@@ -93,22 +93,22 @@ class ObservationResource extends Resource
                     [
                         Tables\Actions\Action::make('sent for review')
                             ->icon('heroicon-o-paper-airplane')
-                            ->visible(fn(Observation $record) => $record->status === ObservationStatusEnum::DRAFT)
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::DRAFT)
                             ->label('Send for review')
-                            ->action(fn(Observation $record) => $record->review()),
+                            ->action(fn (Observation $record) => $record->review()),
 
                         Tables\Actions\Action::make('issue')
                             ->icon('heroicon-o-paper-airplane')
-                            ->visible(fn(Observation $record) => $record->status === ObservationStatusEnum::IN_REVIEW)
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::IN_REVIEW)
                             ->label('Issue Observation')
-                            ->action(fn(Observation $record) => $record->issue()),
+                            ->action(fn (Observation $record) => $record->issue()),
                         // Tables\Actions\Action::make('received')
                         //     ->icon('heroicon-o-paper-airplane')
                         //     ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::IN_REVIEW)
                         //     ->label('Issue Observation')
                         //     ->action(fn (Observation $record) => $record->issue()),
                         Tables\Actions\EditAction::make()
-                            ->visible(fn(Observation $record) => $record->status === ObservationStatusEnum::DRAFT),
+                            ->visible(fn (Observation $record) => $record->status === ObservationStatusEnum::DRAFT),
                         Tables\Actions\ViewAction::make(),
                     ]
                 )

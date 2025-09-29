@@ -41,7 +41,7 @@ class ObservationTypesChart extends ChartWidget
                 function ($query, $auditStatus) {
                     $query->whereHas(
                         'observation.audit',
-                        fn($query) => $query->where(
+                        fn ($query) => $query->where(
                             'status',
                             $auditStatus
                         )
@@ -50,18 +50,18 @@ class ObservationTypesChart extends ChartWidget
             )
             ->when(
                 $districts,
-                fn($query, $districts) => $query->whereHas(
+                fn ($query, $districts) => $query->whereHas(
                     'observation.audit',
-                    fn($query) => $query->whereHas(
+                    fn ($query) => $query->whereHas(
                         'districts',
-                        fn($query) => $query->whereIn('districts.id', $districts)
+                        fn ($query) => $query->whereIn('districts.id', $districts)
                     )
                 )
             )
             ->when(
                 $observationStatus,
                 function ($query, $observationStatus) {
-                    $query->whereHas('observation', fn($query) => $query->where('status', $observationStatus));
+                    $query->whereHas('observation', fn ($query) => $query->where('status', $observationStatus));
                 }
             )
             ->when(
@@ -87,15 +87,15 @@ class ObservationTypesChart extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Findings types',
-                    'backgroundColor' => $data->map(fn($item) => 'rgb(' . $item->type->getColor()['500'] . ')'),
-                    'data' => $data->map(fn($item) => $item->count),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->type->getColor()['500'].')'),
+                    'data' => $data->map(fn ($item) => $item->count),
                     'borderWidth' => 0,
                     'animation' => [
                         'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => $data->map(fn($item) => $item->type->getLabel()),
+            'labels' => $data->map(fn ($item) => $item->type->getLabel()),
         ];
     }
 

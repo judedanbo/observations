@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Casts\Money;
-use App\Casts\RecoveredCast;
-use App\Casts\ResolvedCast;
-use App\Casts\SurchargeCast;
 use App\Enums\FindingClassificationEnum;
 use App\Enums\FindingTypeEnum;
 use App\Http\Traits\LogAllTraits;
@@ -117,7 +113,7 @@ class Finding extends Model
 
     public function getAmountDisplayAttribute()
     {
-        return MoneyMoney::of($this->amount ?? 0, "USD")
+        return MoneyMoney::of($this->amount ?? 0, 'USD')
             ->formatWith($this->formatter);
     }
 
@@ -128,7 +124,7 @@ class Finding extends Model
 
     public function getTotalRecoveriesDisplayAttribute()
     {
-        return MoneyMoney::of($this->total_recoveries ?? 0, "USD")
+        return MoneyMoney::of($this->total_recoveries ?? 0, 'USD')
             ->formatWith($this->formatter);
     }
 
@@ -148,7 +144,7 @@ class Finding extends Model
 
     public function getAmountResolvedDisplayAttribute()
     {
-        return MoneyMoney::of($this->amount_resolved ?? 0, "USD")
+        return MoneyMoney::of($this->amount_resolved ?? 0, 'USD')
             ->formatWith($this->formatter);
     }
 
@@ -161,16 +157,18 @@ class Finding extends Model
     {
         return $this->morphMany(Document::class, 'documentable');
     }
+
     public function addDocuments($data)
     {
         // dd('findings');
-        $document =  new Document();
+        $document = new Document;
         $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
         $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
         $document->file = $data['file'];
 
         $this->documents()->save($document);
     }
+
     public function scopeControl(Builder $query): Builder
     {
         return $query->where('type', FindingTypeEnum::INT);
@@ -184,15 +182,21 @@ class Finding extends Model
     public function getSurchargeAmountDisplayAttribute(?float $amount = null)
     {
 
-        return MoneyMoney::of($this->surcharge_amount ?? 0, "USD")
+        return MoneyMoney::of($this->surcharge_amount ?? 0, 'USD')
             ->formatWith($this->formatter);
     }
 
-    function getAmountDueAttribute()
+    public function getAmountDueAttribute()
     {
         $amount = ($this->amount ?? 0) + ($this->surcharge_amount ?? 0) - ($this->amount_resolved ?? 0);
+
         return MoneyMoney::of($amount, 'USD')
             ->formatWith($this->formatter);
+    }
+
+    public function getAmountDueIntAttribute()
+    {
+        return ($this->amount ?? 0) + ($this->surcharge_amount ?? 0) - ($this->amount_resolved ?? 0);
     }
 
     // public function recover($data)

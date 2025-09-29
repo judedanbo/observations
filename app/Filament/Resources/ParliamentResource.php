@@ -14,7 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ParliamentResource extends Resource
 {
@@ -54,7 +53,7 @@ class ParliamentResource extends Resource
                     ->badge()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('finding.title')
-                    ->description(fn(Parliament $record): ?string => $record->finding?->observation?->audit?->title)
+                    ->description(fn (Parliament $record): ?string => $record->finding?->observation?->audit?->title)
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pac_directive')
@@ -101,13 +100,13 @@ class ParliamentResource extends Resource
                 Tables\Filters\SelectFilter::make('institution_id')
                     ->searchable()
                     ->preload()
-                    ->options(fn() => Institution::all()->pluck('name', 'id'))
+                    ->options(fn () => Institution::all()->pluck('name', 'id'))
                     ->native(false)
                     ->placeholder('Select institution')
                     ->label('Institution')
-                    ->query(fn(Builder $query) => $query->whereHas(
+                    ->query(fn (Builder $query) => $query->whereHas(
                         'finding.observation.audit.institutions',
-                        fn(Builder $query) => $query->select('id', 'name')
+                        fn (Builder $query) => $query->select('id', 'name')
                     )),
                 Tables\Filters\SelectFilter::make('audit_id')
                     ->relationship('finding.observation.audit', 'title')
@@ -115,15 +114,15 @@ class ParliamentResource extends Resource
                     ->preload()
                     ->placeholder('Select audit')
                     ->label('Audit')
-                    ->query(fn(Builder $query) => $query->whereHas(
+                    ->query(fn (Builder $query) => $query->whereHas(
                         'finding.observation.audit',
-                        fn(Builder $query) => $query->select('id', 'title')
+                        fn (Builder $query) => $query->select('id', 'title')
                     )),
 
                 Tables\Filters\SelectFilter::make('region_id')
                     ->searchable()
                     ->preload()
-                    ->options(fn() => District::all()->pluck('region.name', 'id'))
+                    ->options(fn () => District::all()->pluck('region.name', 'id'))
                     ->native(false)
                     ->placeholder('Select region')
                     ->label('Region')
@@ -140,7 +139,7 @@ class ParliamentResource extends Resource
                 Tables\Filters\SelectFilter::make('district_id')
                     ->searchable()
                     ->preload()
-                    ->options(fn() => District::all()->pluck('name', 'id'))
+                    ->options(fn () => District::all()->pluck('name', 'id'))
                     ->native(false)
                     ->placeholder('Select district')
                     ->label('District')

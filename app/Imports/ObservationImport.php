@@ -16,19 +16,20 @@ use App\Models\Report;
 use App\Models\Status;
 use App\Models\Unit;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ObservationImport implements ToCollection, WithHeadingRow, WithValidation, WithMultipleSheets
+class ObservationImport implements ToCollection, WithHeadingRow, WithMultipleSheets, WithValidation
 {
     use Importable;
 
     private $auditSection;
+
     private $managementLetter;
 
     public function __construct($auditSection = '', $managementLetter = null)
@@ -40,7 +41,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
     public function sheets(): array
     {
         return [
-            'Title' => new TitleSheetImport(),
+            'Title' => new TitleSheetImport,
             'Details' => new FindingsSheetImport($this->auditSection, $this->managementLetter),
         ];
     }
@@ -56,8 +57,8 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             $department = $row['department'] ?? 'Unknown Department';
             $auditRegion = $row['audit_region'] ?? 'Unknown Region';
             $auditUnit = $row['audit_unit'] ?? 'Unknown Unit';
-            $region =  $row['region'];
-            $district =  $row['district'];
+            $region = $row['region'];
+            $district = $row['district'];
 
             $departmentModel = Department::firstOrCreate([
                 'name' => Str::of($department)->replace('_', ' '),
@@ -67,7 +68,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                 'department_id' => $departmentModel->id,
             ]);
             $region = Region::firstOrCreate([
-                'name' => Str::of($region)->replace('_', " "),
+                'name' => Str::of($region)->replace('_', ' '),
             ]);
             $district = District::firstOrCreate([
                 'name' => Str::of($district)->replace('_', ' '),
@@ -79,7 +80,7 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
             ]);
 
             $audit = Audit::firstOrCreate([
-                'title' => 'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
+                'title' => 'Audit of '.$row['covered_entity'].' '.$row['report_financial_year'],
                 'year' => $row['report_financial_year'],
                 'status' => AuditStatusEnum::ISSUED,
             ]);
@@ -111,7 +112,6 @@ class ObservationImport implements ToCollection, WithHeadingRow, WithValidation,
                 ]);
                 $finding->statuses->attach($status->id);
             }
-
 
             $recommendation = Recommendation::create([
                 'finding_id' => $finding->id,

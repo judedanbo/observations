@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ActionResource\Pages;
 
 use App\Filament\Resources\ActionResource;
 use App\Models\Action;
-use Filament\Actions;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -16,7 +15,7 @@ class ListActions extends ListRecords
     {
         return [
             CreateAction::make()
-                ->slideOver()
+                ->slideOver(),
             // ->after(function (CreateAction $action, Action $record, array $data) {
             //     $record->addDocuments($data);
             // }),

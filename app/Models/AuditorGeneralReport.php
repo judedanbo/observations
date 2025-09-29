@@ -60,12 +60,12 @@ class AuditorGeneralReport extends Model
             }
         });
 
-        static::saving(function (AuditorGeneralReport $report) {
-            // Auto-calculate totals when findings are attached
-            if ($report->exists && $report->isDirty(['total_amount_involved', 'total_recoveries', 'total_findings_count']) === false) {
-                $report->calculateTotals();
-            }
-        });
+        // static::saving(function (AuditorGeneralReport $report) {
+        //     // Auto-calculate totals when findings are attached
+        //     if ($report->exists && $report->isDirty(['total_amount_involved', 'total_recoveries', 'total_findings_count']) === false) {
+        //         $report->calculateTotals();
+        //     }
+        // });
     }
 
     // Relationships
@@ -180,7 +180,7 @@ class AuditorGeneralReport extends Model
         }
 
         $this->findings()->attach($attachData);
-        $this->calculateTotals();
+        // $this->calculateTotals();
     }
 
     // Scopes
@@ -207,5 +207,27 @@ class AuditorGeneralReport extends Model
     public function scopeDraft($query)
     {
         return $query->where('status', AuditorGeneralReportStatusEnum::DRAFT);
+    }
+
+    public function getTotalFindingsCountAttribute()
+    {
+        return $this->findings()->count();
+    }
+    public function getTotalMonitoryFindingsCountAttribute()
+    {
+        return $this->findings()->whereNotNull('amount')->count();
+    }
+    public function getTotalNonMonitoryFindingsCountAttribute()
+    {
+        return $this->findings()->whereNull('amount')->count();
+    }
+    public function getTotalAmountInvolvedAttribute()
+    {
+        return $this->findings->sum('amount_due_int');
+    }
+
+    public function getTotalRecoveriesAttribute()
+    {
+        return $this->findings->sum('total_recoveries');
     }
 }

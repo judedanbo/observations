@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Livewire\Component as Livewire;
 
-
 class Action extends Model
 {
     use HasFactory, LogAllTraits, SoftDeletes;
@@ -70,15 +69,17 @@ class Action extends Model
     {
         return $this->hasMany(FollowUp::class);
     }
+
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');
     }
+
     public function addDocuments($data)
     {
-        $document =  new Document();
-        $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
-        $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
+        $document = new Document;
+        $document->title = $data['title'] ?? 'Evidence for '.$this->title;
+        $document->description = $data['description'] ?? 'Evidence for '.$this->title;
         $document->file = $data['filename'];
 
         $this->documents()->save($document);
@@ -93,8 +94,8 @@ class Action extends Model
                     name: 'observation',
                     titleAttribute: 'title',
                     modifyQueryUsing: function (Builder $query, Get $get) use ($observationId) {
-                        $query->when($observationId, fn(Builder $query, $observationId) => $query->where('id', $observationId));
-                        $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->whereHas('findings', fn(Builder $query) => $query->where('id', $findingId)));
+                        $query->when($observationId, fn (Builder $query, $observationId) => $query->where('id', $observationId));
+                        $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->whereHas('findings', fn (Builder $query) => $query->where('id', $findingId)));
                     }
                 )
                 ->default($observationId)
@@ -118,11 +119,11 @@ class Action extends Model
                     modifyQueryUsing: function (Builder $query, Get $get) {
                         $query->when(
                             $get('observation_id'),
-                            fn(Builder $query, $observationId) => $query->where('observation_id', $observationId)
+                            fn (Builder $query, $observationId) => $query->where('observation_id', $observationId)
                         );
                         $query->when(
                             $get('recommendation_id'),
-                            fn(Builder $query, $recommendationId) => $query->whereHas('recommendations', fn(Builder $query) => $query->where('id', $recommendationId))
+                            fn (Builder $query, $recommendationId) => $query->whereHas('recommendations', fn (Builder $query) => $query->where('id', $recommendationId))
                         );
                     }
                 )
@@ -142,7 +143,7 @@ class Action extends Model
                 ->columnSpanFull(),
             Select::make('recommendation_id')
                 ->relationship(name: 'recommendation', titleAttribute: 'title', modifyQueryUsing: function (Builder $query, Get $get) {
-                    $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->where('finding_id', $findingId));
+                    $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->where('finding_id', $findingId));
                 })
                 ->editOptionForm(Recommendation::getForm())
                 ->searchable()
@@ -163,7 +164,7 @@ class Action extends Model
                 ->label('Upload evidence')
                 ->columnSpanFull()
                 // ->multiple()
-                ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']),
             // Actions::make([
             //     ActionsAction::make('Save')
             //         ->label('Generate data')

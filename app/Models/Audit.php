@@ -128,11 +128,11 @@ class Audit extends Model
     {
         return $query->when(
             $data['planned_start_date_from'],
-            fn(Builder $query, $value) => $query->whereDate('planned_start_date', '>=', $value)
+            fn (Builder $query, $value) => $query->whereDate('planned_start_date', '>=', $value)
         )
             ->when(
                 $data['planned_start_date_to'],
-                fn(Builder $query, $value) => $query->whereDate('planned_start_date', '<=', $value)
+                fn (Builder $query, $value) => $query->whereDate('planned_start_date', '<=', $value)
             );
     }
 
@@ -140,11 +140,11 @@ class Audit extends Model
     {
         return $query->when(
             $data['actual_start_date_from'],
-            fn(Builder $query, $value) => $query->whereDate('actual_start_date', '>=', $value)
+            fn (Builder $query, $value) => $query->whereDate('actual_start_date', '>=', $value)
         )
             ->when(
                 $data['actual_start_date_to'],
-                fn(Builder $query, $value) => $query->whereDate('actual_start_date', '<=', $value)
+                fn (Builder $query, $value) => $query->whereDate('actual_start_date', '<=', $value)
             );
     }
 
@@ -192,7 +192,7 @@ class Audit extends Model
             return $this->teams()->create(['name' => $team['name']]);
         }
 
-        return $this->teams()->create(['name' => $this->title . ' Team']);
+        return $this->teams()->create(['name' => $this->title.' Team']);
     }
 
     public function addTeam($team)
@@ -235,23 +235,23 @@ class Audit extends Model
     {
         if ($this->planned_start_date === null) {
             if ($this->planned_end_date !== null) {
-                return 'To end ' . $this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+                return 'To end '.$this->planned_end_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
             }
 
             return 'Not scheduled';
         }
         if ($this->planned_start_date->gt(now())) {
-            return 'To start ' . $this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
+            return 'To start '.$this->planned_start_date->diffForHumans(['options' => Carbon::ONE_DAY_WORDS]);
         }
         if ($this->planned_start_date->lt(now())) {
             if ($this->status === AuditStatusEnum::PLANNED) {
-                return 'planned start passed ' . $this->planned_start_date->diffForHumans([
+                return 'planned start passed '.$this->planned_start_date->diffForHumans([
                     'options' => Carbon::ONE_DAY_WORDS,
                 ]);
             }
             if ($this->planned_end_date?->lt(now())) {
                 if ($this->status === AuditStatusEnum::IN_PROGRESS) {
-                    return 'passed due' . $this->planned_end_date->diffForHumans([
+                    return 'passed due'.$this->planned_end_date->diffForHumans([
                         'options' => Carbon::ONE_DAY_WORDS,
                     ]);
                 }
@@ -269,7 +269,7 @@ class Audit extends Model
     public function addManagementLetter($managementLetter)
     {
         // dd($managementLetter);
-        $document =  new Document();
+        $document = new Document;
         $document->title = 'Management Letter';
         $document->file = $managementLetter;
 
@@ -289,9 +289,10 @@ class Audit extends Model
         if ($document->file) {
             //  get file's extension
             $extension = pathinfo($document->file, PATHINFO_EXTENSION);
-            $fullname = public_path('storage/' . $document->file);
+            $fullname = public_path('storage/'.$document->file);
+
             // dd($fullname);
-            return response()->download($fullname, $this->title . ' ' . $document->title . '.' . $extension);
+            return response()->download($fullname, $this->title.' '.$document->title.'.'.$extension);
         }
 
         return null;

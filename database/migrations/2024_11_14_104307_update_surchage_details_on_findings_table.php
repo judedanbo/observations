@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('amount')->change()->nullable();
-            $table->unsignedDecimal('surcharge_amount')->change()->nullable();
+            $table->decimal('amount', 15, 2)->unsigned()->change()->nullable();
+            $table->decimal('surcharge_amount', 15, 2)->unsigned()->change()->nullable();
         });
     }
 };

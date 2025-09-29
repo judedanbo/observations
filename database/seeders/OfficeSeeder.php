@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -144,7 +143,6 @@ class OfficeSeeder extends Seeder
             ['id' => 128, 'name' => 'Ministry of Health', 'type' => 'branch', 'district_id' => 47],
             ['id' => 129, 'name' => 'Performance Audit', 'type' => 'unit', 'district_id' => 47],
             ['id' => 130, 'name' => 'IT Audit', 'type' => 'unit', 'district_id' => 47],
-
 
         ]);
     }

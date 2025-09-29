@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('findings', function (Blueprint $table) {
-            $table->unsignedDecimal('amount', 14, 2)
+            $table->decimal('amount', 14, 2)->unsigned()
                 ->nullable(false)
                 ->default(0)
                 ->change();
-            $table->unsignedDecimal('surcharge_amount', 14, 2)
+            $table->decimal('surcharge_amount', 14, 2)->unsigned()
                 ->default(0)
                 ->change();
-            $table->unsignedDecimal('amount_resolved', 14, 2)
+            $table->decimal('amount_resolved', 14, 2)->unsigned()
                 ->default(0)
                 ->change();
         });
