@@ -162,11 +162,18 @@ class Finding extends Model
     {
         // dd('findings');
         $document = new Document;
-        $document->title = $data['title'] ?? 'Evidence for ' . $this->title;
-        $document->description = $data['description'] ?? 'Evidence for ' . $this->title;
+        $document->title = $data['title'] ?? 'Evidence for '.$this->title;
+        $document->description = $data['description'] ?? 'Evidence for '.$this->title;
         $document->file = $data['file'];
 
         $this->documents()->save($document);
+    }
+
+    public function reports(): BelongsToMany
+    {
+        return $this->belongsToMany(AuditorGeneralReport::class)
+            ->withPivot('report_section_order')
+            ->withTimestamps();
     }
 
     public function scopeControl(Builder $query): Builder

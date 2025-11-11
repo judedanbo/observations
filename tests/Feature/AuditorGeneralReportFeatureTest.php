@@ -4,9 +4,6 @@ use App\Enums\AuditorGeneralReportStatusEnum;
 use App\Enums\AuditorGeneralReportTypeEnum;
 use App\Models\AuditorGeneralReport;
 use App\Models\Finding;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 test('authenticated user can access reports list', function () {
     AuditorGeneralReport::factory()->count(3)->create();
@@ -49,7 +46,7 @@ test('user can add findings to report', function () {
             'section_category' => 'financial',
             'report_section_order' => $index + 1,
             'highlighted_finding' => false,
-            'report_context' => 'Context for finding ' . ($index + 1),
+            'report_context' => 'Context for finding '.($index + 1),
         ]);
     }
     $report->refresh();

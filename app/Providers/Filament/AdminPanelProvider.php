@@ -59,6 +59,13 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->navigationGroups([
+                'Reports',
+                'GAS',
+                'Clients',
+                'Audit',
+                'Administration',
+            ])
             ->sidebarCollapsibleOnDesktop()
             ->authMiddleware([
                 Authenticate::class,

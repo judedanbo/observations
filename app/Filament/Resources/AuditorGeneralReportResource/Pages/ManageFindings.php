@@ -22,14 +22,14 @@ class ManageFindings extends Page implements HasTable
 
     protected static string $view = 'filament.resources.auditor-general-report-resource.pages.manage-findings';
 
-    public function mount(int | string $record): void
+    public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
     }
 
     public function getTitle(): string
     {
-        return 'Manage Findings - ' . $this->record->title;
+        return 'Manage Findings - '.$this->record->title;
     }
 
     public function table(Table $table): Table
@@ -54,11 +54,11 @@ class ManageFindings extends Page implements HasTable
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state?->getLabel()),
+                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
 
                 Tables\Columns\TextColumn::make('classification')
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state?->getLabel()),
+                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
 
                 Tables\Columns\TextColumn::make('amount')
                     ->money('GHS', divideBy: 1)
@@ -100,11 +100,11 @@ class ManageFindings extends Page implements HasTable
 
                 Tables\Filters\SelectFilter::make('type')
                     ->options(collect(\App\Enums\FindingTypeEnum::cases())
-                        ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])),
+                        ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])),
 
                 Tables\Filters\SelectFilter::make('classification')
                     ->options(collect(\App\Enums\FindingClassificationEnum::cases())
-                        ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])),
+                        ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])),
             ])
             ->actions([
                 Tables\Actions\Action::make('add_to_report')
@@ -127,7 +127,7 @@ class ManageFindings extends Page implements HasTable
                         Forms\Components\TextInput::make('report_section_order')
                             ->label('Section Order')
                             ->numeric()
-                            ->default(fn() => $this->record->findings()->count() + 1)
+                            ->default(fn () => $this->record->findings()->count() + 1)
                             ->required(),
 
                         Forms\Components\Toggle::make('highlighted_finding')
@@ -185,7 +185,7 @@ class ManageFindings extends Page implements HasTable
             Actions\Action::make('back')
                 ->label('Back to Report')
                 ->icon('heroicon-o-arrow-left')
-                ->url(fn() => AuditorGeneralReportResource::getUrl('view', ['record' => $this->record])),
+                ->url(fn () => AuditorGeneralReportResource::getUrl('view', ['record' => $this->record])),
         ];
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('findings', function (Blueprint $table) {
             $table->decimal('amount', 14, 2)->unsigned()
-                ->nullable(false)
+                ->nullable()
                 ->default(0)
                 ->change();
             $table->decimal('surcharge_amount', 14, 2)->unsigned()

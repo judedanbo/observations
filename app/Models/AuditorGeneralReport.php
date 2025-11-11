@@ -29,9 +29,6 @@ class AuditorGeneralReport extends Model
         'methodology',
         'conclusion',
         'recommendations_summary',
-        'total_amount_involved',
-        'total_recoveries',
-        'total_findings_count',
         'metadata',
         'created_by',
         'approved_by',
@@ -45,9 +42,6 @@ class AuditorGeneralReport extends Model
         'publication_date' => 'date',
         'period_start' => 'date',
         'period_end' => 'date',
-        'total_amount_involved' => 'decimal:2',
-        'total_recoveries' => 'decimal:2',
-        'total_findings_count' => 'integer',
         'approved_at' => 'datetime',
         'metadata' => 'json',
     ];
@@ -100,9 +94,9 @@ class AuditorGeneralReport extends Model
     // Helper methods
     public function calculateTotals(): void
     {
-        $this->total_amount_involved = $this->findings->sum('amount') ?? 0;
-        $this->total_recoveries = $this->findings->sum('total_recoveries') ?? 0;
-        $this->total_findings_count = $this->findings->count();
+        // Reload the findings relationship to ensure fresh data
+        // The actual totals are computed via accessor methods
+        $this->load('findings');
     }
 
     public function markAsUnderReview(): void
@@ -194,7 +188,7 @@ class AuditorGeneralReport extends Model
         return $query->where('report_type', $type);
     }
 
-    public function scopeByYear($query, int $year)
+    public function scopeForYear($query, int $year)
     {
         return $query->where('report_year', $year);
     }
@@ -213,17 +207,20 @@ class AuditorGeneralReport extends Model
     {
         return $this->findings()->count();
     }
+
     public function getTotalMonitoryFindingsCountAttribute()
     {
         return $this->findings()->whereNotNull('amount')->count();
     }
+
     public function getTotalNonMonitoryFindingsCountAttribute()
     {
         return $this->findings()->whereNull('amount')->count();
     }
+
     public function getTotalAmountInvolvedAttribute()
     {
-        return $this->findings->sum('amount_due_int');
+        return $this->findings->sum('amount');
     }
 
     public function getTotalRecoveriesAttribute()

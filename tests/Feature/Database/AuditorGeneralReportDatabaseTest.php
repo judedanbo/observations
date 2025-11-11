@@ -3,9 +3,7 @@
 use App\Models\AuditorGeneralReport;
 use App\Models\Finding;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
-use Tests\TestCase;
 
 test('migrations create required tables', function () {
     $this->assertTrue(Schema::hasTable('auditor_general_reports'));

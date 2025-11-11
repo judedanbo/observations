@@ -63,7 +63,7 @@ class FindingsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('section_category')
                     ->label('Category')
                     ->badge()
-                    ->color(fn($state) => match ($state) {
+                    ->color(fn ($state) => match ($state) {
                         'financial' => 'success',
                         'compliance' => 'warning',
                         'performance' => 'info',
@@ -71,7 +71,7 @@ class FindingsRelationManager extends RelationManager
                         'general' => 'gray',
                         default => 'gray'
                     })
-                    ->formatStateUsing(fn($state) => ucfirst($state ?? 'general')),
+                    ->formatStateUsing(fn ($state) => ucfirst($state ?? 'general')),
 
                 Tables\Columns\TextColumn::make('report_section_order')
                     ->label('Order')
@@ -97,7 +97,7 @@ class FindingsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state?->getLabel()),
+                    ->formatStateUsing(fn ($state) => $state?->getLabel()),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('section_category')
@@ -119,11 +119,11 @@ class FindingsRelationManager extends RelationManager
                 Tables\Actions\Action::make('manage_findings')
                     ->label('Add More Findings')
                     ->icon('heroicon-o-plus')
-                    ->url(fn() => route(
+                    ->url(fn () => route(
                         'filament.admin.resources.auditor-general-reports.manage-findings',
                         ['record' => $this->ownerRecord]
                     ))
-                    ->visible(fn() => $this->ownerRecord->canBeEdited()),
+                    ->visible(fn () => $this->ownerRecord->canBeEdited()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

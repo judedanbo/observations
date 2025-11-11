@@ -7,7 +7,7 @@ use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
-enum AuditorGeneralReportStatusEnum: string implements HasColor, HasLabel, HasDescription
+enum AuditorGeneralReportStatusEnum: string implements HasColor, HasDescription, HasLabel
 {
     case DRAFT = 'draft';
     case UNDER_REVIEW = 'under_review';
@@ -57,7 +57,7 @@ enum AuditorGeneralReportStatusEnum: string implements HasColor, HasLabel, HasDe
     public static function getOptions(): array
     {
         return collect(self::cases())
-            ->mapWithKeys(fn($case) => [$case->value => $case->getLabel()])
+            ->mapWithKeys(fn ($case) => [$case->value => $case->getLabel()])
             ->toArray();
     }
 

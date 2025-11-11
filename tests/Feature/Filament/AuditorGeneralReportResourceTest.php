@@ -4,17 +4,15 @@ namespace Tests\Feature\Filament;
 
 use App\Enums\AuditorGeneralReportStatusEnum;
 use App\Enums\AuditorGeneralReportTypeEnum;
-use App\Filament\Resources\AuditorGeneralReportResource;
 use App\Filament\Resources\AuditorGeneralReportResource\Pages\CreateAuditorGeneralReport;
-use App\Filament\Resources\AuditorGeneralReportResource\Pages\ListAuditorGeneralReports;
 use App\Filament\Resources\AuditorGeneralReportResource\Pages\EditAuditorGeneralReport;
-use App\Filament\Resources\AuditorGeneralReportResource\Pages\ViewAuditorGeneralReport;
+use App\Filament\Resources\AuditorGeneralReportResource\Pages\ListAuditorGeneralReports;
 use App\Filament\Resources\AuditorGeneralReportResource\Pages\ManageFindings;
+use App\Filament\Resources\AuditorGeneralReportResource\Pages\ViewAuditorGeneralReport;
 use App\Models\AuditorGeneralReport;
 use App\Models\Finding;
 use App\Models\User;
 use Filament\Facades\Filament;
-use Filament\Tables;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,13 +33,14 @@ class AuditorGeneralReportResourceTest extends TestCase
 
         $this->user = User::factory()->create();
         $this->user->assignRole('Super Administrator');
-        
+
         // Authenticate as the user
         $this->actingAs($this->user);
-        
+
         // Set the current panel for Filament
         Filament::setCurrentPanel(Filament::getPanel('admin'));
     }
+
     #[test]
     public function can_render_resource_pages()
     {

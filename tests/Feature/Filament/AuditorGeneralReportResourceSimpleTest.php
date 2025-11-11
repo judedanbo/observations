@@ -6,7 +6,6 @@ use App\Enums\AuditorGeneralReportStatusEnum;
 use App\Enums\AuditorGeneralReportTypeEnum;
 use App\Models\AuditorGeneralReport;
 use App\Models\Finding;
-use App\Models\Observation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -135,7 +134,7 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
                 'highlighted_finding' => $index === 0, // First one is highlighted
             ];
         }
-        
+
         $report->findings()->attach($attachData);
 
         // Assert findings are attached
@@ -148,7 +147,7 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
     public function can_calculate_report_totals()
     {
         $report = AuditorGeneralReport::factory()->draft()->create();
-        
+
         // Create findings with specific amounts
         $finding1 = Finding::factory()->create([
             'amount' => 10000,
@@ -222,11 +221,11 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
     public function can_delete_draft_report()
     {
         $draftReport = AuditorGeneralReport::factory()->draft()->create();
-        
+
         $this->assertTrue($draftReport->canBeDeleted());
-        
+
         $draftReport->delete();
-        
+
         $this->assertSoftDeleted('auditor_general_reports', [
             'id' => $draftReport->id,
         ]);
@@ -236,7 +235,7 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
     public function cannot_delete_published_report()
     {
         $publishedReport = AuditorGeneralReport::factory()->published()->create();
-        
+
         $this->assertFalse($publishedReport->canBeDeleted());
     }
 
@@ -285,7 +284,7 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
     {
         $creator = User::factory()->create();
         $approver = User::factory()->create();
-        
+
         $report = AuditorGeneralReport::factory()->create([
             'created_by' => $creator->id,
             'approved_by' => $approver->id,
