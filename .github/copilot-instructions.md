@@ -12,10 +12,14 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - filament/filament (FILAMENT) - v3
 - laravel/framework (LARAVEL) - v11
 - laravel/prompts (PROMPTS) - v0
+- laravel/sanctum (SANCTUM) - v4
 - livewire/livewire (LIVEWIRE) - v3
+- laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
+- laravel/sail (SAIL) - v1
+- pestphp/pest (PEST) - v3
+- phpunit/phpunit (PHPUNIT) - v11
 - tailwindcss (TAILWINDCSS) - v3
-
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -106,104 +110,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Enums
 - Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
-
-
-=== filament/core rules ===
-
-## Filament
-- Filament is used by this application, check how and where to follow existing application conventions.
-- Filament is a Server-Driven UI (SDUI) framework for Laravel. It allows developers to define user interfaces in PHP using structured configuration objects. It is built on top of Livewire, Alpine.js, and Tailwind CSS.
-- You can use the `search-docs` tool to get information from the official Filament documentation when needed. This is very useful for Artisan command arguments, specific code examples, testing functionality, relationship management, and ensuring you're following idiomatic practices.
-- Utilize static `make()` methods for consistent component initialization.
-
-### Artisan
-- You must use the Filament specific Artisan commands to create new files or components for Filament. You can find these with the `list-artisan-commands` tool, or with `php artisan` and the `--help` option.
-- Inspect the required options, always pass `--no-interaction`, and valid arguments for other options when applicable.
-
-### Filament's Core Features
-- Actions: Handle doing something within the application, often with a button or link. Actions encapsulate the UI, the interactive modal window, and the logic that should be executed when the modal window is submitted. They can be used anywhere in the UI and are commonly used to perform one-time actions like deleting a record, sending an email, or updating data in the database based on modal form input.
-- Forms: Dynamic forms rendered within other features, such as resources, action modals, table filters, and more.
-- Infolists: Read-only lists of data.
-- Notifications: Flash notifications displayed to users within the application.
-- Panels: The top-level container in Filament that can include all other features like pages, resources, forms, tables, notifications, actions, infolists, and widgets.
-- Resources: Static classes that are used to build CRUD interfaces for Eloquent models. Typically live in `app/Filament/Resources`.
-- Schemas: Represent components that define the structure and behavior of the UI, such as forms, tables, or lists.
-- Tables: Interactive tables with filtering, sorting, pagination, and more.
-- Widgets: Small component included within dashboards, often used for displaying data in charts, tables, or as a stat.
-
-### Relationships
-- Determine if you can use the `relationship()` method on form components when you need `options` for a select, checkbox, repeater, or when building a `Fieldset`:
-
-<code-snippet name="Relationship example for Form Select" lang="php">
-Forms\Components\Select::make('user_id')
-    ->label('Author')
-    ->relationship('author')
-    ->required(),
-</code-snippet>
-
-
-## Testing
-- It's important to test Filament functionality for user satisfaction.
-- Ensure that you are authenticated to access the application within the test.
-- Filament uses Livewire, so start assertions with `livewire()` or `Livewire::test()`.
-
-### Example Tests
-
-<code-snippet name="Filament Table Test" lang="php">
-    livewire(ListUsers::class)
-        ->assertCanSeeTableRecords($users)
-        ->searchTable($users->first()->name)
-        ->assertCanSeeTableRecords($users->take(1))
-        ->assertCanNotSeeTableRecords($users->skip(1))
-        ->searchTable($users->last()->email)
-        ->assertCanSeeTableRecords($users->take(-1))
-        ->assertCanNotSeeTableRecords($users->take($users->count() - 1));
-</code-snippet>
-
-<code-snippet name="Filament Create Resource Test" lang="php">
-    livewire(CreateUser::class)
-        ->fillForm([
-            'name' => 'Howdy',
-            'email' => 'howdy@example.com',
-        ])
-        ->call('create')
-        ->assertNotified()
-        ->assertRedirect();
-
-    assertDatabaseHas(User::class, [
-        'name' => 'Howdy',
-        'email' => 'howdy@example.com',
-    ]);
-</code-snippet>
-
-<code-snippet name="Testing Multiple Panels (setup())" lang="php">
-    use Filament\Facades\Filament;
-
-    Filament::setCurrentPanel('app');
-</code-snippet>
-
-<code-snippet name="Calling an Action in a Test" lang="php">
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])->callAction('send');
-
-    expect($invoice->refresh())->isSent()->toBeTrue();
-</code-snippet>
-
-
-=== filament/v3 rules ===
-
-## Filament 3
-
-## Version 3 Changes To Focus On
-- Resources are located in `app/Filament/Resources/` directory.
-- Resource pages (List, Create, Edit) are auto-generated within the resource's directory - e.g., `app/Filament/Resources/PostResource/Pages/`.
-- Forms use the `Forms\Components` namespace for form fields.
-- Tables use the `Tables\Columns` namespace for table columns.
-- A new `Filament\Forms\Components\RichEditor` component is available.
-- Form and table schemas now use fluent method chaining.
-- Added `php artisan filament:optimize` command for production optimization.
-- Requires implementing `FilamentUser` contract for production access control.
 
 
 === laravel/core rules ===
@@ -303,7 +209,7 @@ Forms\Components\Select::make('user_id')
     @endforeach
     ```
 
-- Prefer lifecycle hooks like `mount()`, `updatedFoo()`) for initialization and reactive side effects:
+- Prefer lifecycle hooks like `mount()`, `updatedFoo()` for initialization and reactive side effects:
 
 <code-snippet name="Lifecycle hook examples" lang="php">
     public function mount(User $user) { $this->user = $user; }
@@ -373,6 +279,60 @@ document.addEventListener('livewire:init', function () {
 - Do not run `vendor/bin/pint --test`, simply run `vendor/bin/pint` to fix any formatting issues.
 
 
+=== pest/core rules ===
+
+## Pest
+
+### Testing
+- If you need to verify a feature is working, write or update a Unit / Feature test.
+
+### Pest Tests
+- All tests must be written using Pest. Use `php artisan make:test --pest <name>`.
+- You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files - these are core to the application.
+- Tests should test all of the happy paths, failure paths, and weird paths.
+- Tests live in the `tests/Feature` and `tests/Unit` directories.
+- Pest tests look and behave like this:
+<code-snippet name="Basic Pest Test Example" lang="php">
+it('is true', function () {
+    expect(true)->toBeTrue();
+});
+</code-snippet>
+
+### Running Tests
+- Run the minimal number of tests using an appropriate filter before finalizing code edits.
+- To run all tests: `php artisan test`.
+- To run all tests in a file: `php artisan test tests/Feature/ExampleTest.php`.
+- To filter on a particular test name: `php artisan test --filter=testName` (recommended after making a change to a related file).
+- When the tests relating to your changes are passing, ask the user if they would like to run the entire test suite to ensure everything is still passing.
+
+### Pest Assertions
+- When asserting status codes on a response, use the specific method like `assertForbidden` and `assertNotFound` instead of using `assertStatus(403)` or similar, e.g.:
+<code-snippet name="Pest Example Asserting postJson Response" lang="php">
+it('returns all', function () {
+    $response = $this->postJson('/api/docs', []);
+
+    $response->assertSuccessful();
+});
+</code-snippet>
+
+### Mocking
+- Mocking can be very helpful when appropriate.
+- When mocking, you can use the `Pest\Laravel\mock` Pest function, but always import it via `use function Pest\Laravel\mock;` before using it. Alternatively, you can use `$this->mock()` if existing tests do.
+- You can also create partial mocks using the same import or self method.
+
+### Datasets
+- Use datasets in Pest to simplify tests which have a lot of duplicated data. This is often the case when testing validation rules, so consider going with this solution when writing tests for validation rules.
+
+<code-snippet name="Pest Dataset Example" lang="php">
+it('has emails', function (string $email) {
+    expect($email)->not->toBeEmpty();
+})->with([
+    'james' => 'james@laravel.com',
+    'taylor' => 'taylor@laravel.com',
+]);
+</code-snippet>
+
+
 === tailwindcss/core rules ===
 
 ## Tailwind Core
@@ -403,4 +363,106 @@ document.addEventListener('livewire:init', function () {
 ## Tailwind 3
 
 - Always use Tailwind CSS v3 - verify you're using only classes supported by this version.
+
+
+=== tests rules ===
+
+## Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
+
+
+=== filament/filament rules ===
+
+## Filament
+- Filament is used by this application, check how and where to follow existing application conventions.
+- Filament is a Server-Driven UI (SDUI) framework for Laravel. It allows developers to define user interfaces in PHP using structured configuration objects. It is built on top of Livewire, Alpine.js, and Tailwind CSS.
+- You can use the `search-docs` tool to get information from the official Filament documentation when needed. This is very useful for Artisan command arguments, specific code examples, testing functionality, relationship management, and ensuring you're following idiomatic practices.
+- Utilize static `make()` methods for consistent component initialization.
+
+### Artisan
+- You must use the Filament specific Artisan commands to create new files or components for Filament. You can find these with the `list-artisan-commands` tool, or with `php artisan` and the `--help` option.
+- Inspect the required options, always pass `--no-interaction`, and valid arguments for other options when applicable.
+
+### Filament's Core Features
+- Actions: Handle doing something within the application, often with a button or link. Actions encapsulate the UI, the interactive modal window, and the logic that should be executed when the modal window is submitted. They can be used anywhere in the UI and are commonly used to perform one-time actions like deleting a record, sending an email, or updating data in the database based on modal form input.
+- Forms: Dynamic forms rendered within other features, such as resources, action modals, table filters, and more.
+- Infolists: Read-only lists of data.
+- Notifications: Flash notifications displayed to users within the application.
+- Panels: The top-level container in Filament that can include all other features like pages, resources, forms, tables, notifications, actions, infolists, and widgets.
+- Resources: Static classes that are used to build CRUD interfaces for Eloquent models. Typically live in `app/Filament/Resources`.
+- Schemas: Represent components that define the structure and behavior of the UI, such as forms, tables, or lists.
+- Tables: Interactive tables with filtering, sorting, pagination, and more.
+- Widgets: Small component included within dashboards, often used for displaying data in charts, tables, or as a stat.
+
+### Relationships
+- Determine if you can use the `relationship()` method on form components when you need `options` for a select, checkbox, repeater, or when building a `Fieldset`:
+
+<code-snippet name="Relationship example for Form Select" lang="php">
+Forms\Components\Select::make('user_id')
+    ->label('Author')
+    ->relationship('author')
+    ->required(),
+</code-snippet>
+
+
+## Testing
+- It's important to test Filament functionality for user satisfaction.
+- Ensure that you are authenticated to access the application within the test.
+- Filament uses Livewire, so start assertions with `livewire()` or `Livewire::test()`.
+
+### Example Tests
+
+<code-snippet name="Filament Table Test" lang="php">
+    livewire(ListUsers::class)
+        ->assertCanSeeTableRecords($users)
+        ->searchTable($users->first()->name)
+        ->assertCanSeeTableRecords($users->take(1))
+        ->assertCanNotSeeTableRecords($users->skip(1))
+        ->searchTable($users->last()->email)
+        ->assertCanSeeTableRecords($users->take(-1))
+        ->assertCanNotSeeTableRecords($users->take($users->count() - 1));
+</code-snippet>
+
+<code-snippet name="Filament Create Resource Test" lang="php">
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'Howdy',
+            'email' => 'howdy@example.com',
+        ])
+        ->call('create')
+        ->assertNotified()
+        ->assertRedirect();
+
+    assertDatabaseHas(User::class, [
+        'name' => 'Howdy',
+        'email' => 'howdy@example.com',
+    ]);
+</code-snippet>
+
+<code-snippet name="Testing Multiple Panels (setup())" lang="php">
+    use Filament\Facades\Filament;
+
+    Filament::setCurrentPanel('app');
+</code-snippet>
+
+<code-snippet name="Calling an Action in a Test" lang="php">
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])->callAction('send');
+
+    expect($invoice->refresh())->isSent()->toBeTrue();
+</code-snippet>
+
+
+## Version 3 Changes To Focus On
+- Resources are located in `app/Filament/Resources/` directory.
+- Resource pages (List, Create, Edit) are auto-generated within the resource's directory - e.g., `app/Filament/Resources/PostResource/Pages/`.
+- Forms use the `Forms\Components` namespace for form fields.
+- Tables use the `Tables\Columns` namespace for table columns.
+- A new `Filament\Forms\Components\RichEditor` component is available.
+- Form and table schemas now use fluent method chaining.
+- Added `php artisan filament:optimize` command for production optimization.
+- Requires implementing `FilamentUser` contract for production access control.
 </laravel-boost-guidelines>
