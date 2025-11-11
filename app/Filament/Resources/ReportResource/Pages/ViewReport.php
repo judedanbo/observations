@@ -36,7 +36,7 @@ class ViewReport extends ViewRecord
 
                         return $data;
                     })
-                    ->action(fn(Report $record, array $data) => $record->recommend($data)),
+                    ->action(fn (Report $record, array $data) => $record->recommend($data)),
                 // ->after(function () {
                 //     Notification::make()
                 //         ->success()
@@ -71,7 +71,7 @@ class ViewReport extends ViewRecord
 
                         return $data;
                     })
-                    ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                    ->action(fn (Report $record, array $data) => $record->addDocuments($data)),
                 Action::make('classification')
                     ->label('Add Classification')
                     ->icon('heroicon-o-rectangle-group')
@@ -85,7 +85,7 @@ class ViewReport extends ViewRecord
                     ])
                     ->action(function ($data, $record) {
                         $newAmount = $record->finding()->update([
-                            'classification' => $data['classification']
+                            'classification' => $data['classification'],
                         ]);
                         Notification::make('Classification Added')
                             ->title('Classification Added')
@@ -104,7 +104,7 @@ class ViewReport extends ViewRecord
                     ])
                     ->action(function ($data, $record) {
                         $newAmount = $record->finding()->update([
-                            'amount_resolved' => $data['amount_resolved']
+                            'amount_resolved' => $data['amount_resolved'],
                         ]);
                         Notification::make('Amount resolved added')
                             ->title('Amount Resolved added')
@@ -122,7 +122,7 @@ class ViewReport extends ViewRecord
                     ])
                     ->action(function ($data, $record) {
                         $newAmount = $record->finding()->update([
-                            'surcharge_amount' => $data['surcharge_amount']
+                            'surcharge_amount' => $data['surcharge_amount'],
                         ]);
                         // dd($record->finding);
                         // $record->save();

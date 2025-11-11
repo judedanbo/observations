@@ -13,9 +13,7 @@ use App\Filament\Resources\ReportResource\RelationManagers\ActionsRelationManage
 use App\Filament\Resources\ReportResource\RelationManagers\FollowUpsRelationManager;
 use App\Filament\Resources\ReportResource\RelationManagers\RecommendationsRelationManager;
 use App\Models\Document;
-use App\Models\FollowUp;
 use App\Models\Report;
-use App\Models\Surcharge;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -35,7 +33,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use PHPUnit\Runner\Baseline\Issue;
 
 class ReportResource extends Resource
 {
@@ -107,13 +104,13 @@ class ReportResource extends Resource
                                 ->numeric()
                                 ->columnStart(4),
                             TextEntry::make('finding.documents.title')
-                                ->visible(fn(Report $record) => $record->finding->documents->count() > 0)
+                                ->visible(fn (Report $record) => $record->finding->documents->count() > 0)
                                 ->label('Documents')
                                 ->listWithLineBreaks()
                                 ->limitList(2)
                                 ->expandableLimitedList()
-                                ->url(fn(Report $record) => $record->finding->documents->first()?->file_url)
-                                ->openUrlInNewTab()
+                                ->url(fn (Report $record) => $record->finding->documents->first()?->file_url)
+                                ->openUrlInNewTab(),
 
                             // TextEntry::make('implementation_date')
                             //     ->date(),
@@ -147,7 +144,6 @@ class ReportResource extends Resource
                     ]),
                 // ]),
 
-
             ]);
     }
 
@@ -169,7 +165,7 @@ class ReportResource extends Resource
                 //     ->searchable()
                 //     ->sortable(),
                 Tables\Columns\TextColumn::make('audit.title')
-                    ->description(fn(Report $record) => $record->institution->name)
+                    ->description(fn (Report $record) => $record->institution->name)
                     ->searchable()
                     ->sortable()
                     ->icon(function (Report $record) {
@@ -452,9 +448,10 @@ class ReportResource extends Resource
                         ->form(Document::getForm())
                         ->mutateFormDataUsing(function (Model $record, array $data): array {
                             $data['report_id'] = $record->id;
+
                             return $data;
                         })
-                        ->action(fn(Report $record, array $data) => $record->addDocuments($data)),
+                        ->action(fn (Report $record, array $data) => $record->addDocuments($data)),
                     Tables\Actions\Action::make('classification')
                         ->label('Add Classification')
                         ->icon('heroicon-o-rectangle-group')
@@ -470,7 +467,7 @@ class ReportResource extends Resource
                         ])
                         ->action(function ($data, $record) {
                             $newAmount = $record->finding()->update([
-                                'classification' => $data['classification']
+                                'classification' => $data['classification'],
                             ]);
                             Notification::make('Classification Added')
                                 ->title('Classification Added')
@@ -489,7 +486,7 @@ class ReportResource extends Resource
                         ])
                         ->action(function ($data, $record) {
                             $newAmount = $record->finding()->update([
-                                'amount_resolved' => $data['amount_resolved']
+                                'amount_resolved' => $data['amount_resolved'],
                             ]);
                             Notification::make('Amount resolved added')
                                 ->title('Amount Resolved added')
@@ -507,7 +504,7 @@ class ReportResource extends Resource
                         ])
                         ->action(function ($data, $record) {
                             $newAmount = $record->finding()->update([
-                                'surcharge_amount' => $data['surcharge_amount']
+                                'surcharge_amount' => $data['surcharge_amount'],
                             ]);
                             // dd($record->finding);
                             // $record->save();
@@ -533,7 +530,7 @@ class ReportResource extends Resource
                         ->action(function ($data, $record) {
                             $finding = $record->finding->recoveries()->create($data);
                         }),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

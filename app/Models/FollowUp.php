@@ -70,13 +70,13 @@ class FollowUp extends Model
                     modifyQueryUsing: function (Builder $query, Get $get) use ($findingId) {
                         $query->when(
                             $findingId,
-                            fn(Builder $query, $findingId) => $query->whereHas('findings', fn(Builder $query) => $query->where('id', $findingId))
+                            fn (Builder $query, $findingId) => $query->whereHas('findings', fn (Builder $query) => $query->where('id', $findingId))
                         );
                         $query->when(
                             $get('finding_id'),
-                            fn(Builder $query, $auditId) => $query->whereHas(
+                            fn (Builder $query, $auditId) => $query->whereHas(
                                 'findings',
-                                fn(Builder $query) => $query->where('id', $auditId)
+                                fn (Builder $query) => $query->where('id', $auditId)
                             )
                         );
                     }
@@ -97,15 +97,15 @@ class FollowUp extends Model
                     modifyQueryUsing: function (Builder $query, Get $get) use ($findingId) {
                         $query->when(
                             $findingId,
-                            fn(Builder $query, $findingId) => $query->where('id', $findingId)
+                            fn (Builder $query, $findingId) => $query->where('id', $findingId)
                         );
                         $query->when(
                             $get('observation_id'),
-                            fn(Builder $query, $observationId) => $query->where('observation_id', $observationId)
+                            fn (Builder $query, $observationId) => $query->where('observation_id', $observationId)
                         );
                         $query->when(
                             $get('recommendation_id'),
-                            fn(Builder $query, $recommendationId) => $query->whereHas('recommendations', fn(Builder $query) => $query->where('id', $recommendationId))
+                            fn (Builder $query, $recommendationId) => $query->whereHas('recommendations', fn (Builder $query) => $query->where('id', $recommendationId))
                         );
                     }
                 )
@@ -124,7 +124,7 @@ class FollowUp extends Model
                     name: 'recommendation',
                     titleAttribute: 'title',
                     modifyQueryUsing: function (Builder $query, Get $get) {
-                        $query->when($get('finding_id'), fn(Builder $query, $findingId) => $query->where('finding_id', $findingId));
+                        $query->when($get('finding_id'), fn (Builder $query, $findingId) => $query->where('finding_id', $findingId));
                     }
                 )
                 ->default(function (Livewire $livewire) use ($findingId) {

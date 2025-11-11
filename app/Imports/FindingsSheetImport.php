@@ -11,22 +11,24 @@ use App\Models\Institution;
 use App\Models\Observation;
 use App\Models\Recommendation;
 use App\Models\Region;
-use Illuminate\Support\Str;
 use App\Models\Report;
 use App\Models\Status;
 use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidation, WithCalculatedFormulas
+class FindingsSheetImport implements ToCollection, WithCalculatedFormulas, WithHeadingRow, WithValidation
 {
     private $auditSection;
+
     private $managementLetter;
-    public function __construct($auditSection = '', $managementLetter)
+
+    public function __construct($auditSection, $managementLetter)
     {
         $this->auditSection = $auditSection;
         $this->managementLetter = $managementLetter;
@@ -73,7 +75,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             ]);
 
             $audit = Audit::firstOrCreate([
-                'title' => $row['audit_title'], //'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
+                'title' => $row['audit_title'], // 'Audit of ' . $row['covered_entity'] . ' ' . $row['report_financial_year'],
                 'year' => $row['report_financial_year'],
                 'status' => 'issued',
                 'type' => $this->auditSection,
@@ -137,10 +139,12 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
 
         $audit->units()->attach($unitModel->id);
     }
+
     public function headingRow(): int
     {
         return 4;
     }
+
     public function rules(): array
     {
         return [
@@ -150,7 +154,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             '*.region' => 'required|max:50',
             '*.district' => 'required|max:50',
             '*.covered_entity' => 'required|max:250',
-            '*.report_financial_year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
+            '*.report_financial_year' => 'required|integer|min:2000|max:'.(date('Y') + 1),
             '*.audit_title' => 'required|unique:audits,title|max:250',
             '*.amount' => 'nullable|decimal:0,4|min:1',
             '*.recommendation' => 'required|max:250',
@@ -161,6 +165,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             '*.amount_recovered' => 'nullable|decimal:0,4',
         ];
     }
+
     public function customValidationMessages(): array
     {
         return [
@@ -173,7 +178,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
             'report_financial_year.required' => 'The report financial year field in the Title Sheet is required.',
             'report_financial_year.integer' => 'The report financial year field in the Title Sheet must be an number.',
             'report_financial_year.min' => 'The report financial year field in the Title Sheet must be not be before the year 2000.',
-            'report_financial_year.max' => 'The report financial year field in the Title Sheet must be not be after the year' . date('Y') + 1,
+            'report_financial_year.max' => 'The report financial year field in the Title Sheet must be not be after the year'.date('Y') + 1,
             'audit_title.required' => 'The audit title field in the Title Sheet is is required.',
             'audit_title.unique' => 'An audit of the same title in the Audit Title field in the Title Sheet is already imported. please ensure that the audit title is in the title sheet.',
             'report_paragraphs.required' => 'The report paragraphs column of row :index is required.',
@@ -193,6 +198,7 @@ class FindingsSheetImport implements ToCollection, WithHeadingRow, WithValidatio
 
         ];
     }
+
     public function customValidationAttributes(): array
     {
         return [

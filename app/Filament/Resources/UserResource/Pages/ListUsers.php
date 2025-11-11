@@ -20,6 +20,7 @@ class ListUsers extends ListRecords
                     } else {
                         $data['password'] = bcrypt('password');
                     }
+
                     return $data;
                 })
                 ->after(function ($record) {

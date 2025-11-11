@@ -28,8 +28,8 @@ class ActionFactory extends Factory
             'description' => $this->faker->realText(500),
             'observation_id' => $observationID,
             'finding_id' => $findingId,
-            'follow_up_id' => null, //FollowUp::factory(),
-            'recommendation_id' => $recommendationId, //Recommendation::factory(),
+            'follow_up_id' => null, // FollowUp::factory(),
+            'recommendation_id' => $recommendationId, // Recommendation::factory(),
         ];
     }
 }

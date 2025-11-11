@@ -5,13 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DistrictResource\Pages;
 use App\Filament\Resources\DistrictResource\RelationManagers\AuditsRelationManager;
 use App\Filament\Resources\DistrictResource\RelationManagers\OfficesRelationManager;
-use App\Models\Audit;
 use App\Models\District;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class DistrictResource extends Resource
 {
@@ -78,7 +76,7 @@ class DistrictResource extends Resource
 
         return [
             AuditsRelationManager::class,
-            OfficesRelationManager::class
+            OfficesRelationManager::class,
         ];
     }
 

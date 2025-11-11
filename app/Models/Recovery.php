@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Casts\Money;
-use App\Casts\RecoveredCast;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

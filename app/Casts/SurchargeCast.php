@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SurchargeCast implements CastsAttributes
 {
-
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
         // dd($value);
@@ -20,14 +19,16 @@ class SurchargeCast implements CastsAttributes
         $formatter->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, 'GH¢ ');
         $formatter->setSymbol(\NumberFormatter::MONETARY_GROUPING_SEPARATOR_SYMBOL, ',');
         $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+
         return \Brick\Money\Money::of($attributes['surcharge_amount'], 'USD')->formatWith($formatter);
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        if (!$value instanceof \Brick\Money\Money) {
+        if (! $value instanceof \Brick\Money\Money) {
             return $value;
         }
+
         return $value->getMinorAmount()->toInt();
     }
 }

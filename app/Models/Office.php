@@ -34,7 +34,7 @@ class Office extends Model
         return $this->belongsTo(District::class);
     }
 
-    function region(): BelongsTo
+    public function region(): BelongsTo
     {
         return $this->belongsToThrough(Region::class, District::class);
     }
@@ -61,6 +61,7 @@ class Office extends Model
                             })
                             ->pluck('name', 'id');
                     }
+
                     return Region::query()->pluck('name', 'id');
                     // return $query->from('regions')->pluck('name', 'id');
                 })
@@ -69,15 +70,16 @@ class Office extends Model
                 ->preload()
                 ->native(false)
                 // ->default('1')
-                ->afterStateUpdated(fn(Set $set) => $set('district_id', null)),
+                ->afterStateUpdated(fn (Set $set) => $set('district_id', null)),
             Select::make('district_id')
                 ->relationship(
                     name: 'district',
                     titleAttribute: 'name',
                     modifyQueryUsing: function (Builder $query, Get $get) {
-                        if (!$get('region')) {
+                        if (! $get('region')) {
                             return $query;
                         }
+
                         return $query->where('region_id', $get('region'));
                     }
                 )

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\AuditDepartmentEnum;
 use App\Enums\AuditTypeEnum;
 use App\Enums\FindingTypeEnum;
 use Filament\Forms\Components\DatePicker;
@@ -55,7 +54,6 @@ class Report extends Model
     //     return $this->hasOneThrough(Office::class, Audit::class, 'id', 'id', 'audit_id', 'office_id');
     // }
 
-
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class);
@@ -83,8 +81,7 @@ class Report extends Model
         return $this->hasOneThrough(Region::class, District::class, 'id', 'id', 'district_id', 'region_id');
     }
 
-
-    function followUps(): HasManyThrough
+    public function followUps(): HasManyThrough
     {
         return $this->hasManyThrough(FollowUp::class, Finding::class, 'id', 'finding_id', 'finding_id', 'id');
     }
@@ -103,6 +100,7 @@ class Report extends Model
     {
         return $this->where('section', AuditTypeEnum::MDA);
     }
+
     public function scopeDacf()
     {
         return $this->where('section', AuditTypeEnum::DACF);
@@ -117,22 +115,27 @@ class Report extends Model
     {
         return $this->where('section', AuditTypeEnum::IGF);
     }
+
     public function scopePre()
     {
         return $this->where('section', AuditTypeEnum::PRE);
     }
+
     public function scopeState()
     {
         return $this->where('section', AuditTypeEnum::SEO);
     }
+
     public function scopeTertiary()
     {
         return $this->where('section', AuditTypeEnum::TERTIARY);
     }
+
     public function scopeBog()
     {
         return $this->where('section', AuditTypeEnum::BOG);
     }
+
     public function scopePerformance()
     {
         return $this->where('section', AuditTypeEnum::PERFORMANCE);
@@ -142,10 +145,12 @@ class Report extends Model
     {
         return $this->where('section', AuditTypeEnum::SPECIAL);
     }
+
     public function scopeIs()
     {
         return $this->where('section', AuditTypeEnum::IS);
     }
+
     public function documents(): MorphMany
     {
         return $this->morphMany(Document::class, 'documentable');

@@ -30,6 +30,7 @@ class Region extends Model
     {
         return $this->HasManyThrough(Office::class, District::class);
     }
+
     public static function getForm(): array
     {
         return [

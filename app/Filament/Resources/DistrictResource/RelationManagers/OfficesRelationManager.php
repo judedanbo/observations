@@ -3,19 +3,14 @@
 namespace App\Filament\Resources\DistrictResource\RelationManagers;
 
 use App\Models\Office;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OfficesRelationManager extends RelationManager
 {
     protected static string $relationship = 'offices';
-
-
 
     public function isReadOnly(): bool
     {

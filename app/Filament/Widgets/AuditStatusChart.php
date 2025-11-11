@@ -48,14 +48,14 @@ class AuditStatusChart extends ChartWidget
                 }
                 // fn($query, $institutions) => $query->whereHas('regions', fn($query) => $query->where('id', 'in', $institutions))
             )
-            ->when($districts, fn($query, $districts) => $query->whereHas(
+            ->when($districts, fn ($query, $districts) => $query->whereHas(
                 'districts',
-                fn($query) => $query->whereIn('districts.id', $districts)
+                fn ($query) => $query->whereIn('districts.id', $districts)
             ))
-            ->when($auditStatus, fn($query, $auditStatus) => $query->where('status', $auditStatus))
-            ->when($observationStatus, fn($query, $observationStatus) => $query->whereHas('observations', fn($query) => $query->where('status', $observationStatus)))
+            ->when($auditStatus, fn ($query, $auditStatus) => $query->where('status', $auditStatus))
+            ->when($observationStatus, fn ($query, $observationStatus) => $query->whereHas('observations', fn ($query) => $query->where('status', $observationStatus)))
             ->when($findingType, function ($query, $findingType) {
-                return $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                return $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
             })
             // ->when($unitDepartment, function ($query, $unitDepartment) {
             //     // dd($unitDepartment);
@@ -71,7 +71,7 @@ class AuditStatusChart extends ChartWidget
                 [
                     // 'label' => 'Blog posts created',
                     'data' => $data->pluck('count'),
-                    'backgroundColor' => $data->map(fn($item) => 'rgb(' . $item->status->getColor()['500'] . ')'),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->status->getColor()['500'].')'),
                     // 'borderColor' => '#FF0000',
                     'borderWidth' => 0,
                     'animation' => [
@@ -79,7 +79,7 @@ class AuditStatusChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->map(fn($item) => $item->status->getLabel()),
+            'labels' => $data->map(fn ($item) => $item->status->getLabel()),
         ];
     }
 

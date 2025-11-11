@@ -80,7 +80,7 @@ class SurchargeResource extends Resource
                         ->searchable()
                         ->preload()
                         ->multiple()
-                        ->options(fn() => Region::all()->pluck('name', 'id'))
+                        ->options(fn () => Region::all()->pluck('name', 'id'))
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['values'], function ($query, $data) {
                                 $query->whereHas('observation.audit', function ($query) use ($data) {
@@ -95,7 +95,7 @@ class SurchargeResource extends Resource
                         ->searchable()
                         ->multiple()
                         ->preload()
-                        ->options(fn() => District::all()->pluck('name', 'id'))
+                        ->options(fn () => District::all()->pluck('name', 'id'))
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['values'], function ($query, $data) {
                                 $query->whereHas('observation.audit', function ($query) use ($data) {
@@ -112,7 +112,7 @@ class SurchargeResource extends Resource
                         ->searchable()
                         ->preload()
                         ->options(
-                            fn() => Unit::all()->pluck('name', 'id')
+                            fn () => Unit::all()->pluck('name', 'id')
                         )
                         ->query(function (Builder $query, array $data) {
                             $query->when($data['values'], function ($query, $data) {

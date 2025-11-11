@@ -37,11 +37,11 @@ class ObservationStatusChart extends ChartWidget
             // ->when($endDate, fn($query, $endDate) => $query->where('created_at', '<=', $endDate))
             ->when(
                 $institutions,
-                fn($query, $institutions) => $query->whereHas(
+                fn ($query, $institutions) => $query->whereHas(
                     'audit',
-                    fn($query) => $query->whereHas(
+                    fn ($query) => $query->whereHas(
                         'institutions',
-                        fn($query) => $query->whereIn(
+                        fn ($query) => $query->whereIn(
                             'institutions.id',
                             $institutions
                         )
@@ -50,18 +50,18 @@ class ObservationStatusChart extends ChartWidget
             )
             ->when(
                 $districts,
-                fn($query, $districts) => $query->whereHas(
+                fn ($query, $districts) => $query->whereHas(
                     'audit',
-                    fn($query) => $query->whereHas(
+                    fn ($query) => $query->whereHas(
                         'districts',
-                        fn($query) => $query->whereIn('districts.id', $districts)
+                        fn ($query) => $query->whereIn('districts.id', $districts)
                     )
                 )
             )
             ->when(
                 $auditStatus,
                 function ($query, $auditStatus) {
-                    $query->whereHas('audit', fn($query) => $query->where('status', $auditStatus));
+                    $query->whereHas('audit', fn ($query) => $query->where('status', $auditStatus));
                 }
             )
             ->when(
@@ -73,7 +73,7 @@ class ObservationStatusChart extends ChartWidget
             ->when(
                 $findingType,
                 function ($query, $findingType) {
-                    $query->whereHas('findings', fn($query) => $query->where('type', $findingType));
+                    $query->whereHas('findings', fn ($query) => $query->where('type', $findingType));
                 }
             )
             // ->when(
@@ -92,14 +92,14 @@ class ObservationStatusChart extends ChartWidget
                 [
                     'label' => 'Observation status',
                     'data' => $data->pluck('count')->toArray(),
-                    'backgroundColor' => $data->map(fn($item) => 'rgb(' . $item->status->getColor()['500'] . ')'),
+                    'backgroundColor' => $data->map(fn ($item) => 'rgb('.$item->status->getColor()['500'].')'),
                     'borderWidth' => 0,
                     'animation' => [
                         'duration' => 1500,
                     ],
                 ],
             ],
-            'labels' => $data->map(fn($item) => $item->status->getLabel()),
+            'labels' => $data->map(fn ($item) => $item->status->getLabel()),
         ];
     }
 

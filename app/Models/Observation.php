@@ -77,6 +77,7 @@ class Observation extends Model
     {
         return $this->hasMany(Recovery::class);
     }
+
     public function documents(): BelongsToMany
     {
         return $this->belongsToMany(Document::class);

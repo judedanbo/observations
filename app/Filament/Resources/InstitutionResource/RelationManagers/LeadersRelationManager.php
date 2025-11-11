@@ -19,8 +19,6 @@ class LeadersRelationManager extends RelationManager
 
     protected static string $relationship = 'leaders';
 
-
-
     public function form(Form $form): Form
     {
         return $form

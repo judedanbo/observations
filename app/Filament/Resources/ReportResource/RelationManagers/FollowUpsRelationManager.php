@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ReportResource\RelationManagers;
 
 use App\Models\FollowUp;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -20,7 +19,6 @@ class FollowUpsRelationManager extends RelationManager
         return false;
     }
 
-
     public function form(Form $form): Form
     {
         return $form
@@ -34,12 +32,12 @@ class FollowUpsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\TextColumn::make('description')
-                    ->html()
+                    ->html(),
                 // ->html()
                 // ->description(fn(FollowUp $record): ?string => $record->description),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
@@ -57,7 +55,7 @@ class FollowUpsRelationManager extends RelationManager
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScopes([
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
     }
