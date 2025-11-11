@@ -5,12 +5,14 @@ namespace App\Models;
 use App\Enums\AuditorGeneralReportStatusEnum;
 use App\Enums\AuditorGeneralReportTypeEnum;
 use App\Http\Traits\LogAllTraits;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class AuditorGeneralReport extends Model
 {
@@ -18,6 +20,7 @@ class AuditorGeneralReport extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'description',
         'report_type',
         'report_year',
@@ -49,8 +52,27 @@ class AuditorGeneralReport extends Model
     protected static function booted(): void
     {
         static::creating(function (AuditorGeneralReport $report) {
-            if (auth()->check()) {
+            // Only set created_by if not already set and user is authenticated
+            if (auth()->check() && empty($report->created_by)) {
                 $report->created_by = auth()->id();
+            }
+
+            // Generate slug if not provided
+            if (empty($report->slug) && ! empty($report->title)) {
+                $report->slug = $report->generateUniqueSlug($report->title);
+            }
+        });
+
+        static::updating(function (AuditorGeneralReport $report) {
+            // Regenerate slug if title changed and slug wasn't manually set
+            if ($report->isDirty('title') && ! $report->isDirty('slug')) {
+                $originalSlug = Str::slug($report->getOriginal('title'));
+                $currentSlug = $report->slug;
+
+                // Only regenerate if the slug matches the old title's slug pattern
+                if ($currentSlug === $originalSlug || Str::startsWith($currentSlug, $originalSlug.'-')) {
+                    $report->slug = $report->generateUniqueSlug($report->title, $report->id);
+                }
             }
         });
 
@@ -178,27 +200,32 @@ class AuditorGeneralReport extends Model
     }
 
     // Scopes
-    public function scopeByStatus($query, AuditorGeneralReportStatusEnum $status)
+    public function scopeByStatus(Builder $query, AuditorGeneralReportStatusEnum $status): Builder
     {
         return $query->where('status', $status);
     }
 
-    public function scopeByType($query, AuditorGeneralReportTypeEnum $type)
+    public function scopeByType(Builder $query, AuditorGeneralReportTypeEnum $type): Builder
     {
         return $query->where('report_type', $type);
     }
 
-    public function scopeForYear($query, int $year)
+    public function scopeForYear(Builder $query, int $year): Builder
     {
         return $query->where('report_year', $year);
     }
 
-    public function scopePublished($query)
+    public function scopeByYear(Builder $query): Builder
+    {
+        return $query->orderBy('report_year', 'desc');
+    }
+
+    public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', AuditorGeneralReportStatusEnum::PUBLISHED);
     }
 
-    public function scopeDraft($query)
+    public function scopeDraft(Builder $query): Builder
     {
         return $query->where('status', AuditorGeneralReportStatusEnum::DRAFT);
     }
@@ -226,5 +253,37 @@ class AuditorGeneralReport extends Model
     public function getTotalRecoveriesAttribute()
     {
         return $this->findings->sum('total_recoveries');
+    }
+
+    /**
+     * Generate a unique slug from the given title
+     */
+    protected function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        // Check for existing slugs and append number if necessary
+        while ($this->slugExists($slug, $ignoreId)) {
+            $counter++;
+            $slug = $originalSlug.'-'.$counter;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Check if a slug already exists
+     */
+    protected function slugExists(string $slug, ?int $ignoreId = null): bool
+    {
+        $query = static::where('slug', $slug);
+
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        return $query->exists();
     }
 }

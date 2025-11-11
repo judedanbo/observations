@@ -41,7 +41,9 @@ class AuditorGeneralReportFactory extends Factory
             'methodology' => $this->faker->optional(0.5)->paragraphs(3, true),
             'conclusion' => $this->faker->optional(0.4)->paragraph(),
             'recommendations_summary' => $this->faker->optional(0.6)->paragraphs(3, true),
-            'created_by' => User::factory(),
+            // Use authenticated user if available, otherwise create a new user
+            // This allows the model's booted() method to work when testing auth behavior
+            'created_by' => auth()->check() ? auth()->id() : User::factory(),
             'approved_by' => null,
             'approved_at' => null,
         ];

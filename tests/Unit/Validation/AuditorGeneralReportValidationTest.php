@@ -5,15 +5,35 @@ use Illuminate\Support\Facades\Validator;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
+/**
+ * Helper function to create a validator instance for AuditorGeneralReport data
+ */
+function getValidator(array $data): \Illuminate\Validation\Validator
+{
+    return Validator::make($data, [
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'report_type' => 'required|in:'.implode(',', array_column(AuditorGeneralReportTypeEnum::cases(), 'value')),
+        'report_year' => 'required|integer|min:1900|max:2100',
+        'executive_summary' => 'nullable|string',
+        'methodology' => 'nullable|string',
+        'key_findings' => 'nullable|string',
+        'recommendations' => 'nullable|string',
+        'conclusion' => 'nullable|string',
+        'created_by' => 'nullable|exists:users,id',
+        'approved_by' => 'nullable|exists:users,id',
+    ]);
+}
+
 test('title is required', function () {
     $data = [
         'description' => 'Test description',
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('title', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('title');
 });
 
 test('title must be string', function () {
@@ -22,9 +42,9 @@ test('title must be string', function () {
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('title', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('title');
 });
 
 test('title has maximum length', function () {
@@ -33,9 +53,9 @@ test('title has maximum length', function () {
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('title', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('title');
 });
 
 test('report type is required', function () {
@@ -43,9 +63,9 @@ test('report type is required', function () {
         'title' => 'Test Report',
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('report_type', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('report_type');
 });
 
 test('report type must be valid enum value', function () {
@@ -54,9 +74,9 @@ test('report type must be valid enum value', function () {
         'report_type' => 'invalid_type',
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('report_type', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('report_type');
 });
 
 test('report year is required', function () {
@@ -64,9 +84,9 @@ test('report year is required', function () {
         'title' => 'Test Report',
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('report_year', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('report_year');
 });
 
 test('report year must be integer', function () {
@@ -75,9 +95,9 @@ test('report year must be integer', function () {
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
         'report_year' => 'not_a_year',
     ];
-    $validator = $this->getValidator($data);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('report_year', $validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('report_year');
 });
 
 test('report year must be within valid range', function () {
@@ -94,12 +114,12 @@ test('report year must be within valid range', function () {
             'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
             'report_year' => $testCase['year'],
         ];
-        $validator = $this->getValidator($data);
+        $validator = getValidator($data);
         if ($testCase['should_fail']) {
-            $this->assertTrue($validator->fails(), "Year {$testCase['year']} should fail validation");
-            $this->assertArrayHasKey('report_year', $validator->errors()->toArray());
+            expect($validator->fails())->toBeTrue("Year {$testCase['year']} should fail validation");
+            expect($validator->errors()->toArray())->toHaveKey('report_year');
         } else {
-            $this->assertFalse($validator->fails(), "Year {$testCase['year']} should pass validation");
+            expect($validator->fails())->toBeFalse("Year {$testCase['year']} should pass validation");
         }
     }
 });
@@ -112,16 +132,16 @@ test('description is optional but must be string if provided', function () {
         'report_year' => 2024,
         'description' => 'Valid description',
     ];
-    $validator = $this->getValidator($dataWithDescription);
-    $this->assertFalse($validator->fails());
+    $validator = getValidator($dataWithDescription);
+    expect($validator->fails())->toBeFalse();
     // Valid without description
     $dataWithoutDescription = [
         'title' => 'Test Report',
         'report_type' => AuditorGeneralReportTypeEnum::ANNUAL->value,
         'report_year' => 2024,
     ];
-    $validator = $this->getValidator($dataWithoutDescription);
-    $this->assertFalse($validator->fails());
+    $validator = getValidator($dataWithoutDescription);
+    expect($validator->fails())->toBeFalse();
     // Invalid with non-string description
     $dataWithInvalidDescription = [
         'title' => 'Test Report',
@@ -129,9 +149,9 @@ test('description is optional but must be string if provided', function () {
         'report_year' => 2024,
         'description' => 12345,
     ];
-    $validator = $this->getValidator($dataWithInvalidDescription);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('description', $validator->errors()->toArray());
+    $validator = getValidator($dataWithInvalidDescription);
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('description');
 });
 
 test('optional text fields must be strings if provided', function () {
@@ -149,9 +169,9 @@ test('optional text fields must be strings if provided', function () {
             'report_year' => 2024,
             $field => 12345, // Invalid non-string value
         ];
-        $validator = $this->getValidator($data);
-        $this->assertTrue($validator->fails(), "Field {$field} should fail with non-string value");
-        $this->assertArrayHasKey($field, $validator->errors()->toArray());
+        $validator = getValidator($data);
+        expect($validator->fails())->toBeTrue("Field {$field} should fail with non-string value");
+        expect($validator->errors()->toArray())->toHaveKey($field);
     }
 });
 
@@ -168,8 +188,8 @@ test('created by must be valid user id', function () {
         'report_year' => 'required|integer|min:1900|max:2100',
         'created_by' => 'required|exists:users,id',
     ]);
-    $this->assertTrue($validator->fails());
-    $this->assertArrayHasKey('created_by', $validator->errors()->toArray());
+    expect($validator->fails())->toBeTrue();
+    expect($validator->errors()->toArray())->toHaveKey('created_by');
 });
 
 test('all report type enum values are accepted', function () {
@@ -180,8 +200,8 @@ test('all report type enum values are accepted', function () {
             'report_type' => $reportType->value,
             'report_year' => 2024,
         ];
-        $validator = $this->getValidator($data);
-        $this->assertFalse($validator->fails(), "Report type {$reportType->value} should be valid");
+        $validator = getValidator($data);
+        expect($validator->fails())->toBeFalse("Report type {$reportType->value} should be valid");
     }
 });
 
@@ -197,9 +217,9 @@ test('valid complete data passes validation', function () {
         'recommendations' => 'Recommendations section',
         'conclusion' => 'Conclusion content',
     ];
-    $validator = $this->getValidator($data);
-    $this->assertFalse($validator->fails());
-    $this->assertEmpty($validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeFalse();
+    expect($validator->errors()->toArray())->toBeEmpty();
 });
 
 test('minimum required data passes validation', function () {
@@ -208,9 +228,9 @@ test('minimum required data passes validation', function () {
         'report_type' => AuditorGeneralReportTypeEnum::QUARTERLY->value,
         'report_year' => 2023,
     ];
-    $validator = $this->getValidator($data);
-    $this->assertFalse($validator->fails());
-    $this->assertEmpty($validator->errors()->toArray());
+    $validator = getValidator($data);
+    expect($validator->fails())->toBeFalse();
+    expect($validator->errors()->toArray())->toBeEmpty();
 });
 
 test('title trims whitespace', function () {
@@ -224,9 +244,9 @@ test('title trims whitespace', function () {
         'report_type' => 'required|in:'.implode(',', array_column(AuditorGeneralReportTypeEnum::cases(), 'value')),
         'report_year' => 'required|integer|min:1900|max:2100',
     ]);
-    $this->assertFalse($validator->fails());
+    expect($validator->fails())->toBeFalse();
 
     // In a real application, you might use a custom validator or mutator to trim
     $validatedData = $validator->validated();
-    $this->assertEquals('Test Report With Spaces', trim($validatedData['title']));
+    expect(trim($validatedData['title']))->toBe('Test Report With Spaces');
 });

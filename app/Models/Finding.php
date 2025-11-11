@@ -169,10 +169,15 @@ class Finding extends Model
         $this->documents()->save($document);
     }
 
-    public function reports(): BelongsToMany
+    public function auditorGeneralReports(): BelongsToMany
     {
-        return $this->belongsToMany(AuditorGeneralReport::class)
-            ->withPivot('report_section_order')
+        return $this->belongsToMany(AuditorGeneralReport::class, 'auditor_general_report_findings')
+            ->withPivot([
+                'report_section_order',
+                'section_category',
+                'report_context',
+                'highlighted_finding',
+            ])
             ->withTimestamps();
     }
 

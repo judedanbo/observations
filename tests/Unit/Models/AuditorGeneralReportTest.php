@@ -132,8 +132,8 @@ test('it has correct relationships', function () {
 });
 
 test('it has correct scopes', function () {
-    AuditorGeneralReport::factory()->create(['status' => AuditorGeneralReportStatusEnum::DRAFT]);
-    AuditorGeneralReport::factory()->create(['status' => AuditorGeneralReportStatusEnum::PUBLISHED]);
+    AuditorGeneralReport::factory()->create(['status' => AuditorGeneralReportStatusEnum::DRAFT, 'report_year' => 2023,]);
+    AuditorGeneralReport::factory()->create(['status' => AuditorGeneralReportStatusEnum::PUBLISHED, 'report_year' => 2022,]);
     AuditorGeneralReport::factory()->create([
         'report_year' => 2024,
         'status' => AuditorGeneralReportStatusEnum::UNDER_REVIEW,

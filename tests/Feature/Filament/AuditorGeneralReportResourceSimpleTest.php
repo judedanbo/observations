@@ -210,7 +210,7 @@ class AuditorGeneralReportResourceSimpleTest extends TestCase
         $report2024 = AuditorGeneralReport::factory()->forYear(2024)->create();
         $report2025 = AuditorGeneralReport::factory()->forYear(2025)->create();
 
-        $reports2024 = AuditorGeneralReport::byYear(2024)->get();
+        $reports2024 = AuditorGeneralReport::forYear(2024)->get();
 
         $this->assertFalse($reports2024->contains($report2023));
         $this->assertTrue($reports2024->contains($report2024));
